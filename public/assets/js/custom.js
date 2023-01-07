@@ -260,13 +260,8 @@ function deleteCartL(id){
 }
 function clearCart(){
     return new Promise((resolve,reject)=>{
-        let locaData = JSON.parse(localStorage.getItem('cart'))
-        locaData.forEach((data,i)=>{
-            deleteCartL(data.id)
-            if(locaData.length-1==i){
-                resolve()
-            }
-        })
+        localStorage.setItem('cart', []);
+        resolve('success')
 
     })
 }
