@@ -1,0 +1,137 @@
+html {
+    font-size: 14px;
+  }
+
+.loginbg{
+    background-image: url('/admin/images/background/loginbg.webp');
+    background-size: cover;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+label{
+    color: rgb(68, 68, 68);
+    font-size: 14px;
+}
+img{
+    width: 100%;
+}
+.logoHeader{
+    position: relative;
+}
+.logoHeader span{
+    position: absolute;
+    top: 25px;
+    left: 50px;
+    font-size: 12px;
+    color: rgb(243, 106, 8);
+}
+.logoHeaderimg{
+    width: 100px;
+
+}
+.ad-box-shadow{
+
+    box-shadow: 1px 1px 10px rgba(128, 128, 128, 0.101);
+}
+.ad-topHeader{
+    box-shadow: 1px 1px 10px rgba(128, 128, 128, 0.323);
+}
+.ad-productImage{
+    max-height: 180px;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+}
+
+
+
+/************************************
+ADMIN Page
+************************************/
+.adminloginbg{
+    background-image: url('/admin/images/background/admin-login-bg.jpg');
+    background-size: cover;
+}
+.mainBody{
+    max-height: 100vh;
+    overflow-y  : scroll;
+    overflow-x  : hidden;
+    width: 100%;
+}
+#toggleBTN{
+    border-radius: 8px;
+    background-color: white;
+    padding: 3px 8px;
+    margin-right: 5px;
+    outline: none;
+    border: 0;
+    font-size: 20px;
+    display: none;
+}
+#adsidebarForToggle{
+    transition: 0.5s;
+}
+#closeToggle{
+    /* border: 2px solid gray;
+border-radius: 50px; */
+border: 0ch;
+color: white;
+background-color: rgba(5, 5, 5, 0);
+width: 30px;
+height: 30px;
+font-size: 15px;
+display: none;
+position: absolute;
+left: 240px;
+}
+@media only screen and (max-width: 990px) {
+    .adsidebarForToggle{
+        position: fixed;
+        z-index: 999;
+        left: -350px; /*280 actual*/
+        bottom: 0;
+        top: 0;
+    }
+    #closeToggle{
+    display: block;
+    }
+    .sbarActive{
+        left: 0px;
+
+    }
+    #toggleBTN{
+        display: inline;
+
+    }
+}
+.container{
+    border-radius: 10px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    padding: 1%;
+    margin: 1% !important;
+    width: 98% !important;
+    max-width: 98% !important;
+    background-color: white ;
+}
+.nav-pills .nav-link.active{
+    box-shadow: rgba(229, 242, 255, 0.2) 0px 8px 24px;
+
+}
+.dataTables_paginate{
+    max-height: 40px;
+    margin: 10px 10px;
+    background: none !important;
+    background-color: aliceblue;
+}
+.paginate_button{
+    background-color: white !important;
+    height: 40px;
+    border: 0 !important;
+}
+.paginate_button.current{
+    background-color: rgb(231, 240, 255) !important;
+    color: white !important;
+}
+
+.ad-responsive-table{
+    overflow-x: scroll;
+}

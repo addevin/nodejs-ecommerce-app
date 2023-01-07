@@ -1,0 +1,369 @@
+<div id="prodResponse" style="top: 0; left: 0; right: 0; z-index: 3; position: fixed;"></div>
+
+<div class="container bg-white my-2">
+    <div class="d-flex justify-content-between py-1 mb-0">
+
+        <h2 class=" text-muted p-0">
+           Add Product
+        </h2>
+    </div>
+    
+</div>
+
+<div class="row justify-content-around">
+    <div class="col-11 col-md-4 my-1 p-0">
+
+        <div class="card border-0 ad-box-shadow p-0">
+            <div class="card-header">
+                Images
+            </div>
+            <div class="card-body">
+                <div class="border mb-1" style="height: 230px;">
+                    <label for="product_images" class="d-block">
+                    <div id="image_drop_area" class="d-flex justify-content-center align-items-center mx-auto col-md-10 my-1 text-muted" style="
+                    min-height: 200px;
+                    border: 1px dashed rgba(57, 57, 57, 0.766);" onclick="document.getElementById('image_drop_area').innerHTML=`<p class=''>Drag and Drop Image here</p>`"><p class="text-muted">Drag and Drop Image here</p></div>
+                    </label>
+                </div>
+                <div id="dragged_images">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-11 col-md-7 my-1 p-0">
+        <div class="card w-100 border-0 ad-box-shadow p-0">
+            <div class="card-header">
+                Details
+            </div>
+            <div class="card-body">
+                <form action="/adminapi/product/action" method="post"  enctype="multipart/form-data" id="productForm">
+                    <input type="file" name="product_images" class="d-none" id="product_images" multiple >
+                    <input type="hidden" name="action" value="create">
+                    <div class=" mb-3">
+                        <label for="">Name of the product </label>
+                        <input type="text" class="form-control" name="name" placeholder="Enter Product Name" >
+                    </div>
+                    <div class=" mb-3">
+                        <label for="">Category</label>
+                        <select name="category" id="" class="form-select" >
+                            <option disabled selected>Select a category</option>
+                            <% catlist.forEach((val,i)=>{ %>  
+                            <option value="<%= val._id %>"><%= val.name %> </option>
+                            <%}) %>
+                        </select>
+                    </div>
+                    <div class=" mb-3">
+                        <label for="">Discription</label>
+                        <textarea name="discription" id=""  rows="8" class="form-control" placeholder="Write discription for the product.."></textarea>
+                    </div>
+                    <div class=" mb-3">
+                        <label for="">Specification</label>
+                        <textarea name="specification" id=""  rows="8" class="form-control" placeholder="Write specification for the product.."></textarea>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3">
+
+                        <div class="input-group mb-3 ">
+                            <span class="input-group-text" id="basic-addon1">Unit </span>
+                            <select name="unit" id="unit" class="form-select" >
+                                <option disabled selected>Select a Unit</option>
+                                <option value="kg">Kg</option>
+                                <option value="pcs">Pcs</option>
+                                <option value="ltr">Ltr</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="border rounded p-2 mb-3 border-secondary ">
+                        <input type="hidden" name="sizes" id="sazes">
+                        <label for="">Types/sizes</label>
+                        <div class="input-group mb-3 ">
+                            <span class="input-group-text" id="basic-addon1">Name </span>
+                            <input type="text" class="form-control" placeholder="Enter type/size Name" id="sazeName"  onkeydown=" return event.key != 'Enter';">
+                        </div>
+                        <div class="row justify-content-around">
+                            <div class="col-10 col-md-5 col-lg-5 px-1"> 
+                                <div class="input-group mb-3 ">
+                                    <span class="input-group-text" id="basic-addon1">Price </span>
+                                    <input type="number" class="form-control" placeholder="Product price" id="sizePrice"  onkeydown=" return event.key != 'Enter';">
+                                </div>
+                            </div>
+                            <div class="col-10 col-md-5 col-lg-5 px-1">
+                                <div class="input-group mb-3 ">
+                                    <span class="input-group-text" id="basic-addon1">Stock</span>
+                                    <input type="number" class="form-control" placeholder="Opening stock" id="sizeStock"  onkeydown=" return event.key != 'Enter';">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-100 text-end border-bottom pb-1 mb-1">
+
+                            <button class="btn btn-sm btn-dark " type="button" onclick="addToSizeArr()">Add</button>
+                        </div>
+                        <div class=" m-1 rounded p-1" id="sizesBar">
+                        </div>
+                    </div>
+                    <div class="mb-3 border rounded p-1 border-secondary">
+                        <label class="mb-2 text-muted" for="cattag">Tags</label>
+                        <div class="input-group mb-0 input-group-sm">
+                          <input type="text" id="cattag" class="form-control" placeholder="Tags"  onkeydown=" return event.key != 'Enter';">
+                          <input type="hidden" name="tags" id="cattags" class="form-control" placeholder="Tags" value="">
+                          <button type="button" class="btn btn-sm btn-outline-dark" onclick="pushToArray()">Add <i class="bi bi-plus-lg"></i></button>
+                        </div>
+                        <div class="border bg-light" id="tagsDisplay"> </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100" id="productBtn">Create Product</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="accountActionsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Account Actions </h5> <div id="acLoaderStatus"></div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" >
+            <h5 id="uname" class="text-muted">Loading..</h5>
+            <p id="acMessage" class="text-muted"></p>
+        </div>
+        <div class="modal-footer" id="acbuttons">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="cropImgModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" >Crop Image</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center" >
+		    <canvas id="cropCanvas" width="600" height="600" class="border " >Your browser does not support canvas.</canvas>
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+<script>
+    $(document).ready(function () {
+        $('#myTable').dataTable();
+    });
+    
+    function pushToArray(){
+      let tagsInput = document.getElementById('cattags');
+      let tagInput = document.getElementById('cattag');
+      let tagsDisplay = document.getElementById('tagsDisplay')
+      let tagsVals = tagsInput.value;
+      let tags = tagsVals.split(',');
+      let tag = tagInput.value;
+
+      if(tags.includes(tag)==false){
+        tagsDisplay.innerHTML ='';
+        tags.push(tag)
+        tagsInput.value = tags;
+        tags.forEach((val,i) => {
+          tagsDisplay.innerHTML += `<div class="border p-1 d-flex justify-content-between align-items-center" style="height: 30px;"><p class="p-0 m-0 small">${val}</p> <button class="btn-transparent btn" onclick="rmToarr('${val}')" type="button"><i class="bi bi-x-circle"></i></button></div> `;
+        });
+        rmToarr('')
+      }
+      
+    }
+    function rmToarr(val){
+      let tagsInput = document.getElementById('cattags');
+      document.getElementById('cattag').value=null;
+      let tagsVals = tagsInput.value
+      let tags = tagsVals.split(',');
+
+        const index = tags.indexOf(val);
+        if (index > -1) { // only splice array when item is found
+          tags.splice(index, 1); 
+          tagsInput.value = tags
+          tagsDisplay.innerHTML = ''
+          tags.forEach((val,i) => {
+            tagsDisplay.innerHTML += `<div class="border p-1 d-flex justify-content-between align-items-center" style="height: 30px;"><p class="p-0 m-0 small">${val}</p> <button class="btn-transparent btn" onclick="rmToarr('${val}')" type="button"><i class="bi bi-x-circle"></i></button></div> `;
+          });
+        }
+      }
+    
+ /*************************
+  * 
+  * SIZES MANAGEMENT
+  * ***********************/ 
+ // sazeName, sizePrice, sizeStock, sizesBar, sazes
+ function addToSizeArr(){
+    let sazeName = $('#sazeName')
+    let sizePrice = $('#sizePrice')
+    let sizeStock = $('#sizeStock')
+    let sizesBar = $('#sizesBar')
+    let sazes = $('#sazes')
+    let sizeArr = [];
+    sizesBar.html('')
+    if(sazes.val()){
+        sizeArr = JSON.parse(sazes.val());
+    }
+    if( sazeName.val()&& sizePrice.val()&& sizeStock.val()){
+        sizeArr.push({name:sazeName.val(), price: sizePrice.val(), stock:sizeStock.val()})
+        sazes.val(JSON.stringify(sizeArr));
+    }
+    sizeArr.forEach((val,i)=>{
+        sizesBar.append(`<div class="d-flex justify-content-between align-items-center border rounded p-1 my-1">
+                                <div class="">
+                                    <h5 class="text-secondary">
+                                        ${val.name}
+                                    </h5>
+                                    <p class="text-muted">
+                                        Price: <b>${val.price}</b>
+                                        Stock: <b>${val.stock}</b>${$('#unit').val()}
+                                    </p>
+                                </div>
+                                <button class="btn btn-trasprent text-muted " onclick="rmToarrSize('${val.name}')"><i class="fa-solid fa-x"></i></button>
+
+                            </div>`)
+                            sazeName.val(''); sizePrice.val(''); sizeStock.val('')
+    })
+    console.log(sizeArr);
+ }
+
+ function rmToarrSize(val){
+    let sizeArr = JSON.parse($('#sazes').val());
+
+    sizeArr = sizeArr.filter(obj => obj.name !== val);
+    $('#sazes').val(JSON.stringify(sizeArr));
+    addToSizeArr();
+ }
+  
+$(document).ready(function () {
+  $("form").submit(function (event) {
+    let btn_data = $('#productBtn').html();
+    $('#productBtn').html('Loading...').prop('disabled', true);
+    var form = $('form')[0]; // You need to use standard javascript object here
+    var formData = new FormData(form);
+    //data: $('#categoryForm').serialize(),
+
+    $.ajax({
+      type: "POST",
+      url: $('#productForm').attr('action'),
+      data: formData,
+      contentType: false,
+      processData: false,
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      console.log(data.message);
+      if(data.success == true){
+
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+            $("form")[0].reset()
+            setTimeout(()=>{
+                window.location.href = '/admin/products'
+            },1500)
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+    $('#productBtn').html(btn_data).prop('disabled', false);
+      $("#prodResponse").html(resHTML)
+    });
+
+    event.preventDefault();
+  });
+});
+
+
+function imageDrop(){
+    
+    const image_drop_area = document.querySelector("#image_drop_area");
+    var uploaded_image;
+
+    // Event listener for dragging the image over the div
+    image_drop_area.addEventListener('dragover', (event) => {
+    image_drop_area.classList.add('bg-secondary')
+    image_drop_area.classList.add('text-white')
+    image_drop_area.classList.remove('text-muted')
+
+
+    event.stopPropagation();
+    event.preventDefault();
+    // Style the drag-and-drop as a "copy file" operation.
+    event.dataTransfer.dropEffect = 'copy';
+    });
+    image_drop_area.addEventListener('dragleave', (event) => {
+    image_drop_area.classList.remove('bg-secondary')
+    image_drop_area.classList.remove('text-white')
+    image_drop_area.classList.add('text-muted')
+
+    
+    });
+
+    // Event listener for dropping the image inside the div
+    image_drop_area.addEventListener('drop', (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        fileList = event.dataTransfer.files;
+
+        document.querySelector("#product_images").files=fileList;
+
+        document.getElementById('dragged_images').innerHTML ='';
+        for (let i = 0; i < fileList.length; i++) {
+            readImage(fileList[i]);
+        }
+        image_drop_area.classList.remove('bg-secondary')
+        image_drop_area.classList.remove('text-white')
+        image_drop_area.classList.add('text-muted')
+    });
+
+    // Converts the image into a data URI
+    readImage = (file) => {
+        let dragged_images = document.getElementById('dragged_images');
+        // dragged_images.innerHTML = '';
+        const reader = new FileReader();
+        reader.addEventListener('load', (event) => {
+            uploaded_image = event.target.result;
+            image_drop_area.style.border ='none' ;
+            dragged_images.innerHTML+=`<div class="d-flex border justify-content-between rounded align-items-center my-1">
+    <div style="max-height: 80px; max-width: 80px;" class="p-0 rounded">
+        <img src="${uploaded_image}" alt=""  class="image-fluid rounded">
+        </div>
+        <p class="text-secondary">${file.name}</p>
+        </div>`
+        });
+        reader.readAsDataURL(file);
+        
+    }
+
+
+}
+imageDrop()
+
+</script>
+
+<!-- 
+    
+    `<div class="d-flex border justify-content-between rounded align-items-center my-1">
+    <div style="max-height: 80px; max-width: 80px;" class="p-0 rounded">
+        <img src="${uploaded_image}" alt=""  class="image-fluid rounded">
+        </div>
+        <h5 class="text-secondary">${files.name}</h5>
+        <button class="btn btn-trasprent text-muted"><i class="fa-solid fa-x"></i></button>
+        </div>` 
+    
+    -->

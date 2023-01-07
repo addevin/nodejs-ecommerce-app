@@ -1,0 +1,144 @@
+
+
+    <!-- Modal -->
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="w-100 pt-1 mb-5 text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="get" class="modal-content modal-body border-0 p-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
+                    <button type="submit" class="input-group-text bg-success text-light">
+                        <i class="fa fa-fw fa-search text-white"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+<!-- Forget section start -->
+<section class="h-100vh bg-light">
+    <div class="container h-100">
+        <div class="row justify-content-sm-center h-100">
+            <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+                <div class="text-center my-5">
+                    <h1 class="text-primary">
+                        Addev Login
+                    </h1>
+                </div>
+                <div class="card shadow-lg">
+                    <div class="card-body p-5">
+                        <h1 class="fs-4 card-title fw-bold mb-4">Reset Password</h1>
+                        <% if(validated){ %> 
+                            <div id="formMessages"></div>
+                        <form method="POST" class="needs-validation" novalidate="" autocomplete="off">
+                            <div class="mb-3">
+                                <label class="mb-2 text-muted" for="password">New Password</label>
+                                <input id="password" type="password" class="form-control" name="password" value="" required autofocus>
+                                <div class="invalid-feedback">
+                                    Password is required	
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="mb-2 text-muted" for="password-confirm">Confirm Password</label>
+                                <input id="repassword" type="password" class="form-control" name="repassword" onchange="$('#submitBTN').prop('disabled', false)" required>
+                                <div class="invalid-feedback">
+                                    Please confirm your new password
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center">
+                                
+                                <button type="submit" class="btn btn-primary ms-auto" id="submitBTN" disabled>
+                                    Reset Password	
+                                </button>
+                            </div>
+                        </form>
+                        <% }else{ %> 
+                            <div class="alert alert-danger alert-dismissible"> 
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                <strong>Error!</strong> We couldn't verify you, please try again!
+                            </div>
+                            <a href="/auth/reset/" class="btn btn-primary btn-sm">Resend verification email</a>
+                        <% } %> 
+                    </div>
+                </div>
+                <div class="text-center mt-5 text-muted">
+                    Copyright &copy; 2017-2021 &mdash; AdDev Design
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Forget section end -->
+
+
+    <script>
+        (function () {
+	'use strict'
+
+	// Fetch all the forms we want to apply custom Bootstrap validation styles to
+	var forms = document.querySelectorAll('.needs-validation')
+
+	// Loop over them and prevent submission
+	Array.prototype.slice.call(forms)
+		.forEach(function (form) {
+			form.addEventListener('submit', function (event) {
+				if (!form.checkValidity()) {
+					event.preventDefault()
+					event.stopPropagation()
+				}
+
+				form.classList.add('was-validated')
+			}, false)
+		})
+})()
+</script>
+
+
+
+<% if(validated){ %> 
+<script>
+$(document).ready(function () {
+
+$("form").submit(function (event) {
+  $('#submitBTN').html('Loading...').prop('disabled', true);
+
+
+  $.ajax({
+    type: "POST",
+    url: "/api/resetPassword/<%= key %>/<%= id %>",
+    data: $("form").serialize(),
+    dataType: "json", 
+    encode: true,
+  }).done(function (data) {
+    console.log(data.message);
+    if(data.success == true){
+
+         resHTML = '<div class="alert alert-success alert-dismissible"> '+
+          '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+          '<strong>Success!</strong> '+data.message +
+          '</div>';
+            $('#forgotForm').html('')
+              location.href='/auth/login/';
+      }else{
+
+           resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+          '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+          '<strong>Error!</strong> '+data.message +
+          '</div>';
+      }
+    $('#submitBTN').html('Reset Password').prop('disabled', true);
+    $("#formMessages").html(resHTML)
+  });
+
+  event.preventDefault();
+});
+});
+
+    </script>
+<% } %> 
+

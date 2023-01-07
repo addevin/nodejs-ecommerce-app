@@ -1,0 +1,179 @@
+<div class="container bg-white my-2">
+    <div class="d-flex justify-content-between border-bottom py-3 mb-2">
+
+        <h2 class=" text-muted p-0">
+            Products
+        </h2>
+        <a class="btn btn-dark btn-sm"  style="height: 30px;" href="/admin/products/add">
+          <i class="bi bi-plus-square-fill"></i>
+            Add Product
+        </a>
+    </div>
+    <div class="ad-responsive-table w-100">
+      <table id="myTable" class="table table-striped table-bordered table-responsive table-hover ">
+          <thead>
+              <tr>
+                  <th>Sr No.</th>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Created by</th>
+                  <th>Last updated</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+              </tr>
+          </thead>
+          <tbody>
+
+              <% prodlist.forEach((val,ind)=>{ %>
+
+
+              
+              <tr>
+                  <td><%= ind+1 %></td>
+                  <td class="text-capitalize"><%=val.name%></td>
+                  <td class="text-capitalize"><%=val.category.name%></td>
+                  <td><%=val.last_updated_user%></td>
+                  <td title="<%=val.last_updated%>"><%=val.last_updated.getDate() %>/<%=val.last_updated.getMonth()+1 %>/<%=val.last_updated.getFullYear() %></td>
+                  <td><span class="badge <% if(val.status=='active') {%> bg-success<% }else{ %>bg-warning<% } %> "><%=val.status%></span></td>
+                  <td>
+                      <a href="/admin/products/edit/<%=val._id%>"  class="btn  text-warning"><i class="bi bi-pencil-square"></i></a>
+                      <button  class="btn text-danger border-0" id="delete2<%=val._id %>" onclick="catDelete ( 'delete2<%=val._id %>','<%=val._id %>', 'icon')"><i class="bi bi-trash3-fill"></i></button>
+                  </td>
+              </tr>
+
+              <%})%>
+          </tbody>
+      </table>
+    </div>
+</div>
+
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="accountActionsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Account Actions </h5> <div id="acLoaderStatus"></div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" >
+            <h5 id="uname" class="text-muted">Loading..</h5>
+            <p id="acMessage" class="text-muted"></p>
+        </div>
+        <div class="modal-footer" id="acbuttons">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+<script>
+    $(document).ready(function () {
+        $('#myTable').dataTable();
+    });
+    
+   
+    function catDelete ( btn, cid, contType) {
+      let btnData = $('#'+btn).html()
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          if(contType=='icon'){
+            $('#'+btn).html('<i class="fa-solid fa-spinner fa-spin"></i>').prop('disabled',true);
+          }else{
+            $('#'+btn).html('Deleting...').prop('disabled',true);
+          }
+          $.ajax({
+            type: "GET",
+            url: "/adminapi/product/delete/"+ cid,
+            dataType: "json",
+            encode: true, 
+          }).done(function (data) {
+            
+            if(data.success == true){
+              if(contType=='icon'){
+                $('#'+btn).html('<i class="bi bi-check-circle-fill"></i>').prop('disabled',true);
+              }else{
+                $('#'+btn).html('Deleted!').prop('disabled',true);
+              }
+              Swal.fire(
+                'Deleted!',
+                data.message,
+                'success'
+                )
+                
+            }else{
+              $('#'+btn).html(btnData).prop('disabled',false);
+              Swal.fire(
+                'Error Detucted',
+                data.message,
+                'error'
+              )
+            }
+          });
+        }
+        
+      })
+     
+
+  }
+
+
+  
+$(document).ready(function () {
+  $("form").submit(function (event) {
+    let btn_data = $('#categoryBtn').html();
+    $('#categoryBtn').html('Loading...').prop('disabled', true);
+    var form = $('form')[0]; // You need to use standard javascript object here
+    var formData = new FormData(form);
+    //data: $('#categoryForm').serialize(),
+
+    $.ajax({
+      type: "POST",
+      url: $('#categoryForm').attr('action'),
+      data: formData,
+      contentType: false,
+      processData: false,
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      console.log(data.message);
+      if(data.success == true){
+
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+            $("form")[0].reset()
+            setTimeout(()=>{
+
+              toggleModal( 'catupdateModal','hide');
+            },1500)
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+    $('#categoryBtn').html(btn_data).prop('disabled', false);
+      $("#catResponse").html(resHTML)
+    });
+
+    event.preventDefault();
+  });
+});
+
+
+</script>

@@ -1,0 +1,128 @@
+
+    
+
+    <!-- Open Content -->
+    <section class="bg-light">
+        <div class="container pb-5">
+            <div class="col-lg-12 ">
+
+                <h1 class="pt-5 text-muted">CART</h1>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 ">
+                    <% if(prodData.length==0){%>
+                        <h3 class="text-muted bg-white p-2 text-center"><i class="bi bi-cart"></i> Your cart is empty!</h3>
+                        <%} %> 
+                    <% prodData.forEach((val,i)=>{ %> 
+                    <!-- Card Start -->
+                    <div class="card mb-3 p-2" id="<%= val.id %>Item">
+                        <div class="d-block d-md-flex">
+                            <div class="col-12 col-md-3 text-center ">
+                                <img class=" object-fit-cover" style="width: 120px; height: 120px;" src="/shop/<%= val.image%>"
+                                    alt="Card image cap" id="product-detail">
+
+                            </div>
+                            <div class="col-12 col-md-7 d-flex justify-content-center flex-column text-left p-1">
+                                <h5 class="text-left d-none d-md-block"> <%= val.name%> </h5>
+                                <p class="text-left d-block d-md-none fw-bold "> <%= val.name%> </p>
+                                <p class="small d-none d-md-inline threeLineText custom3Dot position-relative">
+                                    <%= val.discription.replace(/-br/g,' | ') %>
+                                </p>
+                                <div class="row">
+                                    <div class="d-flex ">
+                                        
+                                        <span class="pe-1">Size/type: </span>
+                                        <b> <%= val.size %> </b>
+                                    </div>
+
+                                    <ul class="list-inline ">
+                                        <li class="list-inline-item text-right">
+                                            Quantity
+                                            <input type="hidden" name="product-quanity" id="product-quanity" value="<%= val.qnty %>">
+                                        </li>
+                                        <li class="list-inline-item"><button class="btn btn-success btn-sm" id="btn-minus" onclick="cartLupdateQnty('<%= val.id %>',<%= val.limit %>, 'dec')">-</button></li>
+                                        <li class="list-inline-item"><span class="badge bg-secondary badge-sm" id="<%= val.id %>CartQnty2"><%= val.qnty %></span></li>
+                                        <li class="list-inline-item"><button type="button" class="btn btn-success btn-sm" id="btn-plus" onclick="cartLupdateQnty('<%= val.id %>',<%= val.limit %>, 'inc')">+</button></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-2 d-flex justify-content-between flex-row flex-md-column ">
+                                <div>
+                                    <h6 class="text-success mb-0">Price : &#8377;<span id="<%= val.id %>cartPrice"><%= val.price %></span></h6>
+                                    <h6 class="text-success">Total : &#8377;<span id="<%= val.id %>cartTotalPrice"><%= val.total %></span></h6>
+                                </div>
+                                <div>
+                                <button class="btn btn-outline-danger btn-sm d-inline" onclick="deleteCartL('<%= val.id %>')"><i class="fa-solid fa-trash"></i> </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card END -->
+                    <%}) %>
+
+
+                </div>
+                
+                <!-- col end -->
+                <div class="col-lg-4 ">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="text-secondary border-bottom pb-3">
+                                PROCEED TO CHECKOUT
+                            </h5>
+                            <div class="border rounded p-2">
+                                <div class="d-flex justify-content-between border-bottom">
+                                    <p class="m-0 p-1">Cart items</p>
+                                    <p class="m-0 p-1" id="cartItemCount2">0 </p>
+                                </div>
+                                <div class="d-flex justify-content-between border-bottom">
+                                    <p class="m-0 p-1">Sub Total</p>
+                                    <p class="m-0 p-1">&#8377;<span id="cartSubTotal2">000</span></p>
+                                </div>
+                                <div class="d-flex justify-content-between border-bottom">
+                                    <p class="m-0 p-1">Discount</p>
+                                    <p class="m-0 p-1">&#8377;<span >0</span></p>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between border-bottom">
+                                    <p class="m-0 p-1"> Total Price</p>
+                                    <p class="m-0 p-1">&#8377;<span id="cartTotal2">000</span></p>
+                                </div>
+                                <p id="cartErr" class="text-danger"></p>
+                                <button class="btn w-100 btn-outline-dark " onclick="genCheckout()" id="genCheckoutBTN">PROCEED</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Close Content -->
+
+    <script>
+        function genCheckout(){
+            $('#genCheckoutBTN').html('<i class="fa-solid fa-spinner fa-spin"></i> Please wait..')
+            $.ajax({
+                type: "POST",
+                url:  '/api/checkout/generateid',
+                data: {
+                    cart : 'nodata'
+                },
+                dataType: "json",
+                encode: true,
+            }).done(function (res) {
+                console.log(res);
+                if(res.success==true){
+                    location.href='/dash/cart/checkout/'+res.data.id;
+                }else{
+                    $('#cartErr').html(res.message)
+                    $('#genCheckoutBTN').html('TRY AGAIN!')
+
+                }
+            }).fail((data)=>{
+                console.log(data);
+                $('#cartErr').html(data.responseJSON.message)
+                $('#genCheckoutBTN').html('TRY AGAIN!')
+            })
+        }
+    </script>

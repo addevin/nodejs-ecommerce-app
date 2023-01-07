@@ -1,0 +1,174 @@
+<div class="container my-5 py-2 bg-white" id="userUpdateContainer">
+  <h3 class="border-bottom text-muted">Update User</h3>
+
+  
+ 
+
+  
+  
+    <form class="d-block col-12 col-lg-6 m-auto" method="post" >
+      <div id="response"></div>
+      <legend>Update user data</legend>
+      <div class="mb-3">
+        <label for="usernameInput" class="form-label">Username</label>
+        <input type="text" id="usernameInput" class="form-control" placeholder="Full Name" name="uNametoUpdate"
+          value="<%= updateuserData.username %>">
+      </div>
+      <div class="mb-3">
+        <label for="nameInput" class="form-label">Full Name</label>
+        <input type="text" id="nameInput" class="form-control" placeholder="Full Name" name="uNametoUpdate"
+          value="<%= updateuserData.name %>">
+      </div>
+      <div class="mb-3">
+        <label for="emailInput" class="form-label">Email</label>
+        <input type="email" id="emailInput" class="form-control" placeholder="yourname@domain.com" name="emailtoUpdate"
+          value="<%= updateuserData.email %>">
+      </div>
+      <div class="mb-3">
+        <label for="phoneInput" class="form-label">Phone</label>
+        <input type="number" id="phoneInput" class="form-control" placeholder="9876543210" name="phonetoUpdate"
+          value="<%= updateuserData.phone %>">
+      </div>
+      <div class="mb-3">
+        <label for="passwordInput" class="form-label">Password</label>
+        <input type="password" id="passwordInput" class="form-control" placeholder="Password" name="password">
+        <input type="password" id="repasswordInput" class="form-control mt-1" placeholder="Re Password" name="repassword">
+      </div>
+      <button type="submit" class="btn btn-primary" id="regBTN">Update</button>
+      
+  </form>
+</div>
+
+<div class="row">
+  <div class="border border-danger p-3 rounded my-3 col-12 col-lg-5 mx-auto" id="deleteUserContainer">
+
+    <legend class="text-danger">Delete user </legend>
+    <hr>
+    <p>
+      <b>Are you sure to delete user <span class="text-capitalize"> "<%= updateuserData.name %>"</span>?</b> <br>
+      Once you click the button, You cannot undo this operation!
+    </p>
+    <div id="resultDeleted">
+
+      <button class="btn btn-danger" id="SubmitDelete" onclick="accountActions('delete','resultDeleted')"><i class="bi bi-trash3-fill"></i> Delete it!</button>
+    </div>
+  </div>
+
+<% if(updateuserData.status=='banned'){ %>
+  <div class="border border-warning p-3 rounded my-3 col-12 col-lg-5 mx-auto" id="deleteUserContainer">
+
+    <legend class="text-warning">Unban user </legend>
+    <hr>
+    <p>
+      <b>Do you want to unban <span class="text-capitalize"> "<%= updateuserData.name %>"</span>?</b> <br>
+      Seems this user is banned already! you can unban any time!
+    </p>
+    <div id="resultBan">
+
+      <button class="btn btn-warning" id="SubmitDelete"  onclick="accountActions('unban','resultBan')"> <i class="bi bi-slash-circle-fill"></i> Unban user!</button>
+    </div>
+  </div>
+<% }else{ %> 
+  <div class="border border-warning p-3 rounded my-3 col-12 col-lg-5 mx-auto" id="deleteUserContainer">
+
+    <legend class="text-warning">Ban user </legend>
+    <hr>
+    <p>
+      <b>Are you sure to Ban user <span class="text-capitalize"> "<%= updateuserData.name %>"</span>?</b> <br>
+      Don't worry, you can unban any time, and this user cannot create/login the same account.
+    </p>
+    <div id="resultBan">
+
+      <button class="btn btn-warning" id="SubmitDelete"  onclick="accountActions('ban','resultBan')"> <i class="bi bi-slash-circle-fill"></i> Ban user!</button>
+    </div>
+  </div>
+ 
+<%}%>
+
+</div>
+<script>
+
+    function accountActions (action,btn) {
+      if (confirm("Confirming that you are sure to "+action+" the user data, To confirm it just click OK") == true) {
+
+    $('#'+btn).html('Updating...');
+        
+           var formData = {
+              action: action,
+            }; 
+        $.ajax({
+          type: "POST",
+          url: "/adminapi/update/<%= updateuserData._id %>",
+           data: formData, 
+         dataType: "json",
+        encode: true, 
+        }).done(function (data) {
+         
+          if(data.success == true){
+
+              resHTML = '<div class="alert alert-success alert-dismissible"> '+
+              '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+              '<strong>Success!</strong> '+data.message +
+              '</div>';
+              // window.location.href="/admin/";
+              }else{
+
+                resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+              '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+              '<strong>Error!</strong> '+data.message +
+              '</div>';
+              }
+              $("#"+btn).html(resHTML)
+        });
+      } else {
+        $('#'+btn).html('<hr><p class="text-primary ">Great! You have cancelled it!</p>');
+      }
+
+  }
+
+
+
+/********  Update form ***************/
+   
+$(document).ready(function () {
+  $("form").submit(function (event) {
+    $('#regBTN').html('Updating...').prop('disabled', true);
+    var formData = {
+      username: $("#usernameInput").val(),
+      name: $("#nameInput").val(),
+      email: $("#emailInput").val(),
+      phone: $("#phoneInput").val(),
+      password: $("#passwordInput").val(),
+      repassword: $("#repasswordInput").val(),
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "/adminapi/update/<%= updateuserData._id %>",
+      data: formData,
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      console.log(data);
+      if(data.success == true){
+
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+            // window.location.href="/admin/";
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+    $('#regBTN').html('update').prop('disabled', false);
+      $("#response").html(resHTML)
+    });
+
+    event.preventDefault();
+  });
+});
+</script>

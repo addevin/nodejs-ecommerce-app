@@ -1,0 +1,202 @@
+
+
+
+    <!-- Modal -->
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="w-100 pt-1 mb-5 text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="get" class="modal-content modal-body border-0 p-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
+                    <button type="submit" class="input-group-text bg-success text-light">
+                        <i class="fa fa-fw fa-search text-white"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+<div style="position: fixed; top:0; left:0; right:0; z-index: 9;" id="dashResponse"></div>
+    <!-- Open Content -->
+    <section class="bg-light bgimage1" > 
+        <div class="container py-5">
+            <div class="container-fluid px-0">
+                <h2 class="text-muted text-capitalize text-center">
+                    <%= dashPage %>
+                </h2>
+            </div>
+            <div class="row">
+                <!-- col end -->
+                <div class="col-lg-8 mx-auto "> 
+                    <div class="card">
+                        <div class="card-body">
+                            <% if(userData.phone_verified==false){ %> 
+                            <div class="border p-2">
+
+                                    <a href="#" class="w-100 text-decoration-none text-dark d-flex" type="button" data-bs-toggle="collapse" data-bs-target="#otpVerifyCollapse" aria-expanded="false" aria-controls="otpVerifyCollapse">
+                                        <h5 class="text-secondary  mb-2 text-center  d-inline">Verify Phone! </h5> 
+                                        <i class="bi bi-arrow-down-square-fill d-inline ms-auto h4 text-secondary"></i>
+                                    </a>
+                                </p>
+                        
+                                <div class="collapse show" id="otpVerifyCollapse">
+                                    <div class="card card-body text-center  bg-light border-0" >
+                                        <div class="col-md-6 mx-auto py-3" id="otpVerifyContainer">
+                                            <form action="/api/verifysmsotp/" method="post" onsubmit="sendData('otpVerify'); return false" id="otpVerifyForm">
+                                                <div  class="form-text text-dark mb-3">Enter the OTP sent to <b>+91 <%= userData.phone %> </b></div>
+                                                <!-- <div class="d-flex mb-3 ">
+                                                    <div class="input-group mb-0 input-group-sm">
+                                                        <input type="number" id="otpVerify" class="form-control"  name="otp" placeholder=" Enter otp" aria-label="otpVerify" aria-describedby="basic-addon1" onchange="$('#otpVerifyBtn').prop('disabled',false)">
+                                                      </div>
+                                                      <button class="btn btn-sm btn-dark mx-2"  id="otpVerifyBtn" disabled>Verify</button>
+                                                </div> -->
+                                                <div class="d-block mb-3 ">
+                                                    <div class=" my-2 ">
+                                                        <input type="number" id="otpVerify" class="form-control d-block rounded-0 border-dark text-center fs-5" style="letter-spacing: 3px;"  name="otp" placeholder=" Enter otp" aria-label="otpVerify" aria-describedby="basic-addon1" onchange="$('#otpVerifyBtn').prop('disabled',false)">
+                                                      </div>
+                                                      <button class="btn w-100  btn-dark rounded-0"  id="otpVerifyBtn" disabled>VERIFY</button>
+                                                </div>
+                                                <p class="text-muted">Didn't you recieve any code?</p>
+                                            </form>
+                                            <form action="/api/sentSms" method="post" onsubmit="sendData('sendSms');unblockBtn('sendSmsBtn',5000); return false" id="sendSmsForm">
+                                                <input type="hidden" id="no_use_data" class="form-control"  name="no_use_data">
+                                                <button class="btn btn-sm btn-outline-secondary mx-2" type="button" onclick="resetPhone()" >Edit number</button>
+                                                <button class="btn btn-sm btn-outline-dark mx-2"  id="sendSmsBtn" disabled>Resend</button>
+                                            </form>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                            <%} %> 
+                            <% if(userData.email_verified==false){ %> 
+                            <div class="border p-2 mt-2">
+                                <a href="#" class="w-100 text-decoration-none text-dark d-flex" type="button" data-bs-toggle="collapse" data-bs-target="#emailVerifyCollapse" aria-expanded="false" aria-controls="emailVerifyCollapse">
+                                    <h5 class="text-secondary  mb-2 text-center  d-inline">Verify Email! </h5> 
+                                    <i class="bi bi-arrow-down-square-fill d-inline ms-auto h4 text-secondary"></i>
+                                </a>
+                                </p>
+                                <% if(userData.phone_verified){ %> 
+                                <div class="collapse show" id="emailVerifyCollapse">
+                                    <%}else{ %> 
+                                    <div class="collapse hide" id="emailVerifyCollapse">
+
+                                            <%} %> 
+                                        <div class="card card-body bg-light  border-0">
+                                            <div class="col-md-12 text-center">
+                                                    <div  class="form-text text-dark fs-5">Check the email sent to <b><%= userData.email %> </b></div>
+                                                    <div class=" mb-3">
+                                                        <div class="input-group mb-0 input-group-sm">
+                                                        </div>
+                                                    </div>
+                                                    <p class="text-muted">Didn't you recieve any code?</p>
+                                                <form action="/api/sentemailverify" method="post" onsubmit="sendData('sendemail');unblockBtn('sendemailBtn',5000); return false" id="sendemailForm">
+                                                    <input type="hidden" id="no_use_data" class="form-control"  name="no_use_data">
+                                                    <button class="btn btn-outline-dark mx-2 rounded-0"  id="sendemailBtn">Resend</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                            </div>
+                            <%} %> 
+                            <% if(userData.phone_verified && userData.email_verified){ %> 
+
+                                <div class="text-center text-success">
+                                    You are a verified user, you have nothing left to verify! <b>Happy shopping..</b>
+                                    <a  href="/" class="btn btn-sm btn-outline-dark mx-2" >Go home</a>
+
+                                </div>
+                            <%} %> 
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Close Content -->
+    <div class="d-none">
+        <form action="/api/updateuserdata" method="post" onsubmit="sendData('updatePhone');unblockBtn('sendemailBtn',5000); return false" id="updatePhoneForm">
+            <input type="number" class="form-control" placeholder="Your Phone"  id="phoneUpdate" aria-label="phone" name="phone" aria-describedby="basic-addon1" value="<%= userData.phone %>" onchange="$('#phoneUpdateBtn').prop('disabled',false)">
+            <button type="submit" id="updatePhoneBtn"></button>
+        </form>
+    </div>
+<script>
+    function unblockBtn(id,t){
+    setTimeout(()=>{
+        $('#'+id).prop('disabled', false);
+    },t)
+}
+
+
+    // $('#sendSmsForm').submit();  UNCOMMECT THIS AFTER MODIFICATION
+function sendData(id,ask){
+    if(ask){
+        if (confirm("Confirming that you are sure to do this action, To confirm it just click OK") != true) {
+            $('#'+id+'Btns').html('<p class="text-danger">Oops! You have cancelled the action! </p>')
+            return false;
+        }
+    }
+        let btnData = $('#'+id+'Btn').html();
+        $('#'+id+'Btn').html('Sending..').prop('disabled', true);
+        console.log($("#"+id+'Form').serialize());
+        $.ajax({
+            type: "POST",
+            url: $("#"+id+'Form').attr('action'),
+            data: $("#"+id+'Form').serialize(),
+            dataType: "json",
+            encode: true,
+        }).done(function (data) {
+            console.log(data.message);
+            if(data.success == true){
+                if(data.verified=='phone'){
+                    $('#'+id+'Container').html('<h2 class="text-Success">VERIFIED</h2><p>Your phone number is verified!</p>');
+                    setTimeout(() => {
+                        $("#"+id+'Collapse').collapse('hide')
+                        $("#emailVerifyCollapse").collapse('show')
+                    }, 2000);
+                }
+                resHTML = '<div class="alert alert-success alert-dismissible"> '+
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+                    '<strong>Success!</strong> '+data.message +
+                    '</div>';
+                }else{
+                    
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+                '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+                '<strong>Error!</strong> '+data.message +
+                '</div>';
+            }
+            $('#'+id+'Btn').html(btnData).prop('disabled', true);
+            $("#dashResponse").html(resHTML)
+        });
+}
+function resetPhone(){
+    Swal.fire({
+  title: 'Enter new number',
+  input: 'number',
+  inputAttributes: {
+  },
+  showCancelButton: true,
+  confirmButtonText: 'Update',
+  showLoaderOnConfirm: true,
+  preConfirm: (phone) => {
+    $('#phoneUpdate').val(phone);
+    $('#updatePhoneForm').submit();
+    Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Phone number send to update!',
+        showConfirmButton: false,
+        timer: 1500
+        })
+  },
+  allowOutsideClick: () => !Swal.isLoading()
+})
+}
+</script>
+

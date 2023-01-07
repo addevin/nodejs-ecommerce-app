@@ -1,0 +1,142 @@
+
+
+
+    <!-- Modal -->
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="w-100 pt-1 mb-5 text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="get" class="modal-content modal-body border-0 p-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
+                    <button type="submit" class="input-group-text bg-success text-light">
+                        <i class="fa fa-fw fa-search text-white"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+<div style="position: fixed; top:0; left:0; right:0; z-index: 9;" id="dashResponse"></div>
+    <!-- Open Content -->
+    <section class="bg-light">
+        <div class="container py-5">
+            <div class="container-fluid px-0">
+                <h2 class="text-muted text-capitalize">
+                    <%= dashPage %>
+                </h2>
+            </div>
+            <div class="row">
+                <%- include('../../partials/userdashSidebar') %>
+                <!-- col end -->
+                <div class="col-lg-9 ">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="border p-2">
+                                <h5 class="text-secondary border-bottom py-2 mb-2">Your Orders! </h5>
+                                <% ordersList.forEach((val,i)=>{ %> 
+                                    <div class="col-md-12 border  <% if(val.delivery_status.delivered.state ==false){ %> border-dark  <% } %>  bg-light p-2 d-flex flex-wrap">
+                                        <div class="col-12 col-md-5 ">
+                                            <p>Order id: <b><%= val._id %></b> </p>
+                                            <p>Ordered at: <b><%= val.ordered_date.getDate() %>/<%= val.ordered_date.getMonth()+1 %>/<%= val.ordered_date.getFullYear() %></b> </p>
+                                        </div>
+                                        <div class="col-12 col-md-3">
+                                            <% if(val.delivery_status.delivered.state){ %> 
+                                                <p>Status: <b>DELIVERED</b><small>(<%= val.delivery_status.delivered.date.getDate() %>/<%= val.delivery_status.delivered.date.getMonth()+1 %>/<%= val.delivery_status.delivered.date.getFullYear() %>)</small> </p>
+                                                <p><button class="btn btn-dark border-0 btn-sm">Return</button></p>
+                                            <% }else if(val.delivery_status.out_for_delivery.state){ %> 
+                                                <p>Status: <b>OUT_FOR_DELIVERY</b><small>(<%= val.delivery_status.out_for_delivery.date.getDate() %>/<%= val.delivery_status.out_for_delivery.date.getMonth()+1 %>/<%= val.delivery_status.out_for_delivery.date.getFullYear() %>)</small> </p>
+                                                <p><button class="btn btn-dark border-0 btn-sm">Cancel</button></p>
+                                            <% }else if(val.delivery_status.shipped.state){  %> 
+                                                <p>Status: <b>SHIPPED</b><small>(<%= val.delivery_status.shipped.date.getDate() %>/<%= val.delivery_status.shipped.date.getMonth()+1 %>/<%= val.delivery_status.shipped.date.getFullYear() %>)</small> </p>
+                                                <p><button class="btn btn-dark border-0 btn-sm">Cancel</button></p>
+                                            <% }else if(val.delivery_status.ordered.state){  %> 
+                                                <p>Status: <b>ORDERED</b><small>(<%= val.delivery_status.ordered.date.getDate() %>/<%= val.delivery_status.ordered.date.getMonth()+1 %>/<%= val.delivery_status.ordered.date.getFullYear() %>)</small> </p>
+                                                <p><button class="btn btn-dark border-0 btn-sm">Cancel</button></p>
+
+                                            <% } %> 
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <p><%= val.products.length %> <% if(val.products.length >1){ %> Items <% }else{ %> Item <% } %>  </p>
+                                            <p><a href="/dash/order/<%= val._id %>" class="btn btn-primary btn-sm "><i class="bi bi-eye p-0"></i> View</a></p>
+                                        </div>
+                                    </div>
+                                <% }) %>  
+                                <% if(ordersList.length <1){ %> 
+                                    <div class="text-center py-5">
+                                        <i class="bi bi-shop text-muted h1"></i>
+                                        <h4 class=" text-secondary">No orders</h4>
+                                        <p class="text-muted ">You have ordered nothing till now. Start shopping today!</p>
+                                        <a href="/shop/" class="btn btn-primary btn-sm ">Shop now!</a>
+                                    </div>
+                                <% } %> 
+                               
+                            </div>
+                           
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Close Content -->
+<script>
+    
+var uclicks = 0;
+function sendData(id,ask){
+    if(ask){
+        let requiredClick = 3
+        let count = uclicks-requiredClick;
+        setTimeout(()=>{
+            $('#'+id+'clickALert').html('')
+            uclicks=0
+        },3000)
+        if(uclicks==requiredClick){
+            
+            if (confirm("Confirming that you are sure to do this action, To confirm it just click OK") != true) {
+                $('#'+id+'Btns').html('<p class="text-danger">Oops! You have cancelled the action! </p>')
+                return false;
+            }
+        }else{
+            $('#'+id+'clickALert').html('Click '+count+' more times')
+            if(uclicks<=3){
+                uclicks++;
+            }
+
+            return false;
+        }
+       
+    }
+        let btnData = $('#'+id+'Btn').html();
+        $('#'+id+'Btn').html('Updating..').prop('disabled', true);
+        console.log($("#"+id+'Form').serialize());
+        $.ajax({
+            type: "POST",
+            url: "/api/updateuserdata",
+            data: $("#"+id+'Form').serialize(),
+            dataType: "json",
+            encode: true,
+        }).done(function (data) {
+            console.log(data.message);
+            if(data.success == true){
+                
+                resHTML = '<div class="alert alert-success alert-dismissible"> '+
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+                    '<strong>Success!</strong> '+data.message +
+                    '</div>';
+                }else{
+                    
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+                '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+                '<strong>Error!</strong> '+data.message +
+                '</div>';
+            }
+            $('#'+id+'Btn').html(btnData).prop('disabled', true);
+            $("#dashResponse").html(resHTML)
+        });
+}
+</script>
+

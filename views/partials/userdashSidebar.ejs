@@ -1,0 +1,18 @@
+<div class="col-lg-3 ">
+    <div class="card mb-3 px-3 pb-3">
+        <div class="text-center">
+            <div class="p-1 my-3">
+            <h1 class="fs-1 h1 rounded-pill border d-inline p-2 my-5"><i class="fa fa-fw fa-user text-dark mr-3"></i></h1>
+
+            </div>
+            <h5 class=" pb-0 mb-0"><%= userData.name %></h5>
+            <p class="text-muted pt-0 border-bottom small">@<%= userData.username %></p>
+        </div>
+
+        <a href="/dash/profile/" class="btn btn-fluid <% if(dashPage == 'profile') { %>btn-dark <% }else{%>btn-outline-dark <% }%> my-1">Profile</a>
+        <a href="/dash/orders/" class="btn btn-fluid <% if(dashPage == 'orders') { %>btn-dark <% }else{%>btn-outline-dark <% }%>  my-1">Orders</a>
+        <a href="/dash/wishlist/" class="btn btn-fluid <% if(dashPage == 'wishlist') { %>btn-dark <% }else{%>btn-outline-dark <% }%> my-1" >Wishlist</a>
+        <a href="/dash/settings/" class="btn btn-fluid <% if(dashPage == 'settings') { %>btn-dark <% }else{%>btn-outline-dark <% }%> my-1">Settings</a>
+    </div>
+    
+</div>

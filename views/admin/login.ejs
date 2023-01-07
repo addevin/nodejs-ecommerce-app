@@ -1,0 +1,87 @@
+
+
+<div class="d-flex justify-content-center align-items-center w-100 bg-light flex-column adminloginbg" style="width: 100%; height: 100vh;">
+
+   <div id="response"></div>
+        <div class="col-lg-5 col-md-8 col-12 border border-muted p-5 rounded bg-white bg-opacity-50 shadow-sm">
+            <h1 class="text-center text-dark">Admin Login</h1>
+            <hr class="">
+           
+    
+            <form action="/adminapi/loginvalidate" method="post">
+                <div class="form-group my-1">
+                    <label for="user">Email/Username </label>
+                    <input type="text" class="form-control" id="user" aria-describedby="emailHelp"
+                        name="user" value="adil.akp1@gmail.com" placeholder="Enter you email or username" autofocus>
+                    <small id="emailHelp" class="form-text text-muted d-none">We'll never share your email with anyone
+                        else.</small>
+                </div>
+                <div class="form-group my-1">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password"
+                        value="dxpz7QiY">
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="passcheck1">
+                    <label class="form-check-label" for="passcheck1"><small>Show/Hide</small></label>
+                </div>
+                <div class=" p-0 m-0 ">
+    
+                <a href="/auth/login" class=" small text-primary" >Login as user</a> <small class="text-muted">
+                </div>
+                <button type="submit" class="btn btn-primary my-1" id="regBTN">Login</button>
+            </form>
+            
+        </div>
+    
+    </div>
+    
+    <script>
+        document.getElementById('passcheck1').addEventListener('change', () => {
+            let userPass = document.getElementById('password');
+            if (userPass.getAttribute('type') == 'password') {
+                userPass.setAttribute('type', 'text');
+            } else {
+                userPass.setAttribute('type', 'password');
+            }
+        })
+
+        
+$(document).ready(function () {
+  $("form").submit(function (event) {
+    $('#regBTN').html('loging in...').prop('disabled', true);
+    var formData = {
+      user: $("#user").val(),
+      password: $("#password").val(),
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "/adminapi/loginvalidate",
+      data: formData,
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      console.log(data.message);
+      if(data.success == true){
+
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+            window.location.href="/admin/";
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+    $('#regBTN').html('Login').prop('disabled', false);
+      $("#response").html(resHTML)
+    });
+
+    event.preventDefault();
+  });
+});
+    </script>

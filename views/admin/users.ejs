@@ -1,0 +1,257 @@
+<div class="container bg-white my-2">
+    <div class="d-flex justify-content-between border-bottom py-3 mb-2">
+
+        <h2 class=" text-muted p-0">
+            Users
+        </h2>
+        <button type="button" class="btn btn-dark btn-sm d-none" style="height: 30px;" data-bs-toggle="modal" data-bs-target="#accountCreationModal">
+            <i class="bi bi-person-fill-add"></i>
+            Add User
+        </button>
+    </div>
+    <div class="ad-responsive-table w-100">
+        <table id="myTable" class="table table-striped table-bordered table-responsive table-hover">
+            <thead>
+                <tr>
+                    <th>Sr No.</th>
+                    <th>Username</th>
+                    <th>User </th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <% userslist.forEach((val,ind)=>{ %>
+
+
+                
+                <tr>
+                    <td><%= ind+1 %></td>
+                    <td class="">@<%=val.username%></td>
+                    <td class="text-capitalize"><%=val.name%></td>
+                    <td><%=val.email%></td>
+                    <td><%=val.phone%></td>
+                    <td title="<%=val.joined%>"><%=val.joined.getDate() %>/<%=val.joined.getMonth()+1 %>/<%=val.joined.getFullYear() %></td>
+                    <td >  <span class="badge bg-<% if(val.status=='active'){ %>success <% }else{ %>warning<% }%>"><%=val.status %></span></td>
+                    <td>
+                        <a href="/admin/users/update/<%=val._id%>" class="btn  text-warning d-none"><i class="bi bi-pencil-square"></i></a>
+                        <button  class="btn text-danger" data-bs-toggle="modal" data-bs-target="#accountActionsModal" onclick="updateUserData('<%=val._id %>')"><i class="bi bi-trash3-fill"></i></button>
+                    </td>
+                </tr>
+
+                <%})%>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="accountActionsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Account Actions </h5> <div id="acLoaderStatus"></div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" >
+            <h5 id="uname" class="text-muted">Loading..</h5>
+            <p id="acMessage" class="text-muted"></p>
+        </div>
+        <div class="modal-footer" id="acbuttons">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="accountCreationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Create Account</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" >
+            <div id="acctnRegResponse"></div>
+            <form method="POST" class="" novalidate="" autocomplete="off" >
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="name">Name</label>
+                    <input id="name" type="text" class="form-control" name="name" value="" required autofocus>
+                    <div class="invalid-feedback">
+                        Name is required	
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="email">E-Mail Address</label>
+                    <input id="email" type="email" class="form-control" name="email" value="" required>
+                    <div class="invalid-feedback">
+                        Email is invalid
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="phone">Phone Number</label>
+                    <input id="phone" type="number" class="form-control" name="phone" value="" required>
+                    <div class="invalid-feedback">
+                        Phone number is required
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="password">Password</label>
+                    <input id="password" type="password" class="form-control" name="password" required>
+                    <div class="invalid-feedback">
+                        Password is required
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="password">Password</label>
+                    <input id="repassword" type="password" class="form-control" name="repassword" required>
+                    <div class="invalid-feedback">
+                        Password is required
+                    </div>
+                </div>
+
+                <p class="form-text text-muted mb-3">
+                    By registering you agree with our terms and condition.
+                </p>
+
+                <div class="align-items-center d-flex">
+                    <button type="submit" class="btn btn-primary ms-auto" id="regBTN1">
+                        Register	
+                    </button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+    $(document).ready(function () {
+        $('#myTable').dataTable();
+    });
+    
+    function updateUserData(uid){
+        
+        $('#acLoaderStatus').html('<span class="badge bg-success mx-3">Loading...</span>')
+        $.ajax({
+          type: "GET",
+          url: "/adminapi/getuser/"+ uid,
+         dataType: "json",
+        encode: true, 
+        }).done(function (data) {
+         console.log(data);
+          if(data.success == true){
+            $('#uname').html(data.args.name)
+            if(data.args.status=='active'){
+                $('#acbuttons').html('<button type="button" class="btn btn-warning" onclick="accountActions(\'ban\',\'ban'+uid+'\',\''+uid+'\')" id="ban'+uid+'">Ban User</button><button type="button" class="btn btn-danger" onclick="accountActions(\'delete\',\'delete'+uid+'\',\''+uid+'\')" id="delete'+uid+'">Delete</button>')
+                $('#acMessage').html('In this actions you can delete a person or if you want to stay the person but with no access, the you can do ban the user, after banning a user they won\'t able to access the account!')
+            }else{
+                $('#acbuttons').html('<button type="button" class="btn btn-warning" onclick="accountActions(\'unban\',\'uban'+uid+'\',\''+uid+'\')" id="uban'+uid+'">Unban User</button><button type="button" class="btn btn-danger"  onclick="accountActions(\'delete\',\'delete'+uid+'\',\''+uid+'\')" id="delete'+uid+'">Delete</button>')
+                $('#acMessage').html('Seems like this account is banned already! if you want to unban the account just click the button below! also you can delete the account!')
+            }
+            $('#acLoaderStatus').html('')
+          }else{
+            $('#acMessage').html('<p class="text-danger">User not found!</p>')
+          }
+        })
+
+    }
+    
+    function accountActions (action,btn, userid) {
+      if (confirm("Confirming that you are sure to "+action+" the user data, To confirm it just click OK") == true) {
+
+    $('#'+btn).html('Updating...').prop('disabled',true);
+        
+           var formData = {
+              action: action,
+            }; 
+        $.ajax({
+          type: "POST",
+          url: "/adminapi/update/"+ userid,
+           data: formData, 
+         dataType: "json",
+        encode: true, 
+        }).done(function (data) {
+         
+          if(data.success == true){
+
+              resHTML = '<div class="alert alert-success alert-dismissible"> '+
+              '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+              '<strong>Success!</strong> '+data.message +
+              '</div>';
+              // window.location.href="/admin/";
+              }else{
+
+                resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+              '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+              '<strong>Error!</strong> '+data.message +
+              '</div>';
+              }
+              $("#acbuttons").html(resHTML)
+              setTimeout(() => {
+                $("#acbuttons").html('')
+              }, 5000);
+
+        });
+        
+
+      } else {
+        $('#acbuttons').html('<hr><p class="text-primary ">Great! You have cancelled it!</p>');
+      }
+
+  }
+
+
+  
+$(document).ready(function () {
+  $("form").submit(function (event) {
+    $('#regBTN1').html('Registering...').prop('disabled', true);
+    var formData = {
+      name: $("#name").val(),
+      email: $("#email").val(),
+      phone: $("#phone").val(),
+      repassword: $("#repassword").val(),
+      password: $("#password").val(),
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "/api/adduser",
+      data: formData,
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      console.log(data.message);
+      if(data.success == true){
+
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+            $("form")[0].reset()
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+    $('#regBTN1').html('Register').prop('disabled', false);
+      $("#acctnRegResponse").html(resHTML)
+    });
+
+    event.preventDefault();
+  });
+});
+
+</script>

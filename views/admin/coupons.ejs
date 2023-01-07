@@ -1,0 +1,296 @@
+<div class="container bg-white my-2">
+    <div class="d-flex justify-content-between border-bottom py-3 mb-2">
+
+        <h2 class=" text-muted p-0">
+            Coupons
+        </h2>
+        <button type="button" class="btn btn-dark btn-sm" style="height: 30px;" data-bs-toggle="modal" data-bs-target="#coupUpdateModal" onclick="resetCoupForm()">
+          <i class="bi bi-plus-square-fill"></i>
+            Add Coupon
+        </button>
+    </div>
+    <div class="ad-responsive-table w-100">
+      <table id="myTable" class="table table-striped table-bordered table-responsive table-hover ">
+          <thead>
+              <tr>
+                  <th>Sr No.</th>
+                  <th>Title</th>
+                  <th>Code</th>
+                  <th>Created by</th>
+                  <th>Last updated</th>
+                  <th>Expire</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+              </tr>
+          </thead>
+          <tbody>
+
+              <% couplist.forEach((val,ind)=>{ %>
+
+
+              
+              <tr>
+                  <td><%= ind+1 %></td>
+                  <td class="text-capitalize"><%=val.name%></td>
+                  <td><%=val.code%></td>
+                  <td><%=val.last_updated_user%></td>
+                  <td title="<%=val.last_updated%>"><%=val.last_updated.getDate() %>/<%=val.last_updated.getMonth()+1 %>/<%=val.last_updated.getFullYear() %></td>
+                  <td title="<%=val.expire%>"><%=val.expire.getDate() %>/<%=val.expire.getMonth()+1 %>/<%=val.expire.getFullYear() %></td>
+                  <td title=""><% if( val.expire<=new Date()){ %><span class="badge  bg-danger ">expired</span> <% }else{ %><span class="badge  bg-success ">active</span><% } %>  </td>
+                  <td>
+                      <a href="#" onclick="updateCoupData('<%=val._id%>')" class="btn  text-warning"><i class="bi bi-pencil-square"></i></a>
+                      <button  class="btn text-danger border-0" id="delete2<%=val._id %>" onclick="coupDelete( 'delete2<%=val._id %>','<%=val._id %>', 'icon')"><i class="bi bi-trash3-fill"></i></button>
+                  </td>
+              </tr>
+
+              <%})%>
+          </tbody>
+      </table>
+    </div>
+</div>
+
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="accountActionsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Account Actions </h5> <div id="acLoaderStatus"></div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" >
+            <h5 id="uname" class="text-muted">Loading..</h5>
+            <p id="acMessage" class="text-muted"></p>
+        </div>
+        <div class="modal-footer" id="acbuttons">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="coupUpdateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="catHeaderLabel">Loading..</h5> <small id="catLoader"></small>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" >
+            <div id="catResponse"></div>
+            <form action="/adminapi/coupon/update" method="post" class="" novalidate=""  autocomplete="off"  id="couponForm">
+              
+              <div class="mb-3">
+                <label class="mb-2 text-muted" for="catname">Name</label>
+                <input id="coupName" type="text" class="form-control" name="name" value="" required autofocus>
+                <div class="invalid-feedback">
+                    Name is Required
+                </div>
+              </div> 
+                
+              <div class="mb-3"> 
+                <label class="mb-2 text-muted" for="catname">Code</label>
+                <input id="coupCode" type="text" class="form-control" name="code" value="" required >
+                <div class="invalid-feedback">
+                    Code is Required
+                </div>
+              </div> 
+                
+              <div class="mb-3">
+                <label class="mb-2 text-muted" for="catname">Min Bill Amount</label>
+                <input id="coupMinBill" type="number" class="form-control" name="min_order" value="" required >
+                <div class="invalid-feedback">
+                  min_bill is Required
+                </div>
+              </div> 
+                
+              <div class="mb-3"> 
+                <label class="mb-2 text-muted" for="catname">Discount</label>
+                <div class="input-group">
+                  <input id="coupDiscount" type="number" class="form-control" name="discount" value="" placeholder="Amount" required >
+  
+                  <select class="form-select" id="coupDiscountType" name="pType">
+                    <option selected disabled>Choose</option>
+                    <option value="inr">&#8377; INR</option>
+                    <option value="percnt">&percnt; Percentage </option>
+                  </select>
+                </div>
+              </div> 
+             
+                
+              <div class="mb-3">
+                <label class="mb-2 text-muted" for="catname">Expire date</label> 
+                <input id="coupExpire" type="datetime-local" class="form-control" name="expire" value="" required >
+                <div class="invalid-feedback">
+                    Expire is Required
+                </div>
+              </div> 
+                
+
+                <input type="hidden" name="action" value="create" id="coupAction">
+                <input type="hidden" name="id" value="noid" id="coupID">
+               
+
+                <div class="align-items-center d-flex">
+                  <div id="coupButtons"></div>
+                    <button type="submit" class="btn btn-primary ms-auto" id="coupBtn" >
+                        Loading..
+                    </button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+    $(document).ready(function () {
+        $('#myTable').dataTable();
+    });
+    
+    
+      function resetCoupForm(){
+        $("form")[0].reset()
+        $('#coupAction').val('create')
+        $('#catHeaderLabel').html('Create Coupon')
+        $('#coupBtn').html('Create')
+        $('#catResponse').html('')
+        $('#coupButtons').html('')
+        $('#catLoader').html('')
+      }
+
+    function updateCoupData(cid){
+      resetCoupForm()
+        $('#catLoader').html('<span class="badge bg-success mx-3">Loading...</span>')
+        $('#catHeaderLabel').html('Update Coupon')
+        $('#coupBtn').html('Update')
+        $('#coupAction').val('update')
+        $('#coupID').val(cid)
+        toggleModal( 'coupUpdateModal','show');
+
+        $.ajax({
+          type: "GET",
+          url: "/adminapi/coupon/get/"+ cid,
+         dataType: "json",
+        encode: true, 
+        }).done(function (data) {
+          if(data.success == true){
+            //coupName,coupCode,coupMinBill,coupDiscount,coupExpire
+                $('#coupDiscountType').val(data.data.pType)
+                $('#coupName').val(data.data.name)
+                $('#coupCode').val(data.data.code)
+                $('#coupMinBill').val(data.data.min_bill)
+                $('#coupDiscount').val(data.data.discount)
+                $('#coupExpire').val(data.data.expire.slice(0,-3))
+                console.log($('#coupExpire').val());
+                console.log(data.data.expire.slice(0,-5));
+                $('#coupButtons').html(`<button type="button" class="btn btn-danger"  onclick="coupDelete( 'delete${cid}', '${cid}', 'text')" id="delete${cid}">Delete</button>`)
+            
+            $('#catLoader').html('')
+          }else{
+            $('#catResponse').html(`<div class="alert alert-danger alert-dismissible"> 
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <strong>Error! </strong>  ${data.message}
+            </div>`)
+        $('#catLoader').html('<span class="badge bg-danger mx-3">Error Detucted!</span>')
+
+          }
+        })
+
+    }
+    
+    function coupDelete ( btn, cid, contType) {
+      let btnData = $('#'+btn).html()
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          if(contType=='icon'){
+            $('#'+btn).html('<i class="fa-solid fa-spinner fa-spin"></i>').prop('disabled',true);
+          }else{
+            $('#'+btn).html('Deleting...').prop('disabled',true);
+          }
+          $.ajax({
+            type: "GET",
+            url: "/adminapi/coupon/delete/"+ cid,
+            dataType: "json",
+            encode: true, 
+          }).done(function (data) {
+            
+            if(data.success == true){
+              if(contType=='icon'){
+                $('#'+btn).html('<i class="bi bi-check-circle-fill"></i>').prop('disabled',true);
+              }else{
+                $('#'+btn).html('Deleted!').prop('disabled',true);
+              }
+              Swal.fire(
+                'Deleted!',
+                data.message,
+                'success'
+                )
+                
+            }else{
+              $('#'+btn).html(btnData).prop('disabled',false);
+              Swal.fire(
+                'Error Detucted',
+                data.message,
+                'error'
+              )
+            }
+          });
+        }
+        
+      })
+     
+
+  }
+
+
+  
+$(document).ready(function () {
+  $("form").submit(function (event) {
+    let btn_data = $('#coupBtn').html();
+    $('#coupBtn').html('Loading...').prop('disabled', true);
+    $.ajax({
+      type: "POST",
+      url: $('#couponForm').attr('action'),
+      data: $('#couponForm').serialize(),
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      console.log(data.message);
+      if(data.success == true){
+
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+            setTimeout(()=>{
+              toggleModal( 'coupUpdateModal','hide');
+            },1000)
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+    $('#coupBtn').html(btn_data).prop('disabled', false);
+      $("#catResponse").html(resHTML)
+    });
+
+    event.preventDefault();
+  });
+});
+
+
+</script>

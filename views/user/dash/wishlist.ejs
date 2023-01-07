@@ -1,0 +1,285 @@
+
+
+
+    <!-- Modal -->
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="w-100 pt-1 mb-5 text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="get" class="modal-content modal-body border-0 p-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
+                    <button type="submit" class="input-group-text bg-success text-light">
+                        <i class="fa fa-fw fa-search text-white"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+<div style="position: fixed; top:0; left:0; right:0; z-index: 99999999;" id="dashResponse"></div>
+    <!-- Open Content -->
+    <section class="bg-light">
+        <div class="container py-5">
+            <div class="container-fluid px-0">
+                <h2 class="text-muted text-capitalize">
+                    <%= dashPage %>
+                </h2>
+            </div>
+            <div class="row">
+                <%- include('../../partials/userdashSidebar') %>
+                <!-- col end -->
+                <div class="col-lg-9 ">
+                    <div class="card">
+                        <div class="card-body py-4" id="wishListContainer">
+                            <% if(wishlistData.wishData.length <1){ %> 
+                                <div class="text-center ">
+                                    <i class="bi bi-bag-heart h1 text-danger my-3 d-block"></i>
+                                    <p class="text-secondary h3"> Your Wishlist is empty!</p>
+                                    <a href="/shop/" class="btn btn-dark btn-sm"><i class="bi bi-bag-plus"></i> Continue Shopping</a>
+                                </div>
+                                <% } %> 
+                            <% wishlistData.wishData.forEach((val,i)=>{ %> 
+                            <div class="d-flex my-1 border align-items-center justify-content-between p-1 flex-column flex-md-row" id="<%= val._id %>wishContainer">
+                                <img src="/shop/<%= val.image[0] %>" alt="" class="object-fit-cover" style="width: 110px; height: 110px;">
+                                <div>
+                                    <p><%= val.name %> </p>
+                                    <p class="p-0 m-0">Price : <b>&#8377;<%= val.sizes[0].price %></b></p>
+                                </div>
+                                <div>
+                                    <input type="hidden" value="1" id="product-quanity1">
+                                    <button href="" class="btn btn-sm btn-outline-dark" onclick="addToCartLoc('<%=val.sizes[0]._id%>','product-quanity1')"><i class="bi bi-cart-plus"></i> Cart</button>
+                                    <a href="/product/0/<%= val._id %>" class="btn btn-sm btn-dark"><i class="bi bi-eye"></i> View</a>
+                                    <button href="" class="btn btn-sm ps-0" onclick="removeWishList('<%= val._id %>')" id="<%=val._id%>WishDltBtn"><small><i class="bi bi-x-circle"></i> Remove</small></button> 
+                                </div>
+                            </div>
+                            <% }) %> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Close Content -->
+
+    <!-- Modal -->
+  <div class="modal fade" id="accountCreationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="actionNameLabel" >Create address</h5>
+          <div id="addrssStatusLoader"></div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" >
+            <div id="acctnRegResponse"></div>
+            <form action="/api/updateAddress/" method="POST" class="needs-validation" novalidate="" autocomplete="off" onsubmit="sendData('addressUpdation'); return false" id="addressUpdationForm">
+                <input id="AddressAction" type="hidden" class="form-control" name="action" value="create" required >
+                <input id="_id" type="hidden" class="form-control" name="id" value="" required>
+
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="name">Name</label>
+                    <input id="name" type="text" class="form-control" name="name" value="" required autofocus>
+                    <div class="invalid-feedback">
+                        Name is required	
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="house">house</label>
+                    <input id="house" type="text" class="form-control" name="house" value="" required>
+                    <div class="invalid-feedback">
+                        house is required
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="post">post</label>
+                    <input id="post" type="text" class="form-control" name="post" value="" required>
+                    <div class="invalid-feedback">
+                        post is required
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="city">city</label>
+                    <input id="city" type="text" class="form-control" name="city" required>
+                    <div class="invalid-feedback">
+                        city is required
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="district">district</label>
+                    <input id="district" type="text" class="form-control" name="district" required>
+                    <div class="invalid-feedback">
+                        district is required
+                    </div>
+                </div>
+                <div class="mb-3"> 
+                    <label class="mb-2 text-muted" for="state">state</label>
+                    <input id="state" type="text" class="form-control" name="state" required>
+                    <div class="invalid-feedback">
+                        state is required
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="pin">pin</label>
+                    <input id="pin" type="number" class="form-control" name="pin" required>
+                    <div class="invalid-feedback">
+                        pin is required
+                    </div>
+                </div>
+
+                <p class="form-text text-muted mb-3">
+                    By registering you agree with our terms and condition.
+                </p>
+
+                <div class="align-items-center d-flex" id="addressUpdationBtnFooter">
+                            <button onclick="runDeleteAddressForm()" type="submit" class="btn btn-danger me-auto">Delete</button>
+                        
+                    <button type="submit" class="btn btn-primary ms-auto" id="addressUpdationBtn" onclick="unblockBtn('addressUpdationBtn',3000)">
+                        Submit	
+                    </button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <form action="/api/updateAddress/" method="POST" class="needs-validation d-none" novalidate="" autocomplete="off" onsubmit="sendData('addressDeletion',true); return false" id="addressDeletionForm">
+        <input type="hidden" name="id" id="_id2" >
+        <input type="hidden" name="action" id="" value="delete" >
+        <button type="submit"></button>
+  </form>
+<script>
+
+function addAddressToHtml(){ 
+    let bar = `<div class="card p-3 bg-light my-2" id="addrs">
+        <h6>New Address  </h6>
+        <div class="col-md-6">
+            <p><b>${$('#name').val()}</b> ${$('#house').val()}, ${$('#post').val()}, ${$('#city').val()}, ${$('#district').val()}, ${$('#state').val()}, pin:${$('#pin').val()}.</p>
+        </div>
+        <small class="text-primary"><i class="bi bi-pencil-square"></i> Edit (Refresh page to edit)</small> 
+    </div>`
+    $('#addressList').append(bar)
+}
+function runDeleteAddressForm(){
+    $('#_id2').val($('#_id').val())
+    $('#addressDeletionForm').submit();
+} 
+function setupAddressForm(action,id){
+    if(action == 'new'){
+        $('#addressUpdationForm')[0].reset();
+        $('#addressUpdationBtnFooter').html('<button type="submit" class="btn btn-primary ms-auto" id="addressUpdationBtn" onclick="unblockBtn(\'addressUpdationBtn\',3000);">Save</button>')
+        $('#addrssStatusLoader').html('')
+        $('#actionNameLabel').html('Add Address')
+        $('#AddressAction').val('create')
+    }else if(action =='update'){
+        $('#addressUpdationForm')[0].reset();
+        $('#addressUpdationBtnFooter').html('<button type="button" class="btn btn-outline-danger me-auto" id="addressDeletionBtn" onclick="runDeleteAddressForm()">Delete</button><button type="submit" class="btn btn-primary ms-auto" id="addressUpdationBtn" onclick="unblockBtn(\'addressUpdationBtn\',3000)">Save</button>')
+        $('#addrssStatusLoader').html('<span class="badge bg-success">Loading...</span>')
+        $('#actionNameLabel').html('Edit Address')
+        $('#AddressAction').val('update')
+
+        $.ajax({
+            type: "POST",
+            url:  '/api/getAddressData/',
+            data: {
+                addressid : id
+            },
+            dataType: "json",
+            encode: true,
+            }).done(function (data) {
+                if(data.success==true){
+
+                    for (let i in data.data.address) {
+                        $('#'+i).val(data.data.address[i])
+                    }
+                    
+                }else{
+                    resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+                            '<strong>Error!</strong> '+data.message +
+                            '</div>';
+                     $("#dashResponse").html(resHTML)
+                        
+                }
+
+                $('#addrssStatusLoader').html('')
+
+            })
+    }
+}
+function unblockBtn(id,t){
+    setTimeout(()=>{
+        $('#'+id).prop('disabled', false);
+    },t)
+}
+function sendData(id, ask){
+    if(ask){
+      if (confirm("Confirming that you are sure to complete this action, To confirm it just click OK") != true) {
+        return false
+      }else{
+        let addID = $('#_id2').val()
+        $('#addrs'+addID).addClass('text-danger border-danger')
+      }
+    }
+    let btnData = $('#'+id+'Btn').html()
+    $('#'+id+'Btn').html('Updating..').prop('disabled', true);
+    $.ajax({
+      type: "POST",
+      url:  $("#"+id+'Form').attr('action'),
+      data: $("#"+id+'Form').serialize(),
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      if(data.success == true){
+        let bar = `<b>  ${$('#name').val()}</b> ${$('#house').val()}, ${$('#post').val()}, ${$('#city').val()}, ${$('#district').val()}, ${$('#state').val()}, pin:${$('#pin').val()}.`;
+
+        if($('#AddressAction').val()=='update'){
+            $("#p"+$('#_id').val()).html(bar)
+        }else if($('#AddressAction').val()=='create'){
+            addAddressToHtml();
+        }
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+        hideModalAddress('accountCreationModal')
+    $('#'+id+'Btn').html(btnData).prop('disabled', true);
+      $("#dashResponse").html(resHTML)
+    });
+}
+    
+
+// (function () {
+// 	'use strict'
+
+// 	// Fetch all the forms we want to apply custom Bootstrap validation styles to
+// 	var forms = document.querySelectorAll('.needs-validation')
+
+// 	// Loop over them and prevent submission
+// 	Array.prototype.slice.call(forms)
+// 		.forEach(function (form) {
+// 			form.addEventListener('submit', function (event) {
+// 				if (!form.checkValidity()) {
+// 					event.preventDefault()
+// 					event.stopPropagation()
+// 				}
+
+// 				form.classList.add('was-validated')
+// 			}, false)
+// 		})
+// })()
+</script>
+  

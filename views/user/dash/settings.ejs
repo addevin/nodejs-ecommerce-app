@@ -1,0 +1,137 @@
+
+
+
+    <!-- Modal -->
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="w-100 pt-1 mb-5 text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="get" class="modal-content modal-body border-0 p-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
+                    <button type="submit" class="input-group-text bg-success text-light">
+                        <i class="fa fa-fw fa-search text-white"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+<div style="position: fixed; top:0; left:0; right:0; z-index: 9;" id="dashResponse"></div>
+    <!-- Open Content -->
+    <section class="bg-light">
+        <div class="container py-5">
+            <div class="container-fluid px-0">
+                <h2 class="text-muted text-capitalize">
+                    <%= dashPage %>
+                </h2>
+            </div>
+            <div class="row">
+                <%- include('../../partials/userdashSidebar') %>
+                <!-- col end -->
+                <div class="col-lg-9 ">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="border p-2">
+                                <h5 class="text-secondary border-bottom py-2 mb-2">Security </h5>
+                                <div class="col-md-6">
+                                    <form action="" method="post" onsubmit="sendData('passwordUpdate'); return false" id="passwordUpdateForm">
+                                        <div  class="form-text text-muted">Changing password every month will increase your account security!</div>
+                                        <div class="d-flex mb-3">
+                                            <div class="input-group mb-0 input-group-sm">
+                                                <input type="password" id="passwordUpdate " class="form-control"  name="password" placeholder="password" aria-label="password" aria-describedby="basic-addon1" onchange="$('#passwordUpdateBtn').prop('disabled',false)">
+                                                <input type="password" id="repasswordUpdate" class="form-control"  name="repassword" placeholder="re enter password" aria-label="repassword" aria-describedby="basic-addon1" onchange="$('#passwordUpdateBtn').prop('disabled',false)">
+                                              </div>
+                                              <button class="btn btn-sm btn-success mx-2" disabled id="passwordUpdateBtn">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                               
+                            </div>
+                            <div class="border p-2 mt-2">
+                                <h5 class="text-secondary border-bottom py-2 mb-2">Actions</h5>
+                                <div class="border border-danger p-3 rounded my-3 col-12 col-lg-10 mx-auto" id="deleteUserContainer">
+
+                                    <legend class="text-danger">Delete Account </legend>
+                                    <hr>
+                                    <p>
+                                      <b>Do you want to delete your account permanently?</b> <br>
+                                      You can, but all your data will be deleted, you cannot take back your account!
+                                    </p>
+                                    <div id="deleteAccountBtns">
+                                        <form action="" method="post" onsubmit="sendData('deleteAccount', 'true'); return false" id="deleteAccountForm">
+                                            <input type="hidden" name="deleteaccount" value="dodelete">
+                                            <button class="btn btn-danger" id="deleteAccountBtn" > <i class="bi bi-slash-circle-fill"></i> Delete Permanently!</button>
+                                            <p id="deleteAccountclickALert" class="text-primary opacity-5"></p>
+                                        </form>
+                                    </div>
+                                  </div>
+                                
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Close Content -->
+<script>
+    
+var uclicks = 0;
+function sendData(id,ask){
+    if(ask){
+        let requiredClick = 3
+        let count = uclicks-requiredClick;
+        setTimeout(()=>{
+            $('#'+id+'clickALert').html('')
+            uclicks=0
+        },3000)
+        if(uclicks==requiredClick){
+            
+            if (confirm("Confirming that you are sure to do this action, To confirm it just click OK") != true) {
+                $('#'+id+'Btns').html('<p class="text-danger">Oops! You have cancelled the action! </p>')
+                return false;
+            }
+        }else{
+            $('#'+id+'clickALert').html('Click '+count+' more times')
+            if(uclicks<=3){
+                uclicks++;
+            }
+
+            return false;
+        }
+       
+    }
+        let btnData = $('#'+id+'Btn').html();
+        $('#'+id+'Btn').html('Updating..').prop('disabled', true);
+        console.log($("#"+id+'Form').serialize());
+        $.ajax({
+            type: "POST",
+            url: "/api/updateuserdata",
+            data: $("#"+id+'Form').serialize(),
+            dataType: "json",
+            encode: true,
+        }).done(function (data) {
+            console.log(data.message);
+            if(data.success == true){
+                
+                resHTML = '<div class="alert alert-success alert-dismissible"> '+
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+                    '<strong>Success!</strong> '+data.message +
+                    '</div>';
+                }else{
+                    
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+                '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+                '<strong>Error!</strong> '+data.message +
+                '</div>';
+            }
+            $('#'+id+'Btn').html(btnData).prop('disabled', true);
+            $("#dashResponse").html(resHTML)
+        });
+}
+</script>
+

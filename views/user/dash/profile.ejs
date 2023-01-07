@@ -1,0 +1,336 @@
+
+
+
+    <!-- Modal -->
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="w-100 pt-1 mb-5 text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="get" class="modal-content modal-body border-0 p-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
+                    <button type="submit" class="input-group-text bg-success text-light">
+                        <i class="fa fa-fw fa-search text-white"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+<div style="position: fixed; top:0; left:0; right:0; z-index: 99999999;" id="dashResponse"></div>
+    <!-- Open Content -->
+    <section class="bg-light">
+        <div class="container py-5">
+            <div class="container-fluid px-0">
+                <h2 class="text-muted text-capitalize">
+                    <%= dashPage %>
+                </h2>
+            </div>
+            <div class="row">
+                <%- include('../../partials/userdashSidebar') %>
+                <!-- col end -->
+                <div class="col-lg-9 ">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="border p-2">
+                                <h5 class="text-secondary border-bottom py-2 mb-2">Update Profile </h5>
+                                <div class="col-md-6">
+                                    <form action="/api/updateuserdata" method="post" onsubmit="sendData('usernameUpdate'); return false" id="usernameUpdateForm">
+                                        <div  class="form-text text-muted">You can use this username instead using email to login</div>
+                                        <div class="d-flex mb-3">
+                                            <div class="input-group mb-0 input-group-sm">
+                                                <span class="input-group-text" id="basic-addon1">@</span>
+                                                <input type="text" id="usernameUpdate" class="form-control" value="<%= userData.username %>" name="username" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" onchange="$('#usernameUpdateBtn').prop('disabled',false)">
+                                              </div>
+                                              <button class="btn btn-sm btn-success mx-2" disabled id="usernameUpdateBtn">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <form action="/api/updateuserdata" method="post" onsubmit="sendData('emailUpdate'); return false" id="emailUpdateForm">
+                                        <div  class="form-text text-muted">You can always change your Email, we don't keep it </div>
+                                        <div class="d-flex mb-3">
+                                            <div class="input-group mb-0 input-group-sm">
+                                                <input type="email" class="form-control" placeholder="Email" name="email" id="emailUpdate" aria-label="email"  aria-describedby="basic-addon1" value="<%= userData.email %>" onchange="$('#emailUpdateBtn').prop('disabled',false)">
+                                              </div>
+                                              <button class="btn btn-sm btn-success mx-2" id="emailUpdateBtn" disabled>Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <form action="/api/updateuserdata" method="post" onsubmit="sendData('unameUpdate'); return false" id="unameUpdateForm">
+                                        <div  class="form-text text-muted">Hello <%= userData.name %>, do you want to update your name? </div>
+                                        <div class="d-flex mb-3">
+                                            <div class="input-group mb-0 input-group-sm">
+                                                <input type="text" class="form-control" placeholder="Your name"  id="unameUpdate" aria-label="name" name="name" aria-describedby="basic-addon1" value="<%= userData.name %>" onchange="$('#unameUpdateBtn').prop('disabled',false)">
+                                              </div>
+                                              <button class="btn btn-sm btn-success mx-2" id="unameUpdateBtn" disabled>Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <form action="/api/updateuserdata" method="post" onsubmit="sendData('phoneUpdate'); return false" id="phoneUpdateForm">
+                                        <div  class="form-text text-muted">Changed your phone number? update here! </div>
+                                        <div class="d-flex mb-3">
+                                            <div class="input-group mb-0 input-group-sm">
+                                                <input type="number" class="form-control" placeholder="Your Phone"  id="phoneUpdate" aria-label="phone" name="phone" aria-describedby="basic-addon1" value="<%= userData.phone %>" onchange="$('#phoneUpdateBtn').prop('disabled',false)">
+                                              </div>
+                                              <button class="btn btn-sm btn-success mx-2" id="phoneUpdateBtn" disabled>Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="border p-2 mt-2" id="">
+                                <div id="addressList">
+
+                                    <h5 class="text-secondary border-bottom py-2 mb-2">Saved Addresses</h5>
+                                    <% if(userData.address.length ==0){ %> 
+                                        <h3 class="text-muted text-center">No Address Avaliable</h3>
+                                        <p class="text-muted text-center"> Add new address</p>
+                                        <%}else{ %> 
+                                            <%  userData.address.forEach((val,i)=>{ %> 
+                                                <a href="#" class="text-decoration-none text-dark "  data-bs-toggle="modal" data-bs-target="#accountCreationModal" onclick="setupAddressForm('update', '<%= i %>')">
+                                                    <div class="card p-3 bg-light my-2" id="addrs<%= val._id %>">
+                                                        <h6>Address <%= i+1 %> </h6>
+                                                        <div class="col-md-6">
+                                                            <p id="p<%= val._id %>"><b><%= val.name %> </b>, <%= val.house +', '+val.post +', '+val.city +', '+val.district +', '+val.state +', pin:'+val.pin +'. '  %> </p>
+                                                        </div>
+                                                        <small class="text-primary"><i class="bi bi-pencil-square"></i> Edit</small>
+                                                    </div>
+                                                </a>
+                                             <% }) } %> 
+                                </div>
+                                
+                                
+                                <a href="#" class="btn btn-outline-secondary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#accountCreationModal" onclick="setupAddressForm('new')"><i class="bi bi-house-add-fill"></i> Add new Address</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Close Content -->
+
+    <!-- Modal -->
+  <div class="modal fade" id="accountCreationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="actionNameLabel" >Create address</h5>
+          <div id="addrssStatusLoader"></div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" >
+            <div id="acctnRegResponse"></div>
+            <form action="/api/updateAddress/" method="POST" class="needs-validation" novalidate="" autocomplete="off" onsubmit="sendData('addressUpdation'); return false" id="addressUpdationForm">
+                <input id="AddressAction" type="hidden" class="form-control" name="action" value="create" required >
+                <input id="_id" type="hidden" class="form-control" name="id" value="" required>
+
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="name">Name</label>
+                    <input id="name" type="text" class="form-control" name="name" value="" required autofocus>
+                    <div class="invalid-feedback">
+                        Name is required	
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="house">house</label>
+                    <input id="house" type="text" class="form-control" name="house" value="" required>
+                    <div class="invalid-feedback">
+                        house is required
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="post">post</label>
+                    <input id="post" type="text" class="form-control" name="post" value="" required>
+                    <div class="invalid-feedback">
+                        post is required
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="city">city</label>
+                    <input id="city" type="text" class="form-control" name="city" required>
+                    <div class="invalid-feedback">
+                        city is required
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="district">district</label>
+                    <input id="district" type="text" class="form-control" name="district" required>
+                    <div class="invalid-feedback">
+                        district is required
+                    </div>
+                </div>
+                <div class="mb-3"> 
+                    <label class="mb-2 text-muted" for="state">state</label>
+                    <input id="state" type="text" class="form-control" name="state" required>
+                    <div class="invalid-feedback">
+                        state is required
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="pin">pin</label>
+                    <input id="pin" type="number" class="form-control" name="pin" required>
+                    <div class="invalid-feedback">
+                        pin is required
+                    </div>
+                </div>
+
+                <p class="form-text text-muted mb-3">
+                    By registering you agree with our terms and condition.
+                </p>
+
+                <div class="align-items-center d-flex" id="addressUpdationBtnFooter">
+                            <button onclick="runDeleteAddressForm()" type="submit" class="btn btn-danger me-auto">Delete</button>
+                        
+                    <button type="submit" class="btn btn-primary ms-auto" id="addressUpdationBtn" onclick="unblockBtn('addressUpdationBtn',3000)">
+                        Submit	
+                    </button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <form action="/api/updateAddress/" method="POST" class="needs-validation d-none" novalidate="" autocomplete="off" onsubmit="sendData('addressDeletion',true); return false" id="addressDeletionForm">
+        <input type="hidden" name="id" id="_id2" >
+        <input type="hidden" name="action" id="" value="delete" >
+        <button type="submit"></button>
+  </form>
+<script>
+
+function addAddressToHtml(){ 
+    let bar = `<div class="card p-3 bg-light my-2" id="addrs">
+        <h6>New Address  </h6>
+        <div class="col-md-6">
+            <p><b>${$('#name').val()}</b> ${$('#house').val()}, ${$('#post').val()}, ${$('#city').val()}, ${$('#district').val()}, ${$('#state').val()}, pin:${$('#pin').val()}.</p>
+        </div>
+        <small class="text-primary"><i class="bi bi-pencil-square"></i> Edit (Refresh page to edit)</small> 
+    </div>`
+    $('#addressList').append(bar)
+}
+function runDeleteAddressForm(){
+    $('#_id2').val($('#_id').val())
+    $('#addressDeletionForm').submit();
+} 
+function setupAddressForm(action,id){
+    if(action == 'new'){
+        $('#addressUpdationForm')[0].reset();
+        $('#addressUpdationBtnFooter').html('<button type="submit" class="btn btn-primary ms-auto" id="addressUpdationBtn" onclick="unblockBtn(\'addressUpdationBtn\',3000);">Save</button>')
+        $('#addrssStatusLoader').html('')
+        $('#actionNameLabel').html('Add Address')
+        $('#AddressAction').val('create')
+    }else if(action =='update'){
+        $('#addressUpdationForm')[0].reset();
+        $('#addressUpdationBtnFooter').html('<button type="button" class="btn btn-outline-danger me-auto" id="addressDeletionBtn" onclick="runDeleteAddressForm()">Delete</button><button type="submit" class="btn btn-primary ms-auto" id="addressUpdationBtn" onclick="unblockBtn(\'addressUpdationBtn\',3000)">Save</button>')
+        $('#addrssStatusLoader').html('<span class="badge bg-success">Loading...</span>')
+        $('#actionNameLabel').html('Edit Address')
+        $('#AddressAction').val('update')
+
+        $.ajax({
+            type: "POST",
+            url:  '/api/getAddressData/',
+            data: {
+                addressid : id
+            },
+            dataType: "json",
+            encode: true,
+            }).done(function (data) {
+                if(data.success==true){
+
+                    for (let i in data.data.address) {
+                        $('#'+i).val(data.data.address[i])
+                    }
+                    
+                }else{
+                    resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+                            '<strong>Error!</strong> '+data.message +
+                            '</div>';
+                     $("#dashResponse").html(resHTML)
+                        
+                }
+
+                $('#addrssStatusLoader').html('')
+
+            })
+    }
+}
+function unblockBtn(id,t){
+    setTimeout(()=>{
+        $('#'+id).prop('disabled', false);
+    },t)
+}
+function sendData(id, ask){
+    if(ask){
+      if (confirm("Confirming that you are sure to complete this action, To confirm it just click OK") != true) {
+        return false
+      }else{
+        let addID = $('#_id2').val()
+        $('#addrs'+addID).addClass('text-danger border-danger')
+      }
+    }
+    let btnData = $('#'+id+'Btn').html()
+    $('#'+id+'Btn').html('Updating..').prop('disabled', true);
+    $.ajax({
+      type: "POST",
+      url:  $("#"+id+'Form').attr('action'),
+      data: $("#"+id+'Form').serialize(),
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      if(data.success == true){
+        let bar = `<b>  ${$('#name').val()}</b> ${$('#house').val()}, ${$('#post').val()}, ${$('#city').val()}, ${$('#district').val()}, ${$('#state').val()}, pin:${$('#pin').val()}.`;
+
+        if($('#AddressAction').val()=='update'){
+            $("#p"+$('#_id').val()).html(bar)
+        }else if($('#AddressAction').val()=='create'){
+            addAddressToHtml();
+        }
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+        hideModalAddress('accountCreationModal')
+    $('#'+id+'Btn').html(btnData).prop('disabled', true);
+      $("#dashResponse").html(resHTML)
+    });
+}
+    
+
+// (function () {
+// 	'use strict'
+
+// 	// Fetch all the forms we want to apply custom Bootstrap validation styles to
+// 	var forms = document.querySelectorAll('.needs-validation')
+
+// 	// Loop over them and prevent submission
+// 	Array.prototype.slice.call(forms)
+// 		.forEach(function (form) {
+// 			form.addEventListener('submit', function (event) {
+// 				if (!form.checkValidity()) {
+// 					event.preventDefault()
+// 					event.stopPropagation()
+// 				}
+
+// 				form.classList.add('was-validated')
+// 			}, false)
+// 		})
+// })()
+</script>
+  

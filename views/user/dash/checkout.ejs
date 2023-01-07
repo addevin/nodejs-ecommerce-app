@@ -1,0 +1,557 @@
+
+    <div id="dashResponse" style="position: fixed; top: 0;left: 0; right: 0; z-index: 99999;"></div>
+
+    <!-- Open Content -->
+    <section class="bg-light">
+        <div class="container pb-5">
+            <div class="col-lg-12 ">
+
+                <h1 class="pt-5 text-muted">CHECKOUT</h1>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 ">
+                    
+                    
+                    <!-- Card Start -->
+                    <div class="card mb-3 p-2" >
+                        <h5 class="border-bottom text-secondary">Address</h5>
+                        <a href="#" class="text-decoration-none text-dark "  data-bs-toggle="modal" data-bs-target="#AddressSelector" onclick="getAddresses()">
+                            <div class="card p-3 bg-light my-2" id="addrs">
+                                <div class="col-md-6">
+                                    <p id="checkoutAddress"><b><%= userCheckout.address.name %> </b>, <%= userCheckout.address.house +', '+userCheckout.address.post +', '+userCheckout.address.city +', '+userCheckout.address.district +', '+userCheckout.address.state +', pin:'+userCheckout.address.pin +'. '  %> </p>
+                                </div>
+                                <small class="text-primary"><i class="bi bi-geo-alt"></i> Change</small>
+                            </div>
+                        </a>
+                    </div>
+                    <!-- Card END -->
+                    <!-- Card Start -->
+                    <div class="card mb-3 p-2" >
+                        <h5 class="border-bottom text-secondary">Coupon</h5>
+                        <form action="/api/checkout/setCoupon/" method="POST" onsubmit="sendData('couponAdd','couponAdd'); return false;" id="couponAddForm">
+                            <div class="border p-2 my-1">
+                                <div class="input-group">
+                                    <span class="input-group-text  border-dark">CODE</span>
+                                    <input type="text" name="ccode" class="form-control border-dark" placeholder="Coupon Code">
+                                    <input type="hidden" name="id" value="<%= userCheckout._id %>">
+                                    <button class="btn btn-dark" type="submit" id="couponAddBtn">Apply</button>
+                                </div>
+                                <div id="couponSTS">
+                                    <p class="text-muted"><i class="bi bi-info-circle-fill"></i> Use your coupon code to apply discount!</p>
+                                </div>
+                                
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Card END -->
+                    <!-- Card Start -->
+                    <div class="card mb-3 p-2 " id="pgatewayContainer">
+                        <h5 class="border-bottom text-secondary">Payment Gateway</h5>
+                        <div class="border p-2 my-1">
+                            <input type="hidden" name="paymentType">
+                            <div class="d-flex flex-column flex-md-row justify-content-around">
+                                <div class="col-11 col-md-5 border border-white p-3 rounded bg-dark text-white"  role="button" id="payID1"  onclick="changePayment('payID1')">
+                                    <span class="paymentTick"><i class="fs-5 bi bi-slash-square"></i> </span> 
+                                    Online Payment
+                                </div>
+                                <div class="col-11 col-md-5 border border-white p-3 rounded bg-dark text-white"  role="button" id="payID2" onclick="changePayment('payID2')">
+                                    <span  class="paymentTick"><i class="fs-5 bi bi-slash-square"></i> </span> Cash on Delivery 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card END -->
+
+
+                </div>
+                
+                <!-- col end -->
+                <div class="col-lg-4 ">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="text-secondary border-bottom pb-3">
+                                PROCEED TO PAYMENT
+                            </h5>
+                            <div class="border rounded p-2">
+                                <div class="d-flex justify-content-between border-bottom"> 
+                                    <p class="m-0 p-1">Cart items</p>
+                                    <p class="m-0 p-1" id="cartItemCount3">0</p>
+                                </div>
+                                <div class="d-flex justify-content-between border-bottom">
+                                    <p class="m-0 p-1">Sub Total</p>
+                                    <p class="m-0 p-1">&#8377;<span id="cartSubTotal3">000</span></p>
+                                </div>
+                                <div class="d-flex justify-content-between border-bottom">
+                                    <p class="m-0 p-1">Discount</p>
+                                    <p class="m-0 p-1"><span id="cartDiscount3">0</span></p>
+                                </div>
+                                <div class="d-flex justify-content-between border-bottom">
+                                    <p class="m-0 p-1"> Rounding Off</p>
+                                    <p class="m-0 p-1"><span id="cartRoundOff3">0</span></p>
+                                </div>
+                                <div class="d-flex justify-content-between border-bottom">
+                                    <p class="m-0 p-1"> Total Price</p>
+                                    <p class="m-0 p-1">&#8377;<span id="cartTotal3">000</span></p>
+                                </div>
+                                <button class="btn w-100 btn-outline-dark " id="CheckoutLastBtn" onclick="checkPaymentType()">PROCEED</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Close Content -->
+
+
+
+    
+    <!-- Modal -->
+  <div class="modal fade" id="accountCreationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="actionNameLabel" >Create address</h5>
+          <div id="addrssStatusLoader"></div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" >
+            <div id="acctnRegResponse"></div>
+            <form action="/api/updateAddress/" method="POST" class="needs-validation" novalidate="" autocomplete="off" onsubmit="sendData('addressUpdation','createAddr'); return false" id="addressUpdationForm">
+                <input id="AddressAction" type="hidden" class="form-control" name="action" value="create" required >
+                <input id="_id" type="hidden" class="form-control" name="id" value="" required>
+
+                <div class="mb-3">
+                    <label class="mb-2 " for="name">Name</label>
+                    <input id="name" type="text" class="form-control" name="name" value="" required autofocus>
+                    <div class="invalid-feedback">
+                        Name is required	
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="mb-2 " for="house">house</label>
+                    <input id="house" type="text" class="form-control" name="house" value="" required>
+                    <div class="invalid-feedback">
+                        house is required
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2 " for="post">post</label>
+                    <input id="post" type="text" class="form-control" name="post" value="" required>
+                    <div class="invalid-feedback">
+                        post is required
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="mb-2 " for="city">city</label>
+                    <input id="city" type="text" class="form-control" name="city" required>
+                    <div class="invalid-feedback">
+                        city is required
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2 " for="district">district</label>
+                    <input id="district" type="text" class="form-control" name="district" required>
+                    <div class="invalid-feedback">
+                        district is required
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2 " for="state">state</label>
+                    <input id="state" type="text" class="form-control" name="state" required>
+                    <div class="invalid-feedback">
+                        state is required
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2 " for="pin">pin</label>
+                    <input id="pin" type="number" class="form-control" name="pin" required>
+                    <div class="invalid-feedback">
+                        pin is required
+                    </div>
+                </div>
+
+                <p class="form-text text-muted mb-3">
+                    By registering you agree with our terms and condition.
+                </p>
+
+                <div class="align-items-center d-flex" id="addressUpdationBtnFooter">
+                            
+                        
+                    <button type="submit" class="btn btn-primary ms-auto" id="addressUpdationBtn" onclick="">
+                        Submit	
+                    </button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+    <!-- Modal -->
+    <div class="modal fade" id="AddressSelector" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="actionNameLabel" >Select address</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" >
+                <div id="addressListingResponse"></div>
+                <div id="addresslist">
+
+                </div>
+                <form action="/api/checkout/update/address" method="post" class="p-1 text-right" onsubmit="sendData('addressSave','updateAddrCheckout'); return false" id="addressSaveForm">
+                    <input type="hidden" name="selectedAddress">
+                    <input type="hidden" name="id" value="<%= userCheckout._id %>">
+                    <button class="btn btn-sm btn-primary" style="display: none;" id="addressSaveBtn">Save</button>
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    <script>
+        function changePayment(id){
+            $('.paymentTick').html('<i class="fs-5 bi bi-square"></i>')
+            $('#'+id+' > .paymentTick').html('<i class="fs-5 bi bi-check-square"></i>')
+            $('[name="paymentType"]').val(id)
+        }
+        function selectAddress(id){
+            $('.addressListSelector').html('<span class="text-primary"><i class="bi bi-geo-alt"></i> SELECT</span>')
+            $('#'+id+' > .addressListSelector').html('<span class="text-success"><i class="bi bi-check2-square"></i> SELECTED</span>')
+            $('[name="selectedAddress"]').val(id)
+            $('#addressSaveBtn').show()
+        }
+
+
+        function getAddresses(){
+            $('#addressListingResponse').html('<i class="fa-solid fa-spinner fa-spin"></i> Fetching data..')
+            $.ajax({
+            type: "POST",
+            url:  '/api/getAddressList/',
+            data: {
+                addressid : 'id'
+            },
+            dataType: "json",
+            encode: true,
+            }).done(function (data) {
+                if(data.success==true){
+                    $('#addresslist').html('')
+                    data.data.addressList.forEach((val,i)=>{
+                        $('#addresslist').append(`<div class="card p-3 bg-light my-2" id="addrs${val._id}" role="button" onclick="selectAddress('addrs${val._id}')">
+                            <div class="col-md-6">
+                                <p id=""><b>${val.name} </b>, ${val.house} , ${val.post}, ${val.city} , ${val.district} , ${val.state} , pin:${val.pin} .  </p>
+                                </div>
+                                <small class="addressListSelector"><span class="text-primary"><i class="bi bi-geo-alt"></i> SELECT </span></small>
+                                </div>`)
+                            })
+                            $('#addresslist').append(`<a href="#" class="btn btn-outline-secondary btn-sm w-100"  onclick="toggleModal('AddressSelector','hide');toggleModal('accountCreationModal','show')"><i class="bi bi-house-add-fill"></i> Add new Address</a>`)
+                    
+                    $("#addressListingResponse").html('')
+
+                    
+                }else{
+                    resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+                            '<strong>Error!</strong> '+data.message +
+                            '</div>';
+                    $('#addresslist').html('No Data')
+                     $("#addressListingResponse").html(resHTML)
+                }
+
+
+            })
+        }
+//sendData('couponAdd','couponAdd')
+function sendData(id,type){
+   
+    let btnData = $('#'+id+'Btn').html()
+    $('#'+id+'Btn').html('Updating..').prop('disabled', true);
+    $.ajax({
+      type: "POST",
+      url:  $("#"+id+'Form').attr('action'),
+      data: $("#"+id+'Form').serialize(),
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      if(data.success == true){
+            resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+            if(type=='createAddr'){
+                hideModalAddress('accountCreationModal')
+                toggleModal('AddressSelector','show')
+                getAddresses()
+            }else if(type == 'updateAddrCheckout'){
+                toggleModal('AddressSelector','hide')
+                $('#addressSaveBtn').hide()
+            }else if(type=='couponAdd'){
+                $('#couponSTS').html(`<h5 class="text-success">Coupon Appled! </h5>`)
+            }
+            $("#"+id+'Form')[0].reset()
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+        getCheckoutData();
+        $('#'+id+'Btn').html(btnData).prop('disabled', false);
+        $("#dashResponse").html(resHTML)
+    });
+}
+
+
+function getCheckoutData(){
+    $('#pageLoader').show()
+    $.ajax({
+      type: "POST",
+      url:  '/api/checkout/getdata',
+      data: {
+        id: '<%=userCheckout._id %>'
+      },
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      if(data.success == true){
+        $('#cartItemCount3').html(data.data.products.length)
+        $('#cartSubTotal3').html(data.data.bill_amount)
+        $('#cartDiscount3').html(`${(data.data.coupen.ptype=='inr') ?`&#8377;` : `&percnt;`}${data.data.coupen.discount}`)
+        if(data.data.coupen.ptype=='inr'){
+            let total = data.data.bill_amount-data.data.coupen.discount
+            $('#cartTotal3').html(Math.round(total))
+            $('#cartRoundOff3').html(total-Math.round(total));
+        }else{
+            let total = data.data.bill_amount-((data.data.bill_amount*data.data.coupen.discount)/100)
+            $('#cartTotal3').html(Math.round(total))
+            $('#cartRoundOff3').html(total-Math.round(total));
+        }
+        $('#checkoutAddress').html(`<b>${data.data.address.name}</b>, ${data.data.address.house}, ${data.data.address.post}, ${data.data.address.city }, ${data.data.address.district}, ${data.data.address.state}, pin:${data.data.address.pin}. `) 
+        if(0<data.data.coupen.discount ){
+            $('#couponSTS').html(`
+            <div class="bg-success text-white d-flex p-3 my-2 align-items-center">
+                <i class="bi bi-check-circle-fill h3 mx-3 p-0 my-0"></i>
+                <div>
+                    <h6 class="m-0">COUPON APPLIED</h6>
+                    <p class="m-0">You got <b>${data.data.coupen.discount}${(data.data.coupen.ptype=='inr') ?`&#8377;` : `&percnt;`}</b> discount on your purchase by using the coupon "<b>${data.data.coupen.name}</b>". </p>
+                    <span class="text-light">
+                        code: ${data.data.coupen.code}
+                    </span>
+                </div>
+            </div>
+            <button class="btn btn-transparent text-muted btn-sm small"><i class="bi bi-x-square"></i> Remove</button>
+
+            `)
+            // `min value is  ${(b<a && b<c) ? `b` : `${(a<c) ? `a` : `c`}`}`;
+        }else{
+            $('#couponSTS').html(`<p class="text-muted"><i class="bi bi-info-circle-fill"></i> Use your coupon code to apply discount!</p>`)
+        }
+      }
+        $('#pageLoader').hide()
+
+    })
+}
+getCheckoutData()
+
+/*
+
+<div id="couponSTS">
+    <p class="text-muted"><i class="bi bi-info-circle-fill"></i> Use your coupon code to apply discount!</p>
+</div>
+<div class="bg-success text-white d-flex p-3 my-2 align-items-center">
+    <i class="bi bi-check-circle-fill h3 mx-3 p-0 my-0"></i>
+    <div>
+        <h6 class="m-0">COUPON APPLIED</h6>
+        <p class="m-0">You got 50% discount on your bill by using the coupon "coupon name"  ! </p>
+        <span class="text-light">
+            code: disc50
+        </span>
+    </div>
+</div>
+
+
+
+                                */
+    </script>
+    
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+
+function checkPaymentType(){
+    let payType = $('[name="paymentType"]').val()
+    if(payType == 'payID1'){//razorpay
+        generateRAZOID()
+    }else if(payType == 'payID2'){ //COD
+        cod()
+    }else{
+        $('#pgatewayContainer').addClass('border border-danger border-3') 
+        setTimeout(()=>{
+            $('#pgatewayContainer').removeClass('border border-danger border-3') 
+        },4000)
+    }
+       
+}
+let orderData={} ;
+function generateRAZOID(){
+   
+    $('#CheckoutLastBtn').prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i> Initiating..');
+    //creates new orderId everytime
+    $.ajax({
+        "url": "/api/checkout/createPID",
+        type: "POST",
+        data: {
+            id:'<%=userCheckout._id %>'
+        },
+        dataType: "json",
+        encode: true,
+    }).done(function (response) {
+        if(response.success == true){
+            orderData=response.data;
+            initPayment()
+        }else{
+            $('#CheckoutLastBtn').prop('disabled', false).html('Try Again!');
+
+            $("#dashResponse").html(
+            '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+response.message +
+            '</div>')
+        }
+    });
+}
+
+function initPayment(){
+    $('#CheckoutLastBtn').prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i> Waiting for payment..');
+        
+    var options = {
+        "key": orderData.razKey, 
+        "amount": orderData.amount, 
+        "currency": "INR",
+        "name": "AdDev",
+        "description": "The Transaction is under test mode, enabled by AdDev",
+        "image": "/favicon.ico",
+        "order_id": orderData.oid, 
+        "handler": function (response){
+            orderData.payment = {}
+            orderData.payment.raz_id = response.razorpay_payment_id
+            orderData.payment.raz_oid = response.razorpay_order_id
+            orderData.payment.raz_sign = response.razorpay_signature
+            orderData.payment.id = '<%=userCheckout._id %>'
+            verifyPayment()
+        },
+        "prefill": {
+            "name": "Gaurav Kumar",
+            "email": "gaurav.kumar@example.com",
+            "contact": "9999999999"
+        },
+        "notes": {
+            "address": "Razorpay Corporate Office"
+        },
+        "theme": {
+            "color": "#000000"
+        },
+        "modal": {
+            "ondismiss": function(){
+                $('#CheckoutLastBtn').prop('disabled', false).html('Try Again!');
+            }
+        }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+    rzp1.on('payment.failed', function (response){
+            $('#CheckoutLastBtn').prop('disabled', false).html('Try Again!');
+            $("#dashResponse").html(
+            '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>'+response.error.reason+'!</strong> '+response.error.description +
+            '</div>')
+    });
+}
+
+function verifyPayment(){
+    $('#CheckoutLastBtn').prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i> Verifying payment..');
+    $.ajax({
+        "url": "/api/checkout/verifyPayment",
+        type: "POST",
+        data: orderData.payment,
+        dataType: "json",
+        encode: true,
+    }).done(function (response) {
+        if(response.success == true){
+            $('#CheckoutLastBtn').prop('disabled', true).html('PAID!');
+
+            $("#dashResponse").html(
+            '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+response.message +
+            '</div>')
+            successOrderPlaced()
+            
+        }else{
+            $('#CheckoutLastBtn').prop('disabled', false).html('Try Again!');
+
+            $("#dashResponse").html(
+            '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+response.message +
+            '</div>')
+        }
+    });
+}
+function cod(){
+    $('#CheckoutLastBtn').prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i> Please wait..');
+    $.ajax({
+        "url": "/api/checkout/CODapprove",
+        type: "POST",
+        data: {
+            id:'<%=userCheckout._id %>'
+        },
+        dataType: "json",
+        encode: true,
+    }).done(function (response) {
+        if(response.success == true){
+            $('#CheckoutLastBtn').prop('disabled', true).html('APPROVED!');
+
+            $("#dashResponse").html(
+            '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+response.message +
+            '</div>')
+            successOrderPlaced()
+        }else{
+            $('#CheckoutLastBtn').prop('disabled', false).html('Try Again!');
+
+            $("#dashResponse").html(
+            '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+response.message +
+            '</div>')
+        }
+    });
+}
+
+function successOrderPlaced(){
+    Swal.fire(
+        'Success!',
+        'Your Order placed and will shipped soon!',
+        'success'
+    )
+            $('#pageLoader').show()
+            clearCart()
+            .then(()=>{
+                $('#pageLoader').hide()
+            })
+            setTimeout(()=>{
+                window.location.href = '/dash/order/<%=userCheckout._id %>';
+            },1500)
+}
+
+</script>

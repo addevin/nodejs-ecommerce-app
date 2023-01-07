@@ -1,0 +1,155 @@
+
+
+    <!-- Modal -->
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="w-100 pt-1 mb-5 text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="get" class="modal-content modal-body border-0 p-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
+                    <button type="submit" class="input-group-text bg-success text-light">
+                        <i class="fa fa-fw fa-search text-white"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+<!-- Login content -->
+<section class="h-100 bg-light" style="min-height:100vh ;">
+    <div class="container h-100">
+        <div class="row justify-content-sm-center h-100">
+            <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+                <div class="text-center my-5">
+                    <h1 class="text-primary">
+                        Addev Login
+                    </h1>
+                </div>
+                <div class="card shadow-lg">
+                    <div class="card-body p-5">
+                        <div  id="response"></div>
+
+                        <h1 class="fs-4 card-title fw-bold mb-4">Login</h1>
+                        <form method="POST" class="needs-validation" novalidate="" autocomplete="off" action="/api/loginvalidate">
+                            <div class="mb-3">
+                                <label class="mb-2 text-muted" for="user">Email/Username</label>
+                                <input id="user" type="text" class="form-control" name="user" value="adil.akp1@gmail.com"  required autofocus>
+                                <div class="invalid-feedback">
+                                    Email/username is invalid
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="mb-2 w-100">
+                                    <label class="text-muted" for="password">Password</label>
+                                    <a href="/auth/reset" class="float-end">
+                                        Forgot Password?
+                                    </a>
+                                </div>
+                                <input id="password" type="password" class="form-control" name="password" value="passwordnew" required>
+                                <div class="invalid-feedback">
+                                    Password is required
+                                </div>
+                                <small><input type="checkbox" class="form-check-input" name="" id="passcheck"> <label for="passcheck" class="form-check-label">show/hide</label></small>
+                            </div>
+
+                            <div class="d-flex align-items-center">
+                                <button type="submit" class="btn btn-primary ms-auto" id="regBTN">
+                                    Login
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer py-3 border-0">
+                        <div class="text-center">
+                            Don't have an account? <a href="/auth/register" class="text-dark">Create One</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-5 text-muted">
+                    Copyright &copy; 2022 &mdash; AdDev Design
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Login content End -->
+
+
+
+    <!-- End Script -->
+    <script>
+        (function () {
+	'use strict'
+
+	// Fetch all the forms we want to apply custom Bootstrap validation styles to
+	var forms = document.querySelectorAll('.needs-validation')
+
+	// Loop over them and prevent submission
+	Array.prototype.slice.call(forms)
+		.forEach(function (form) {
+			form.addEventListener('submit', function (event) {
+				if (!form.checkValidity()) {
+					event.preventDefault()
+					event.stopPropagation()
+				}
+
+				form.classList.add('was-validated')
+			}, false)
+		})
+})()
+
+
+$(document).ready(function () {
+
+  $("form").submit(function (event) {
+    $('#regBTN').html('loging in...').prop('disabled', true);
+    var formData = {
+      user: $("#user").val(),
+      password: $("#password").val(),
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "/api/loginvalidate",
+      data: formData,
+      dataType: "json", 
+      encode: true,
+    }).done(function (data) {
+      console.log(data.message);
+      if(data.success == true){
+
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+
+                location.reload();
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+    $('#regBTN').html('Login').prop('disabled', false);
+      $("#response").html(resHTML)
+    });
+
+    event.preventDefault();
+  });
+});
+
+
+document.getElementById('passcheck').addEventListener('change', () => {
+    let userPass = document.getElementById('password');
+    if (userPass.getAttribute('type') == 'password') {
+        userPass.setAttribute('type', 'text');
+    } else {
+        userPass.setAttribute('type', 'password');
+    }
+})
+    </script>

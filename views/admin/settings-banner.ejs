@@ -1,0 +1,228 @@
+
+<div id="prodResponse" style="top: 0; left: 0; right: 0; z-index: 3; position: fixed;"></div>
+
+<div class="container bg-white my-2">
+    <div class="d-flex justify-content-between py-1 mb-0">
+
+        <h2 class=" text-muted p-0">
+            Banner Design
+        </h2>
+        <a class="btn btn-dark btn-sm"  style="height: 30px;" onclick="newData()">
+            <i class="bi bi-plus-square-fill"></i>
+              Add Banner
+        </a>
+    </div>
+    
+</div>
+
+<div class="container bg-white my-2">
+    
+    <div class="col-12 my-1 p-0">
+        <div class="card w-100 border-0 ad-box-shadow p-0">
+            <div class="card-header">
+                Details
+            </div>
+            <div class="card-body">
+              <div class="p-3 bg-primary rounded-2 text-white my-2 d-flex flex-column flex-md-row align-items-center">
+                <img src="http://localhost/assets/img/banner_img_03.jpg" alt="" style="max-width: 200px;">
+                <div class="p-2">
+                    <p class="h3">Header 1 </p>
+                    <p class="h4">Header 2 </p>
+                    <p>We bring you 100% free CSS templates for your websites. If you wish to support TemplateMo, please make a small contribution via PayPal or tell your friends about our website. Thank you. </p>
+                    <button class="btn btn-primary" onclick="getData()">
+                        EDIT
+                    </button>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="bannerUpdateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bannerHeaderLabel">Loading..</h5> <small id="bannerLoader"></small>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" >
+            <div id="bannerResponse"></div>
+            <form action="/adminapi/category/create" method="post" class="" novalidate=""  autocomplete="off" enctype="multipart/form-data" id="categoryForm">
+              <input type="file" name="catImg"  id="imageInput" class="d-none">
+              <div class="border">
+                <label for="imageInput" class="d-block">
+                  <div id="image_drop_area" class="d-flex justify-content-center align-items-center mx-auto col-md-10 my-1 text-muted" style="
+                    min-height: 225px;
+                    border: 1px dashed rgba(57, 57, 57, 0.766);" onclick="document.getElementById('image_drop_area').innerHTML=`<p class=''>Drag and Drop Image here</p>`"><p class="text-muted">Drag and Drop Image here</p></div>
+                    <p id="file_name"></p>
+                  </div>
+                </label>
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="catname">Header1</label>
+                    <input id="bannerh1" type="text" class="form-control" name="bh1" value="" required autofocus>
+                </div> 
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="catname">Header2</label>
+                    <input id="bannerh2" type="text" class="form-control" name="bh2" value="" required>
+                </div> 
+                <div class="mb-3">
+                    <label class="mb-2 text-muted" for="catname">Message</label>
+                    <input id="bannerh2" type="text" class="form-control" name="bh2" value="" required>
+                </div> 
+                <div class="d-flex w-100">
+
+                    <div class="mb-3 col-6">
+                        <label class="mb-2 text-muted" for="catname">Text color</label>
+                        <input id="bannerh2" type="color" class="form-control" name="bh2" value="" required>
+                    </div> 
+                    <div class="mb-3 col-6">
+                        <label class="mb-2 text-muted" for="catname">Background color</label>
+                        <input id="bannerh2" type="color" class="form-control" name="bh2" value="" required>
+                    </div>
+                </div> 
+                
+
+                <input type="hidden" name="action" value="" id="categoryAction">
+                <input type="hidden" name="id" value="" id="categoryid">
+               
+
+                <div class="align-items-center d-flex">
+                  <div id="catbuttons"></div>
+                    <button type="submit" class="btn btn-primary ms-auto" id="categoryBtn">
+                        Loading..
+                    </button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+<script>
+    $(document).ready(function () {
+        $('#myTable').dataTable();
+    });
+    
+   
+function newData() {
+    toggleModal( 'bannerUpdateModal','show');
+    $('#bannerHeaderLabel').html('New Banner')
+    $('#bannerLoader').html()
+    $('#bannerResponse').html()
+}
+
+function getData(id){
+    toggleModal( 'bannerUpdateModal','show');
+
+}
+function submitData(id){
+    
+
+    let btn_data = $('#categoryBtn').html();
+    $('#categoryBtn').html('Loading...').prop('disabled', true);
+    var form = $('form')[0]; // You need to use standard javascript object here
+    var formData = new FormData(form);
+    //data: $('#categoryForm').serialize(),
+
+    $.ajax({
+      type: "POST",
+      url: $('#categoryForm').attr('action'),
+      data: formData,
+      contentType: false,
+      processData: false,
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      console.log(data.message);
+      if(data.success == true){
+
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+            $("form")[0].reset()
+            setTimeout(()=>{
+
+              toggleModal( 'catupdateModal','hide');
+            },1500)
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+    $('#categoryBtn').html(btn_data).prop('disabled', false);
+      $("#catResponse").html(resHTML)
+    });
+
+    event.preventDefault();
+ 
+}
+
+
+
+
+
+
+
+   
+function imageDrop(){
+  
+  const image_drop_area = document.querySelector("#image_drop_area");
+  var uploaded_image;
+  
+  // Event listener for dragging the image over the div
+  image_drop_area.addEventListener('dragover', (event) => {
+    image_drop_area.classList.add('bg-secondary')
+    image_drop_area.classList.add('text-white')
+    image_drop_area.classList.remove('text-muted')
+  
+  
+    event.stopPropagation();
+    event.preventDefault();
+    // Style the drag-and-drop as a "copy file" operation.
+    event.dataTransfer.dropEffect = 'copy';
+  });
+  image_drop_area.addEventListener('dragleave', (event) => {
+    image_drop_area.classList.remove('bg-secondary')
+    image_drop_area.classList.remove('text-white')
+    image_drop_area.classList.add('text-muted')
+  
+    
+  });
+  
+  // Event listener for dropping the image inside the div
+  image_drop_area.addEventListener('drop', (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+  
+    fileList = event.dataTransfer.files;
+  
+    document.querySelector("#file_name").textContent = fileList[0].name;
+    document.querySelector("#imageInput").files = fileList;
+    
+    readImage(fileList[0]);
+    image_drop_area.classList.remove('bg-secondary')
+    image_drop_area.classList.remove('text-white')
+    image_drop_area.classList.add('text-muted')
+  });
+  
+  // Converts the image into a data URI
+  readImage = (file) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', (event) => {
+      uploaded_image = event.target.result;
+      image_drop_area.style.border ='none' ;
+      image_drop_area.innerHTML=`<img src="${uploaded_image}" class="image-fluid">`
+    });
+    reader.readAsDataURL(file);
+  }
+  }
+  imageDrop()
+</script>

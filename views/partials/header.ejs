@@ -1,0 +1,167 @@
+
+  
+    <div id="siteNotifications" style="position: fixed; z-index: 8; top: 0; left: 0; right: 0;">
+        <% if(userData.phone_verified==false || userData.email_verified==false  ) {%>
+            <div class="alert alert-warning alert-dismissible"> 
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <strong>Let's verify!</strong> You are one more step away from verifying your account. <a href="/dash/verify/">Verify now!</a>
+    </div>
+    <% } %>  
+  </div>
+  <div id="pageLoader" style="position: fixed; top: 0; left: 0; right: 0; z-index: 99; opacity: 0.5; display: none;" class="bg-white ">
+        <div class="d-flex justify-content-center align-items-center w-100 " style="height: 100vh;">
+            <h5 class="text-dark"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading...</h5>
+        </div>
+    </div>
+  <!-- Start Top Nav -->
+  <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
+    <div class="container text-light">
+        <div class="w-100 d-flex justify-content-between">
+            <div>
+                <i class="fa fa-envelope mx-2"></i>
+                <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:info@company.com">info@company.com</a>
+                <i class="fa fa-phone mx-2"></i>
+                <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">010-020-0340</a>
+            </div>
+            <div>
+                <a class="text-light" href="https://fb.com/templatemo" target="_blank" rel="sponsored"><i class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
+                <a class="text-light" href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
+                <a class="text-light" href="https://twitter.com/" target="_blank"><i class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
+                <a class="text-light" href="https://www.linkedin.com/" target="_blank"><i class="fab fa-linkedin fa-sm fa-fw"></i></a>
+            </div>
+        </div>
+    </div>
+</nav>
+<!-- Close Top Nav -->
+
+
+<!-- Header -->
+<nav class="navbar navbar-expand-lg navbar-light shadow">
+    <div class="container d-flex justify-content-between align-items-center">
+
+        <a class="navbar-brand text-success logo h1 align-self-center" href="/">
+            AdDev
+        </a>
+
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between" id="templatemo_main_nav">
+            <div class="flex-fill">
+                <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/shop">Shop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                    </li>
+                    <li class="nav-item d-block d-lg-none">
+                        <% if(login==true){ %>
+                        <a class="nav-link" href="/dash/profile">Profile</a>
+                        <% }else{ %>
+                            <a class="nav-link" href="/auth/login">Login</a>
+                            <a class="nav-link" href="/auth/register">Signup</a>
+                            <% } %>
+                    </li>
+                </ul>
+            </div>
+            <div class="navbar align-self-center d-flex">
+                <div class="d-lg-none flex-sm-fill mt-3 mb-4 col-7 col-sm-auto pr-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="inputMobileSearch" placeholder="Search ...">
+                        <div class="input-group-text">
+                            <i class="fa fa-fw fa-search"></i>
+                        </div>
+                    </div>
+                </div>
+                <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#adSearchBar">
+                    <i class="fa fa-fw fa-search text-dark mr-2"></i>
+                </a>
+                <a class="nav-icon position-relative text-decoration-none px-2 px-md-0" href="/dash/cart" data-bs-toggle="offcanvas" data-bs-target="#cartOffCanvas">
+                    <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
+                    <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark" id="cartCountHeader" style="display: none;">0</span>
+                </a>
+                <div class="dropdown nav-icon m-0 d-none d-lg-block">
+                    <a href="#" class=" text-decoration-none  position-relative dropdown-toggle p-0"
+                      data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="fa fa-fw fa-user text-dark mr-3"></i>
+                        <!-- <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">+99</span> -->
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-light text-small shadow" style="">
+                        <% if(login==true){ %>
+                      <li><a class="dropdown-item" href="/dash/profile/">Profile</a></li>
+                      <li><a class="dropdown-item" href="/dash/settings/">Settings</a></li>
+                      <li><a class="dropdown-item" href="/dash/orders/">Orders</a></li>
+                      <li><a class="dropdown-item" href="/dash/wishlist/">Wishlist</a></li>
+                      <li>
+                        <hr class="dropdown-divider">
+                      </li>
+                      <li><a class="dropdown-item" href="/auth/logout">Sign out</a></li>
+                      <% }else{ %>
+                        <li><a class="dropdown-item" href="/auth/login/">Login</a></li>
+                        <li><a class="dropdown-item" href="/auth/register">Signup</a></li>
+                        
+                        <% } %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</nav>
+<!-- Close Header -->
+
+
+    <!-- Modal -->
+    <div class="modal fade bg-white" id="adSearchBar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="w-100 pt-1 mb-5 text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-content modal-body border-0 p-0">
+
+                <form action="/shop/" method="get" >
+                    <div class="input-group mb-0">
+                        <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ..." onkeyup="searchSuggest(this.value)">
+                        <button type="submit" class="input-group-text bg-success text-light">
+                            <i class="fa fa-fw fa-search text-white"></i>
+                        </button>
+                    </div>
+                </form>
+                <div class="border w-100 rounded-3" id="searchResult">
+                    <!-- Search result -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Cart section start-->
+    <div class="offcanvas offcanvas-end" id="cartOffCanvas">
+        <div class="offcanvas-header">
+          <h1 class="offcanvas-title">Cart</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div id="cartOffCanvaData" class="my-2"></div>
+            <div id="cartLoader"></div>
+            <hr>
+            <div class="border-bottom d-flex justify-content-between">
+                <p class="text-secondary" id="cartItemCount">2 Items</p>
+                <div>
+                    <p class="text-secondary">Sub total: <h5 class="text-primary d-inline m-0 p-0" id="cartItemTotal">1500</h5></p>
+                </div>
+            </div>
+          <a href="/dash/cart/" class="btn btn-lg btn-dark w-100 m-1 rounded-0 fs-5" >Checkout</a>
+          <a href="/shop/" class="btn btn-lg btn-outline-dark w-100 m-1 rounded-0">Continue shopping</a>
+        </div>
+      </div>
+      
+    <!--Cart section end-->

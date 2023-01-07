@@ -1,0 +1,310 @@
+
+
+
+    <!-- Modal -->
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="w-100 pt-1 mb-5 text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="get" class="modal-content modal-body border-0 p-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
+                    <button type="submit" class="input-group-text bg-success text-light">
+                        <i class="fa fa-fw fa-search text-white"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+<div style="position: fixed; top:0; left:0; right:0; z-index: 9;" id="dashResponse"></div>
+    <!-- Open Content -->
+    <section class="bg-light">
+        <div class="container py-5">
+            <div class="container-fluid px-0">
+                <h2 class="text-muted text-capitalize">
+                    <%= dashPage %>
+                </h2>
+            </div>
+            <div class="row">
+                <%- include('../../partials/userdashSidebar') %>
+                <!-- col end -->
+                <div class="col-lg-9 ">
+                    <div class="card mb-3">
+                        <div class="card-body bg-primary border-0">
+                            <div class="border-0 p-2">
+                                <h5 class="text-secondary border-bottom py-2 mb-2 text-white">Order Status </h5>
+                                <div class="adProgress-bar">
+                                    <div class="d-flex align-items-center">
+                                        <div class="col-2 col-md-1 ad-line-s-half py-4">
+                                            <i class="bi <% if(orderData.delivery_status.ordered.state) {%>   bi-check-square<% }else{ %>bi-square <% } %>  h3 text-white bg-primary "></i>
+                                        </div>
+                                        <div class="col ">
+                                            <p class="mt-1 h3  text-white <% if(orderData.delivery_status.ordered.state==true && orderData.delivery_status.shipped.state==false) {%>   fw-bold<% } %>">Order Placed</p>
+                                            <p class="m-0 p-0 text-light"> <%= orderData.delivery_status.ordered.date %></p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="col-2 col-md-1 ad-line-e-half ad-line-s-half py-4">
+                                            <i class="bi <% if(orderData.delivery_status.shipped.state) {%>   bi-check-square<% }else{ %>bi-square <% } %> h3 text-white bg-primary "></i>
+                                        </div>
+                                        <div class="col">
+                                            <p class="mt-1 h3 text-white <% if(orderData.delivery_status.shipped.state==true && orderData.delivery_status.out_for_delivery.state==false) {%>   fw-bold<% } %>" >Shipped</p>
+                                            <% if(orderData.delivery_status.shipped.state) {%>
+                                                <p class="m-0 p-0 text-light"><%= orderData.delivery_status.shipped.date %></p>
+                                            <% } %> 
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="col-2 col-md-1 ad-line-e-half ad-line-s-half py-4">
+                                            <i class="bi <% if(orderData.delivery_status.out_for_delivery.state) {%>   bi-check-square<% }else{ %>bi-square <% } %> h3 text-white bg-primary "></i>
+                                        </div>
+                                        <div class="col">
+                                            <p class="mt-1 h3 text-white  <% if(orderData.delivery_status.out_for_delivery.state==true && orderData.delivery_status.delivered.state==false) {%>   fw-bold<% } %>">Out for delivery</p>
+                                            <% if(orderData.delivery_status.out_for_delivery.state) {%>
+                                                <p class="m-0 p-0 text-light"><%= orderData.delivery_status.out_for_delivery.date %></p>
+                                            <% } %> 
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="col-2 col-md-1 ad-line-e-half py-4">
+                                            <i class="bi <% if(orderData.delivery_status.delivered.state) {%>   bi-check-square<% }else{ %>bi-square <% } %> h3 text-white bg-primary "></i>
+                                        </div>
+                                        <div class="col">
+                                            <p class="mt-1 h3 text-white <% if(orderData.delivery_status.delivered.state==true ) {%>   fw-bold<% } %>">Delivered</p>
+                                            <% if(orderData.delivery_status.delivered.state) {%> 
+                                                <p class="m-0 p-0 text-light"><%= orderData.delivery_status.delivered.date %></p>
+                                            <% } %> 
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                            </div>
+                           
+
+                        </div>
+                    </div>
+                    <div class="card mb-1">
+                        <div class="card-body">
+                            
+                            <div class="border p-2">
+                                <h5 class="text-secondary border-bottom py-2 mb-2">Ordered items </h5>
+                                
+                                <% let subTotalBill = 0; orderData.products.forEach(el => { %>
+                               <div class="border border-dark d-flex p-1 justify-content-between align-items-center flex-wrap flex-md-nowrap mb-1">
+                                   <img src="/shop/<%= el.product_id.image[0] %> " alt="" class="object-fit-cover" style="width: 100px; height: 100px;">
+                                   <p class="h5 fw-bold"><%= el.name %></p>
+                                   <div class="text-center p-2">
+                                       <p class="p-0 m-0"><%= el.qnty %>  x <%= el.size %> (&#8377;<%= el.price %>)</p>
+                                       <p class="fw-bold text-success">&#8377;<%= el.qnty*el.price %></p>
+                                    </div>
+                                </div>
+                                
+                                <% subTotalBill+= el.qnty*el.price;
+                                 }); %> 
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    <div class="card mb-1">
+                        <div class="card-body">
+                            
+                            <div class="border p-2">
+                                <h5 class="text-secondary border-bottom py-2 mb-2">Bill Details </h5>
+                                <div class="d-flex flex-wrap">
+                                    <div class="col-12 col-lg-6">
+                                        <% 
+                                        let totalBill
+                                        if(orderData.coupen.ptype=='inr'){
+                                            totalBill = orderData.bill_amount-orderData.coupen.discount
+                                        }else{
+                                            totalBill = orderData.bill_amount-((orderData.bill_amount*orderData.coupen.discount)/100)
+                                        }
+                                            
+                                            %> 
+                                        <table class="table table-striped  ">
+                                            <tr>
+                                                <td>
+                                                    Sub-total
+                                                </td>
+                                                <td>
+                                                    &#8377;<%= subTotalBill %>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Items
+                                                </td>
+                                                <td>
+                                                    <%= orderData.products.length %> 
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Discount
+                                                </td>
+                                                <td>
+                                                    <% if(orderData.coupen.ptype=='inr'){ %> &#8377;<%}else{ %>&percnt;<%} %><%= orderData.coupen.discount %>  
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Rounding Off
+                                                </td>
+                                                <td>
+                                                    <%= totalBill-Math.round(totalBill) %> 
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Total
+                                                </td>
+                                                <td>
+                                                    <b class="text-success fw-bold">&#8377;<%= Math.round(totalBill) %> </b>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-12 col-lg-6">
+
+                                        <table class="table table-striped  ">
+                                            <tr>
+                                                <td>
+                                                    Payment Status
+                                                </td>
+                                                <td>
+                                                    <%= orderData.payment.payment_status %> 
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Payment method
+                                                </td>
+                                                <td>
+                                                    <% if(orderData.payment.payment_method=='razorpay'){ %> online_payment<%}else{ %> <%= orderData.payment.payment_method %>  <% }%> 
+
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Payment id
+                                                </td>
+                                                <td>
+                                                    <%= orderData.payment.payment_id %>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Order id
+                                                </td>
+                                                <td>
+                                                    <%= orderData._id %>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                     Coupon 
+                                                </td>
+                                                <td>
+                                                    <% if(orderData.coupen.discount>0) {%>
+                                                        <%=  orderData.coupen.name %> <small> (<%=  orderData.coupen.code %>)</small>
+                                                    <% }else{ %>   
+                                                        no_coupon
+                                                    <% } %>   
+                                                </td>
+                                            </tr>
+                                           
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            
+                            <div class="border p-2">
+                                <h5 class="text-secondary border-bottom py-2 mb-2">Delivery Details </h5>
+                                <div class="bg-light p-2">
+                                    <p>Name: <b><%= orderData.address.name %></b>,  <br>
+                                        Address: <b><%= orderData.address.house %>,
+                                        <%= orderData.address.post %>,
+                                        <%= orderData.address.city %>,
+                                        <%= orderData.address.district %>,
+                                        <%= orderData.address.state %>,</b> <br>
+                                        pin: <b><%= orderData.address.pin %></b> <br>
+                                        Contact: <b><%= userData.phone%></b>
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Close Content -->
+<script>
+    
+var uclicks = 0;
+function sendData(id,ask){
+    if(ask){
+        let requiredClick = 3
+        let count = uclicks-requiredClick;
+        setTimeout(()=>{
+            $('#'+id+'clickALert').html('')
+            uclicks=0
+        },3000)
+        if(uclicks==requiredClick){
+            
+            if (confirm("Confirming that you are sure to do this action, To confirm it just click OK") != true) {
+                $('#'+id+'Btns').html('<p class="text-danger">Oops! You have cancelled the action! </p>')
+                return false;
+            }
+        }else{
+            $('#'+id+'clickALert').html('Click '+count+' more times')
+            if(uclicks<=3){
+                uclicks++;
+            }
+
+            return false;
+        }
+       
+    }
+        let btnData = $('#'+id+'Btn').html();
+        $('#'+id+'Btn').html('Updating..').prop('disabled', true);
+        console.log($("#"+id+'Form').serialize());
+        $.ajax({
+            type: "POST",
+            url: "/api/updateuserdata",
+            data: $("#"+id+'Form').serialize(),
+            dataType: "json",
+            encode: true,
+        }).done(function (data) {
+            console.log(data.message);
+            if(data.success == true){
+                
+                resHTML = '<div class="alert alert-success alert-dismissible"> '+
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+                    '<strong>Success!</strong> '+data.message +
+                    '</div>';
+                }else{
+                    
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+                '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+                '<strong>Error!</strong> '+data.message +
+                '</div>';
+            }
+            $('#'+id+'Btn').html(btnData).prop('disabled', true);
+            $("#dashResponse").html(resHTML)
+        });
+}
+</script>
+
