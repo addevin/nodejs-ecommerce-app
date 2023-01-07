@@ -6,6 +6,7 @@ const users = require('../models/users');
 const usersModules = require('../modules/users')
 const products = require('../models/products');
 const createError = require('http-errors');
+const banners = require('../models/banners');
 
 
 routes.use((req,res,next)=>{
@@ -34,7 +35,8 @@ routes.use(async (req,res,next)=>{
 Pages
 ========*/
 routes.get('/',async (req,res)=>{
-    res.render('user/index', {pageName: 'Home', login:res.locals.login, userData:res.locals.userData, catList:res.locals.catList})
+    let bannerList = await banners.find({})
+    res.render('user/index', {pageName: 'Home', login:res.locals.login, userData:res.locals.userData, catList:res.locals.catList, bannerList})
 })
 routes.get('/about',(req,res)=>{
     res.render('user/about', {pageName: 'About Us'})

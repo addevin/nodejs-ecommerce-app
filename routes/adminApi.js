@@ -10,6 +10,7 @@ const categories = require('../models/categories');
 const products = require('../models/products');
 const coupons = require('../models/coupons');
 const orders = require('../models/orders');
+const banners = require('../models/banners');
 
 const uploads = multer({
     dest: path.join(__dirname,'../public/uploads/temp/')
@@ -238,11 +239,13 @@ routes.post('/category/create', uploads.single("catImg") ,async (req,res)=>{
             return new categories(dataToUpload).save()
         }else if(req.body.action=='update'){
             if(req.body.id){
-                categories.findOne({_id:req.body.id}).then((data)=>{
-                    if(data.image){
-                        main.deleteFile(path.join(__dirname,'../public/uploads/category/')+data.image)
-                    }
-                })
+                if(req.file){
+                    categories.findOne({_id:req.body.id}).then((data)=>{
+                        if(data.image){
+                            main.deleteFile(path.join(__dirname,'../public/uploads/category/')+data.image)
+                        }
+                    })
+                }
                 return categories.updateOne({_id:req.body.id},dataToUpload)
             }else{
                 return new Error('required fields are not defined!')
@@ -256,7 +259,7 @@ routes.post('/category/create', uploads.single("catImg") ,async (req,res)=>{
     apiRes.message= 'No data available!'
     apiRes.success = false;
     let dataToUpload ={}
-    dataToUpload.last_updated_user = res.locals.userData.username
+    dataToUpload.last_updated_user = res.locals.userData.username 
     console.log(req.body)
     if(req.body.name && req.body.tags && req.body.action ){ ///&& req.body.action
         dataToUpload.name = req.body.name;
@@ -726,6 +729,145 @@ routes.post('/order/codpaid',(req,res)=>{
     }else{
         res.status(apiRes.status).json(apiRes)
     }
+})
+
+routes.post('/settings/banner/update',  uploads.single("banrImg") , (req,res,next)=>{
+
+
+    function doCatAction(){
+        if(req.body.action=='create'){
+            return new banners(dataToUpload).save()
+        }else if(req.body.action=='update'){
+            if(req.body.id){
+                if(req.file){
+                    banners.findOne({_id:req.body.id}).then((data)=>{
+                        if(data.image){
+                            main.deleteFile(path.join(__dirname,'../public/uploads/banner/')+data.image)
+                        }
+                    })
+                }
+                return banners.updateOne({_id:req.body.id},dataToUpload)
+            }else{
+                return new Error('required fields are not defined!')
+            }
+        }else{
+            return new Error('required fields are not defined!')
+        }
+    }
+    let apiRes = JSON.parse(JSON.stringify(apiResponse));
+    apiRes.status=200
+    apiRes.message= 'No data available!'
+    apiRes.success = false;
+    let dataToUpload ={}
+    dataToUpload.last_updated_user = res.locals.userData.username 
+    console.log(req.body)
+    if(req.body.bh1 && req.body.bh2 && req.body.para && req.body.tc && req.body.bc  && req.body.id && req.body.action){ ///&& req.body.action
+        dataToUpload.bh1 = req.body.bh1;
+        dataToUpload.bh2 = req.body.bh2;
+        dataToUpload.para = req.body.para;
+        dataToUpload.tc = req.body.tc;
+        dataToUpload.bc = req.body.bc;
+        console.log(req.file);
+        if(req.file){
+
+            main.uploadimage(req,'banner','bnr-',false).then((data)=>{ // false = crop
+                apiRes.message= data.message;
+                apiRes.success = true;
+                dataToUpload.image = data.imageName
+    
+            }).catch((err)=>{
+                console.log(err);
+                apiRes.message= err.toString()
+    
+            }).then(()=>{
+                if(apiRes.success==true){
+
+                    doCatAction().then(()=>{
+                        apiRes.success = true;
+                        apiRes.message = 'Successfully updated the banner!'
+
+                    }).catch((err)=>{
+                        console.log(err);
+                        apiRes.success = false;
+                        apiRes.message = 'We couldn\'t update your data, try again!'
+                    }).then(()=>{
+                        res.status(200).json(apiRes)
+                    })
+                }else{
+                    res.status(200).json(apiRes)
+                }
+            })
+        }else{
+            doCatAction().then(()=>{
+                apiRes.success = true;
+                apiRes.message = 'Successfully updated the banner!'
+
+            }).catch((err)=>{
+                console.log(err);
+                apiRes.success = false;
+                apiRes.message = 'We couldn\'t update your data, try again! .'
+            }).then(()=>{
+                res.status(200).json(apiRes)
+            })
+            
+        }
+    }else{
+        apiRes.message= 'Some required fields are missing!'
+
+        res.status(200).json(apiRes)
+    }
+    
+})
+
+
+
+routes.get('/banner/get/:bid', async (req,res)=>{
+    let apiRes = JSON.parse(JSON.stringify(apiResponse));
+    apiRes.status=200
+    apiRes.message= 'No data available!'
+    apiRes.success = false;
+    banners.findOne({_id:req.params.bid}).then((data)=>{
+        if(data){
+            apiRes.data = data;
+            apiRes.success =true;
+            apiRes.message = 'data fetch successfull!'
+        }else{
+            apiRes.success =false;
+            apiRes.message = 'data not found!!'
+        }
+    })
+    .catch((err)=>{
+        console.log(err);
+        apiRes.message = '400 bad Request!'
+    })
+    .then(()=>{
+        res.status(apiRes.status).json(apiRes)
+    })
+})
+
+routes.post('/banner/delete',async (req,res)=>{
+    let apiRes = JSON.parse(JSON.stringify(apiResponse));
+    apiRes.success = false;
+    apiRes.status=200
+        console.log(req.body);
+
+        banners.findOne({_id:req.body.dltid}).then((data)=>{
+            if(data && data.image){
+                main.deleteFile(path.join(__dirname,'../public/uploads/banner/')+data.image)
+            }
+        })
+        banners.deleteOne({_id:req.body.dltid}).then((data)=>{
+            console.log(data);
+            apiRes.message = 'Your banner has been deleted.';
+            apiRes.success = true;
+            
+        }).catch((err)=>{
+            console.log(err);
+            apiRes.message = 'We couldn\'t complete your proccess, try again later...';
+        }).then(()=>{
+            res.status(apiRes.status).json(apiRes)
+        })
+    
 })
 
 

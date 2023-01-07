@@ -9,6 +9,7 @@ const categories = require('../models/categories');
 const products = require('../models/products');
 const coupons = require('../models/coupons');
 const orders = require('../models/orders');
+const banners = require('../models/banners');
 
 /*=======
 Setting a layout for all admin pages
@@ -129,7 +130,8 @@ routes.get('/order/:oid',async (req,res,next)=>{
     }
 })
 routes.get('/settings/banner',async (req,res,next)=>{
-    res.render('./admin/settings-banner', {page:'banner', pageName:"Banner Management", userData: res.locals.userData, pages: ['settings','banner_management']})  
+    let bannerList = await banners.find({})
+    res.render('./admin/settings-banner', {page:'banner', pageName:"Banner Management", userData: res.locals.userData, pages: ['settings','banner_management'], bannerList})  
 })
 
 /*=======

@@ -3,7 +3,7 @@
 let bcrypt = require('bcrypt')
 const path = require('path')
 var fs = require('fs');
-const sharpe = require('sharp')
+const sharp = require('sharp')
 
 
 var mainFunctions = {
@@ -147,7 +147,7 @@ var mainFunctions = {
         });
     },
     cropImage: (path, topath, cb)=>{
-        sharpe(path)
+        sharp(path)
             .resize({
               width: 300,
               height: 300

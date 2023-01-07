@@ -761,9 +761,9 @@ routes.post('/sentSms', function(req, res) {
     apiRes.success = false;
     
     if(res.locals.userData.phone_verified==false){
-        const accountSid = "AC9f53dacf185216d76be902986188f85f";
-        const authToken = process.env.TWILIO_AUTH_TOKEN || 'bc9e63a2fa9830dd592bf9ee9f0e20be';
-        const verifySid = "VA0851e3c6cd857eeb9c95ccbf16076911";
+        const accountSid = process.env.TWILIO_ACCOUNT_SID;
+        const authToken = process.env.TWILIO_AUTH_TOKEN ;
+        const verifySid = process.env.TWILIO_VERIFY_SID;
         const client = require("twilio")(accountSid, authToken);
         
         client.verify.v2
@@ -795,10 +795,10 @@ routes.post('/verifysmsotp', function(req, res) {
     
     if(res.locals.userData.phone_verified==false){
 
-        const accountSid = "AC9f53dacf185216d76be902986188f85f";
-        const authToken = process.env.TWILIO_AUTH_TOKEN || 'bc9e63a2fa9830dd592bf9ee9f0e20be';
-        const verifySid = "VA0851e3c6cd857eeb9c95ccbf16076911";
-        const client = require("twilio")(accountSid, authToken);
+        const accountSid = process.env.TWILIO_ACCOUNT_SID;
+        const authToken = process.env.TWILIO_AUTH_TOKEN ;
+        const verifySid = process.env.TWILIO_VERIFY_SID;
+        const client = require("twilio")(accountSid, authToken); 
         const otpCode = req.body.otp;
         
         client.verify.v2

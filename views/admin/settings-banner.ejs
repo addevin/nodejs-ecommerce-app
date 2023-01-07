@@ -1,5 +1,5 @@
 
-<div id="prodResponse" style="top: 0; left: 0; right: 0; z-index: 3; position: fixed;"></div>
+<div id="banrResponse" style="top: 0; left: 0; right: 0; z-index: 3; position: fixed;"></div>
 
 <div class="container bg-white my-2">
     <div class="d-flex justify-content-between py-1 mb-0">
@@ -20,20 +20,28 @@
     <div class="col-12 my-1 p-0">
         <div class="card w-100 border-0 ad-box-shadow p-0">
             <div class="card-header">
-                Details
+                BANNERS
             </div>
             <div class="card-body">
-              <div class="p-3 bg-primary rounded-2 text-white my-2 d-flex flex-column flex-md-row align-items-center">
-                <img src="http://localhost/assets/img/banner_img_03.jpg" alt="" style="max-width: 200px;">
-                <div class="p-2">
-                    <p class="h3">Header 1 </p>
-                    <p class="h4">Header 2 </p>
-                    <p>We bring you 100% free CSS templates for your websites. If you wish to support TemplateMo, please make a small contribution via PayPal or tell your friends about our website. Thank you. </p>
-                    <button class="btn btn-primary" onclick="getData()">
-                        EDIT
-                    </button>
+              <% if(bannerList.length <1){ %> 
+                <div class="text-center">
+                  <i class="bi bi-door-closed h1" ></i>
+                  <p class="text-secondary fw-bolder">No Data Found!</p>
                 </div>
-              </div>
+              <% } %> 
+              <% bannerList.forEach((val,i)=>{ %> 
+                <div class="p-3 rounded-2 text-white my-2 d-flex flex-column flex-md-row align-items-center" style="background-color: <%= val.bc %>;">
+                  <img src="/uploads/banner/<%= val.image %>" alt="" style="max-width: 200px;">
+                  <div class="p-2">
+                      <p class="h3" style="color: <%= val.tc %>;"><%= val.bh1 %>  </p>
+                      <p class="h4" style="color: <%= val.tc %>;"><%= val.bh2 %> </p>
+                      <p  style="color: <%= val.tc %>;"><%= val.para %> </p>
+                      <button class="btn btn-primary btn-sm" onclick="getData('<%= val._id %>')">
+                          EDIT
+                      </button>
+                  </div>
+                </div>
+              <% }) %> 
             </div>
         </div>
     </div>
@@ -51,8 +59,8 @@
         </div>
         <div class="modal-body" >
             <div id="bannerResponse"></div>
-            <form action="/adminapi/category/create" method="post" class="" novalidate=""  autocomplete="off" enctype="multipart/form-data" id="categoryForm">
-              <input type="file" name="catImg"  id="imageInput" class="d-none">
+            <form action="/adminapi/settings/banner/update" method="post" class="" novalidate="" onsubmit="submitData('banner'); return false;"  autocomplete="off" enctype="multipart/form-data" id="bannerForm">
+              <input type="file" name="banrImg"  id="imageInput" class="d-none">
               <div class="border">
                 <label for="imageInput" class="d-block">
                   <div id="image_drop_area" class="d-flex justify-content-center align-items-center mx-auto col-md-10 my-1 text-muted" style="
@@ -61,7 +69,7 @@
                     <p id="file_name"></p>
                   </div>
                 </label>
-                <div class="mb-3">
+                <div class="mb-3"> 
                     <label class="mb-2 text-muted" for="catname">Header1</label>
                     <input id="bannerh1" type="text" class="form-control" name="bh1" value="" required autofocus>
                 </div> 
@@ -71,30 +79,34 @@
                 </div> 
                 <div class="mb-3">
                     <label class="mb-2 text-muted" for="catname">Message</label>
-                    <input id="bannerh2" type="text" class="form-control" name="bh2" value="" required>
+                    <textarea name="para" id="para" cols="30" rows="10" class="form-control"></textarea>
                 </div> 
                 <div class="d-flex w-100">
-
                     <div class="mb-3 col-6">
                         <label class="mb-2 text-muted" for="catname">Text color</label>
-                        <input id="bannerh2" type="color" class="form-control" name="bh2" value="" required>
+                        <input id="bannertc" type="color" class="form-control" name="tc" value="" required>
                     </div> 
                     <div class="mb-3 col-6">
                         <label class="mb-2 text-muted" for="catname">Background color</label>
-                        <input id="bannerh2" type="color" class="form-control" name="bh2" value="" required>
+                        <input id="bannerbc" type="color" class="form-control" name="bc" value="" required>
                     </div>
                 </div> 
                 
 
-                <input type="hidden" name="action" value="" id="categoryAction">
-                <input type="hidden" name="id" value="" id="categoryid">
+                <input type="hidden" name="action" value="" id="bannerAction">
+                <input type="hidden" name="id" value="noData" id="bannerid">
                
 
                 <div class="align-items-center d-flex">
-                  <div id="catbuttons"></div>
-                    <button type="submit" class="btn btn-primary ms-auto" id="categoryBtn">
+                  <div id="bnrbuttons">
+                    
+                      <button class="btn btn-sm btn-danger" type="button" id="bannerDeleteBtn" onclick="deleteAsk()">Delete</button>
+                    
+                  </div>
+                    <button type="submit" class="btn btn-primary ms-auto" id="bannerBtn">
                         Loading..
                     </button>
+
                 </div>
             </form>
         </div>
@@ -103,6 +115,9 @@
   </div>
   
 
+  <form action="/adminapi/banner/delete/" method="post" onsubmit="DltBanner('banner','bannerDelete'); return false;" id="bannerDeleteForm" class="d-none">
+    <input type="hidden" name="dltid" id="bannerid2" value="noData">
+  </form>
 <script>
     $(document).ready(function () {
         $('#myTable').dataTable();
@@ -110,28 +125,84 @@
     
    
 function newData() {
+  $('#bnrbuttons').hide()
     toggleModal( 'bannerUpdateModal','show');
     $('#bannerHeaderLabel').html('New Banner')
-    $('#bannerLoader').html()
-    $('#bannerResponse').html()
+    $('#bannerLoader').html('')
+    $('#bannerResponse').html('')
+    $('#bannerBtn').html('Create')
+    $('#bannerAction').val('create')
+    $('#bannerForm')[0].reset()
+    $('#image_drop_area').html(`<p class="text-muted">Drag and Drop Image here</p>`) 
 }
 
+function deleteAsk(){
+      
+    Swal.fire({
+      title: 'Do you want to delete the banner?',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $('#bannerDeleteForm').submit()
+      }
+    })
+}
 function getData(id){
+  $('#bannerResponse').html('')
+  $('#bnrbuttons').show()
+  $('#bannerLoader').html('<span class="badge bg-primary">Loading..</span>')
+    $('#bannerHeaderLabel').html('Update Banner')
+    $('#bannerBtn').html('Update')
+    $('#bannerAction').val('update')
     toggleModal( 'bannerUpdateModal','show');
+    $.ajax({
+      type: "GET",
+      url: '/adminapi/banner/get/'+id,
+      data: {},
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+        $('#bannerLoader').html('')
 
+      console.log(data.message);
+      if(data.success == true){
+          $('#image_drop_area').html(`<img src="/uploads/banner/${data.data.image}" alt="">`) 
+          $('#bannerid').val(data.data._id)
+          $('#bannerid2').val(data.data._id)
+          $('#bannerh1').val(data.data.bh1)
+          $('#bannerh2').val(data.data.bh2)
+          $('#para').val(data.data.para)
+          $('#bannerbc').val(data.data.bc)
+          $('#bannertc').val(data.data.tc)
+          
+        }else{
+          $('#bannerLoader').html('<span class="badge bg-danger">Error detucted</span>')
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+            $('#banrResponse').html(resHTML)
+        }
+    });
 }
 function submitData(id){
-    
+  console.log('llllllllllllllllllllll');
 
-    let btn_data = $('#categoryBtn').html();
-    $('#categoryBtn').html('Loading...').prop('disabled', true);
+  let btn_data;
+  let url;
+
+    btn_data = $('#'+id+'Btn').html();
+    $('#'+id+'Btn').html('Loading...').prop('disabled', true);
+    url = $('#'+id+'Form').attr('action')
+
     var form = $('form')[0]; // You need to use standard javascript object here
     var formData = new FormData(form);
     //data: $('#categoryForm').serialize(),
 
     $.ajax({
       type: "POST",
-      url: $('#categoryForm').attr('action'),
+      url: url,
       data: formData,
       contentType: false,
       processData: false,
@@ -145,10 +216,9 @@ function submitData(id){
             '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
             '<strong>Success!</strong> '+data.message +
             '</div>';
-            $("form")[0].reset()
+            $('#'+id+'Form')[0].reset()
             setTimeout(()=>{
-
-              toggleModal( 'catupdateModal','hide');
+              toggleModal( 'bannerUpdateModal','hide');
             },1500)
         }else{
 
@@ -157,16 +227,50 @@ function submitData(id){
             '<strong>Error!</strong> '+data.message +
             '</div>';
         }
-    $('#categoryBtn').html(btn_data).prop('disabled', false);
-      $("#catResponse").html(resHTML)
+     
+          $('#'+id+'Btn').html(btn_data).prop('disabled', false);
+            $('#'+id+'Response').html(resHTML)
     });
 
     event.preventDefault();
- 
 }
 
 
+function DltBanner(id,data){
+  btn_data = $('#'+data+'Btn').html();
+    $('#'+data+'Btn').html('Loading...').prop('disabled', true);
+    url = $('#'+data+'Form').attr('action')
 
+  $.ajax({
+      type: "POST",
+      url: url,
+      data: $('#'+data+'Form').serialize(),
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      console.log(data.message);
+      if(data.success == true){
+
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+            $('#'+id+'Form')[0].reset()
+            setTimeout(()=>{
+              toggleModal( 'bannerUpdateModal','hide');
+            },1500)
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+     
+          $('#'+id+'Btn').html(btn_data).prop('disabled', false);
+            $('#'+id+'Response').html(resHTML)
+      })
+}
 
 
 
