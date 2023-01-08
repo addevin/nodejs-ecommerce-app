@@ -64,4 +64,8 @@ routes.get('/reset/:key/:id',async (req,res,next)=>{
 }) 
 
 
+routes.get('/test',(req,res)=>{
+    res.render('./auth/testLogin', {pageName: "Login"})
+})
+
 module.exports = routes;

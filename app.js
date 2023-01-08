@@ -52,7 +52,7 @@ app.use(session({secret: mainModule.randomGen(15), cookie:{maxAge:60000000000}})
 
 app.set("view engine", "ejs")
 app.set("layout", path.join(__dirname,'views/layout/base-layout'))
-app.set("views", path.join(__dirname,'views'))
+app.set("views", path.join(__dirname,'views')) 
 
 
 app.use('/admin',adminRoutes)

@@ -51,7 +51,7 @@ routes.get('/shop',async (req,res,next)=>{
         try {
             
             productsList = await products.find({category:req.query.cat}).populate('category')
-        } catch (error) {
+        } catch (error) { 
             console.log(error);
             next(createError(404))
         }
@@ -81,8 +81,22 @@ routes.get('/product/:size/:id',async (req,res,next)=>{
 
     try {
         let product = await products.findOne({_id:req.params.id})
+        let wordArr = product.discription.split(' ');
+        wordArr = wordArr.map((val)=>{
+            val = val.replace(/./,'').replace(/:/,'').replace(/-br/,'').replace(/\r/,'').replace(/\n/,'').replace(/[0-9]/g, '')
+            
+                return val;
+            
+        })
+        let wordArr2 = product.specification.split(' ');
+        wordArr2 = wordArr2.map((val)=>{
+            val = val.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&").replace(/[0-9]/g, '').replace(/\*/g,'').replace(/./,'').replace(/:/,'').replace(/\r/,'').replace(/\n/,'')
+                return val;
+        })
+        console.log(wordArr2.toString()+wordArr.toString());
+        let suggestedProducts = await products.aggregate([{$match:{$or:[{tags:{$in:product.tags}},{category:product.category},{specification:{$in:wordArr2}}]}},{$limit:40}]) // IF U DON"T WANT TO SHOW THE SAME PRODUCT IN SUGGESTION< THE ADD =>  {$match:{_id:{$ne:product._id}}},
         if(product.sizes.length>=req.params.size){
-            res.render('user/product', {pageName: product.name, product,selectedSize:req.params.size})
+            res.render('user/product', {pageName: product.name, product,selectedSize:req.params.size,suggestedProducts})
         }else{
             next(createError(404))
         }

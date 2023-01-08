@@ -11,6 +11,7 @@ const products = require('../models/products');
 const coupons = require('../models/coupons');
 const orders = require('../models/orders');
 const banners = require('../models/banners');
+const { match } = require('assert');
 
 const uploads = multer({
     dest: path.join(__dirname,'../public/uploads/temp/')
@@ -25,31 +26,6 @@ var apiResponse = {
     args: {}
 }
 
-/*=======
-Creat admin account
-========*/
-routes.get('/create/:email',(req,res)=>{
-    let newAdm = {
-        username: "admin_"+main.randomGen(5),
-        password: main.randomGen(8)
-    }
-    const createAdmin = new admins(
-        {
-            username: newAdm.username,
-            password: main.hashPassword(newAdm.password),
-            email: req.params.email
-        }
-    )
-    createAdmin.save().then(()=>{
-        newAdm.email = req.params.email;
-        res.status(200).json(newAdm);
-    }).catch((err)=>{
-        console.log(err);
-        res.status(200).json("Error Detucted");
-
-    })
-})
- // {"username":"admin_2ld8D","password":"dxpz7QiY","email":"adil.akp1@gmail.com"}
 
  /*=======
 Admin login validator API
@@ -100,7 +76,12 @@ routes.use(async (req,res,next)=>{
     let isUserLoggedin = await adminModule.authCheck(req);
     if(isUserLoggedin){
         res.locals.userData = await admins.findOne({_id:req.session.adminid})
-        next();
+        if(res.locals.userData.username!='test_user'){
+            next();
+        }else{
+            apiResponse.message = 'You are in test mode of this website, signup to get full access!';
+            res.status(200).json(apiResponse);
+        }
     }else{
         apiResponse.message = "You have not authorized to access!"
         res.status(200).json(apiResponse)
@@ -869,6 +850,130 @@ routes.post('/banner/delete',async (req,res)=>{
         })
     
 })
+
+
+/*=======
+Creat admin account
+========*/
+routes.post('/admin/create',(req,res)=>{
+    let apiRes = JSON.parse(JSON.stringify(apiResponse));
+    apiRes.success = false;
+    apiRes.status=200
+    apiRes.message = 'Missing some fields!'
+
+    if(req.body.name && req.body.email){
+
+        let newAdm = {
+            username: "admin_"+main.randomGen(5),
+            password: main.randomGen(8),
+            name: req.body.name,
+            email: req.body.email
+        }
+        const createAdmin = new admins(
+            {   
+                username: newAdm.username,
+                name: newAdm.name,
+                password: main.hashPassword(newAdm.password),
+                email: newAdm.email
+            }
+        )
+        createAdmin.save().then(()=>{
+            newAdm.email = req.params.email;
+            apiRes.message = 'Saved new admin!';
+            apiRes.success = true;
+            apiRes.data = newAdm;
+        }).catch((err)=>{
+            console.log(err);
+            apiRes.message = 'Something went wrong!'
+        }).then(()=>{
+            res.status(200).json(apiRes);
+            
+        })
+    }else{
+        res.status(200).json(apiRes);
+
+    }
+})
+
+
+ // {"username":"admin_2ld8D","password":"dxpz7QiY","email":"adil.akp1@gmail.com" hash: $2b$10$qx4Oh4fEk5Ep86Z0xag7BeHG7O9HJyTtOgVWIeXNAD2CCNsIUXB.2}
+
+
+ routes.post('/admin/remove',(req,res)=>{
+    let apiRes = JSON.parse(JSON.stringify(apiResponse));
+    apiRes.success = false;
+    apiRes.status=200
+    apiRes.message = 'Missing some fields!'
+
+    if(req.body.id){
+        if(req.body.id.toString() !== req.session.adminid.toString()){
+
+            admins.remove({_id:req.body.id})
+           .then(()=>{
+                apiRes.message = 'Removed the Admin!';
+                apiRes.success = true;
+            }).catch((err)=>{
+                console.log(err);
+                apiRes.message = 'Something went wrong!'
+            }).then(()=>{
+                res.status(200).json(apiRes);
+                
+            })
+        }else{
+            apiRes.message = 'You can\'t delete your account!'
+            res.status(200).json(apiRes);
+        }
+    }else{
+        res.status(200).json(apiRes);
+
+    }
+})
+ routes.post('/admin/profile/edit',(req,res)=>{
+    let apiRes = JSON.parse(JSON.stringify(apiResponse));
+    apiRes.success = false;
+    apiRes.status=200
+    apiRes.message = 'Missing some fields!'
+    let readyToUpdate = false;
+    let dataToUpdate = {}
+    if(req.body.name){
+        dataToUpdate.name =req.body.name 
+        readyToUpdate = true;
+    }
+    
+    if(req.body.email){
+        dataToUpdate.email =req.body.email 
+        readyToUpdate = true;
+    }
+
+    if(req.body.password || req.body.repassword){
+        if(req.body.password === req.body.repassword){
+            
+            dataToUpdate.password = main.hashPassword(req.body.password)
+            readyToUpdate = true;
+        }else{
+            readyToUpdate = false;
+            apiRes.message = 'Password didn\'t match, try again ';
+        }
+    }
+
+    if(readyToUpdate){
+            admins.updateOne({_id:req.session.adminid},{$set:dataToUpdate})
+           .then(()=>{
+                apiRes.message = 'Changes are saved!';
+                apiRes.success = true;
+            }).catch((err)=>{
+                console.log(err);
+                apiRes.message = 'Something went wrong!'
+            }).then(()=>{
+                res.status(200).json(apiRes);
+                
+            })
+    }else{
+        res.status(200).json(apiRes);
+
+    }
+})
+
 
 
 /*=======

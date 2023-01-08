@@ -12,6 +12,8 @@ const orders = require('../models/orders');
 const coupons = require('../models/coupons');
 const Razorpay = require('razorpay');
 const crypto = require("crypto");
+const admins = require('../models/admins');
+const config = require('config');
 
 
 
@@ -41,6 +43,56 @@ routes.use(async (req,res,next)=>{
         res.locals.login = false;
         next();
     }
+})
+
+routes.post('/auth/testmode',(req,res)=>{
+    let apiRes = JSON.parse(JSON.stringify(apiResponse));
+    apiRes.message = 'No result found!';
+    apiRes.status = 200;
+    apiRes.success = false
+    let toUpdate = {}
+    let userData = {
+        name: 'test user'
+    }
+    let dataToSearch = {username:'test_user'}
+    let loginuserData = {username:'test_user'}
+
+        if(config.get('server.test_mode.state')){
+
+            toUpdate.login_sess = mainModule.randomGen(15);
+            toUpdate.last_login = Date.now()
+            req.session.login_sess = toUpdate.login_sess;
+            req.session.userid = config.get('server.test_mode.user_id');
+            users.updateOne(dataToSearch, toUpdate).then(()=>{
+    
+                let userloginUpdate = {};
+                userloginUpdate.login_sess = mainModule.randomGen(15);
+                userloginUpdate.last_login = Date.now()
+                req.session.login_sess_admin = userloginUpdate.login_sess;
+                req.session.adminid = config.get('server.test_mode.admin_id');
+                apiRes.success = true;
+                admins.updateOne( loginuserData ,userloginUpdate).then(()=>{
+                    apiRes.message="Welcome "+ userData.name + ", You have granted access to the pages listed below!";
+                    console.log('Admin loggedin ('+userData.name+")");
+                    apiRes.success = true;
+                    res.status(apiRes.status).json(apiRes)
+                }).catch((err)=>{
+                    console.log(err);
+                    apiRes.message = 'Something went wrong!'
+                    res.status(apiRes.status).json(apiRes)
+                })
+            }).catch((err)=>{
+                console.log(err);
+                apiRes.message = 'Something went wrong!'
+                res.status(apiRes.status).json(apiRes)
+            })
+        }else{
+            apiRes.message = 'Test user is disabled!'
+            res.status(apiRes.status).json(apiRes)
+        }
+
+
+        
 })
 
 routes.post('/searchSuggest', async (req,res,next)=>{
@@ -392,7 +444,12 @@ Checking valid user or not
 routes.use((req,res,next)=>{
     let apiRes = JSON.parse(JSON.stringify(apiResponse));
     if(res.locals.login){
-        next();
+        if(res.locals.userData.username !='test_user'){
+            next();
+        }else{
+            apiRes.message = 'You are in test mode of this website, signup to get full access!';
+            res.status(200).json(apiRes);
+        }
     }else{
         apiRes.message = 'You have not authorized to access!!';
         res.status(200).json(apiRes);

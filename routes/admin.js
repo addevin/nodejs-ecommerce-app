@@ -133,6 +133,13 @@ routes.get('/settings/banner',async (req,res,next)=>{
     let bannerList = await banners.find({})
     res.render('./admin/settings-banner', {page:'banner', pageName:"Banner Management", userData: res.locals.userData, pages: ['settings','banner_management'], bannerList})  
 })
+routes.get('/settings/profile',async (req,res,next)=>{
+    res.render('./admin/profile', {page:'profile', pageName:"Account Management", userData: res.locals.userData, pages: ['settings','profile'], })  
+})
+routes.get('/settings/admins',async (req,res,next)=>{
+    let adminList = await admins.find({});
+    res.render('./admin/admins', {page:'admins', pageName:"Admin Management", userData: res.locals.userData, pages: ['settings','admins'],adminList })  
+})
 
 /*=======
 catch 404 and forward to error handler
