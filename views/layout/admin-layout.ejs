@@ -79,6 +79,7 @@
           <div class="collapse ms-3" id="settings-collapse">
             <ul class="btn-toggle-nav fw-normal pb-1">
               <li><a href="/admin/settings/banner" class="link-white text-decoration-none rounded text-white">Banner</a></li>
+              <li><a href="/admin/settings/admins" class="link-white text-decoration-none rounded text-white">Admins</a></li>
             </ul>
           </div>
         </li>
@@ -92,8 +93,8 @@
           <strong class="text-capitalize"><%= userData.username %></strong>
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow" style="">
-          <li><a class="dropdown-item" href="/admin/users/update/{{adminuserData._id}}">Settings</a></li>
-          <li><a class="dropdown-item" href="/admin/users/update/{{adminuserData._id}}">Profile</a></li>
+          <li><a class="dropdown-item" href="#">Settings</a></li>
+          <li><a class="dropdown-item" href="/admin/settings/profile">Profile</a></li>
           <li>
             <hr class="dropdown-divider">
           </li>

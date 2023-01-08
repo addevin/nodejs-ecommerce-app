@@ -1,0 +1,117 @@
+<div id="adminRes" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9;"></div>
+
+
+<div class="container bg-white my-2">
+    <div class="d-flex justify-content-between border-bottom py-3 mb-2">
+
+        <h2 class=" text-muted p-0">
+            <i class="bi bi-shield-lock"></i> Profile
+        </h2>
+    </div>
+    <div class=" w-100">
+        <div class="col-12 col-md-6 mx-auto">
+            <form action="" method="post" id="profileUpdationForm">
+                <div class="mb-1">
+                    <label for="">Username</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">@</span>
+                        <input type="text" class="form-control" placeholder="Username" aria-label="Username" value="<%=userData.username %>" disabled>
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <label for="">Name</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Name" name="name" aria-label="Name" value="<%=userData.name %>" >
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <label for="">
+                        Email
+                    </label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" name="email" placeholder="admin@email.com" aria-label="email"  value="<%=userData.email %>">
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <label for="">
+                        Password
+                    </label>
+                    <div class="input-group mb-3">
+                        <input type="password" class="form-control" name="password" placeholder="Password" aria-label="Password" >
+                        <input type="password" class="form-control" name="repassword" placeholder="Re Password" aria-label="Password" >
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <button type="submit" class="btn btn-primary w-100" id="profileUpdateBtn"><i class="fa-solid fa-gear"></i> SAVE</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="accountActionsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Account Actions </h5> <div id="acLoaderStatus"></div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" >
+            <h5 id="uname" class="text-muted">Loading..</h5>
+            <p id="acMessage" class="text-muted"></p>
+        </div>
+        <div class="modal-footer" id="acbuttons">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+<script>
+    $(document).ready(function () {
+        $('#myTable').dataTable();
+    });
+    
+  
+$(document).ready(function () {
+  $("form").submit(function (event) {
+    let btn_data = $('#profileUpdateBtn').html();
+    $('#profileUpdateBtn').html('<i class="fa-solid fa-gear fa-spin"></i> Saving...').prop('disabled', true);
+
+    $.ajax({
+      type: "POST",
+      url: '/adminapi/admin/profile/edit',
+      data: $('#profileUpdationForm').serialize(),
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      console.log(data.message);
+      if(data.success == true){
+
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+    $('#profileUpdateBtn').html(btn_data).prop('disabled', false);
+      $("#adminRes").html(resHTML)
+    });
+
+    event.preventDefault();
+  });
+});
+
+
+</script>

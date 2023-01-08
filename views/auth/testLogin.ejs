@@ -1,0 +1,111 @@
+
+
+    <!-- Modal -->
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="w-100 pt-1 mb-5 text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="get" class="modal-content modal-body border-0 p-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
+                    <button type="submit" class="input-group-text bg-success text-light">
+                        <i class="fa fa-fw fa-search text-white"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+<!-- Login content -->
+<section class="h-100 bg-light" style="min-height:100vh ;">
+    <div class="container h-100">
+        <div class="row justify-content-sm-center h-100">
+            <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+                <div class="text-center my-5">
+                    <h1 class="text-primary">
+                        Addev Login
+                    </h1>
+                </div>
+                <div class="card shadow-lg">
+                    <div class="card-body p-5">
+                        <div  id="response"></div>
+
+                        <h1 class="fs-4 card-title fw-bold mb-4">Test Login</h1>
+                        
+
+                            <div class="d-flex align-items-center flex-column flex-md-row" id="buttonsList">
+                                Auth free login: 
+                                <button type="submit" class="btn btn-primary ms-auto" id="regBTN">
+                                     Login
+                                </button>
+                                
+                            </div>
+                    </div>
+                    <div class="card-footer py-3 border-0">
+                        <div class="text-center">
+                            Don't have an account? <a href="/auth/register" class="text-dark">Create One</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-5 text-muted">
+                    Copyright &copy; 2022 &mdash; AdDev Design
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Login content End -->
+
+
+
+    <!-- End Script -->
+    <script>
+      
+
+$(document).ready(function () {
+
+  $("#regBTN").click(function (event) {
+    $('#regBTN').html('loging in...').prop('disabled', true);
+    
+
+    $.ajax({
+      type: "POST",
+      url: "/api/auth/testmode",
+      data: {},
+      dataType: "json", 
+      encode: true,
+    }).done(function (data) {
+      console.log(data.message);
+      if(data.success == true){
+
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+
+                // location.reload();
+                $('#buttonsList').html(`
+                <a href="/" class="btn btn-success d-block me-1 my-1">Home</a>
+                <a href="/dash/profile/" class="btn btn-success d-block ms-1 my-1">User dash</a>
+                <a href="/admin/" class="btn btn-success d-block ms-1 my-1">Admin dash</a>
+                `)
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+    $('#regBTN').html('Login').prop('disabled', false);
+      $("#response").html(resHTML)
+    });
+
+    event.preventDefault();
+  });
+});
+
+
+
+    </script>

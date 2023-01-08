@@ -1,0 +1,10 @@
+{
+    "server": {
+        "test_mode":{
+            "state": true,
+            "user_id": "63bac8075efaaa71d71cfab1",
+            "admin_id" : "63bac7cb5efaaa71d71cfa95"
+        }
+      
+    }
+}
