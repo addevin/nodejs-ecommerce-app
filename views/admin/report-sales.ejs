@@ -1,0 +1,179 @@
+<div id="adminRes" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9;"></div>
+
+<div class="container bg-white my-2">
+    <div class="d-flex justify-content-between border-bottom py-3 mb-2">
+
+        <h2 class=" text-muted p-0">
+            <i class="bi bi-bar-chart-line"></i> Sales Report
+        </h2>
+    </div>
+    <div class="ad-responsive-table w-100">
+      <table id="myTable" class="table table-striped table-bordered table-responsive table-hover ">
+          <thead>
+              <tr>
+                  <th>Sr No.</th>
+                  <th>Date</th>
+                  <th>orderid</th>
+                  <th>Customer</th>
+                  <th>Items</th>
+                  <th>Bill amount</th>
+                  <th>Discount</th>
+                  <th>Total bill</th>
+              </tr>
+          </thead>
+          <tbody>
+
+              <% salesData.forEach((val,ind)=>{ %>
+
+
+              
+              <tr>
+                  <td><%= ind+1 %></td>
+                  <td><%= val.ordered_date.getDate() %>/<%= val.ordered_date.getMonth()+1 %>/<%= val.ordered_date.getFullYear() %></td>
+                  <td class="small"><%=val._id%></td>
+                  <td >@<%=val.userid.username%></td>
+                  <td ><%=val.products.length%></td>
+                  <td ><%=val.bill_amount%></td>
+                  <td><%=val.coupen.discount%></td>
+                  <td>
+                    <%=val.bill_amount%> 
+                  </td>
+              </tr>
+
+              <%})%>
+          </tbody>
+      </table>
+    </div>
+</div>
+
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="adminNewModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Create Admin </h5> <div id="acLoaderStatus"></div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" >
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+
+<script>
+    // $(document).ready(function () {
+    //     $('#myTable').dataTable();
+    // });
+    
+   
+    function catDelete ( btn, uid, contType) {
+      let btnData = $('#'+btn).html()
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          if(contType=='icon'){
+            $('#'+btn).html('<i class="fa-solid fa-spinner fa-spin"></i>').prop('disabled',true);
+          }else{
+            $('#'+btn).html('Deleting...').prop('disabled',true);
+          }
+          $.ajax({
+            type: "POST",
+            url: "/adminapi/admin/remove/",
+            data: {
+                id:uid
+            },
+            dataType: "json",
+            encode: true, 
+          }).done(function (data) {
+            
+            if(data.success == true){
+              if(contType=='icon'){
+                $('#'+btn).html('<i class="bi bi-check-circle-fill"></i>').prop('disabled',true);
+              }else{
+                $('#'+btn).html('Deleted!').prop('disabled',true);
+              }
+              Swal.fire(
+                'Deleted!',
+                data.message,
+                'success'
+                )
+                
+            }else{
+              $('#'+btn).html(btnData).prop('disabled',false);
+              Swal.fire(
+                'Error Detucted',
+                data.message,
+                'error'
+              )
+            }
+          });
+        }
+        
+      })
+     
+
+  }
+
+
+  
+$(document).ready(function () {
+  $("form").submit(function (event) {
+    let btn_data = $('#addAdminBTN').html();
+    $('#addAdminBTN').html('Loading...').prop('disabled', true);
+    var form = $('form')[0]; // You need to use standard javascript object here
+    var formData = new FormData(form);
+    console.log(formData);
+    //data: $('#categoryForm').serialize(),
+
+    $.ajax({
+      type: "POST",
+      url: '/adminapi/admin/create',
+      data: $('#accntCreationForm').serialize(),
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      console.log(data.message);
+      console.log(data);
+      if(data.success == true){
+
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+            $("form")[0].reset()
+
+              toggleModal( 'adminNewModal','hide');
+              toggleModal( 'adminDataModal','show');
+              $('#newAdmnData').html(JSON.stringify(data.data))
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+    $('#addAdminBTN').html(btn_data).prop('disabled', false);
+      $("#adminRes").html(resHTML)
+    });
+
+    event.preventDefault();
+  });
+});
+
+function newAdmin(){
+    toggleModal('adminNewModal','show');
+}
+</script>

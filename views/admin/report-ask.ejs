@@ -1,0 +1,54 @@
+<div id="adminRes" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9;"></div>
+
+
+<div class="container bg-white my-2">
+    <div class="d-flex justify-content-between border-bottom py-3 mb-2">
+
+        <h2 class=" text-muted p-0">
+            <i class="bi bi-bar-chart-line-fill"></i> Report
+        </h2>
+    </div>
+    <div class=" w-100">
+        <div class="col-12 col-md-6 mx-auto bg-primary p-5 text-white">
+            <form action="" method="post" id="reportForm">
+                <div class="mb-1">
+                    <label for="" class=" text-white">Report</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1"><i class="bi bi-clipboard-data"></i></span>
+                        <select name="" id="report"  class="form-control" onchange="changeAction()">
+                            <option disabled selected>Select</option>
+                            <option value="sales" >Sales</option>
+                            <option value="return" >Return</option>
+                        </select>
+                        
+                    </div>
+                </div>
+                
+                <div class="mb-1">
+                    <label for="" class=" text-white">
+                        Date (from - to)
+                    </label>
+                    <div class="input-group mb-3">
+                      <input type="datetime-local" class="form-control" name="Date" placeholder="Date" aria-label="Date" id="fromDate" onchange="changeAction()">
+                    </div>
+                    <div class="input-group mb-3">
+                      <input type="datetime-local" class="form-control" name="toDate" placeholder="toDate" aria-label="toDate" id="toDate" onchange="changeAction()">
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <button type="submit" class="btn btn-dark w-100" id="reportBtn" disabled><i class="bi bi-clipboard-data"></i> Open Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+  function changeAction(){
+    if($('#report').val() && $('#fromDate').val() && $('#toDate').val()){
+      $('#reportForm').attr('action','/admin/report/'+$('#report').val())
+      $('#reportBtn').prop('disabled',false)
+    }
+  }
+</script>

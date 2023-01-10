@@ -1,19 +1,4 @@
-  <!-- Modal -->
-  <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="w-100 pt-1 mb-5 text-right">
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form action="" method="get" class="modal-content modal-body border-0 p-0">
-            <div class="input-group mb-2">
-                <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
-                <button type="submit" class="input-group-text bg-success text-light">
-                    <i class="fa fa-fw fa-search text-white"></i>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+
 
 
 
@@ -41,8 +26,10 @@
                         <i class="pull-right fa fa-fw fa-chevron-circle-down mt-1"></i>
                     </a>
                     <ul id="collapseTwo" class="collapse list-unstyled pl-3">
-                        <li><a class="text-decoration-none" href="#">Sort Name</a></li>
-                        <li><a class="text-decoration-none" href="#">Sort Price</a></li>
+                        <li><a class="text-decoration-none" href="#">Sort by Name (a-z)</a></li>
+                        <li><a class="text-decoration-none" href="#">Sort by Name (z-a)</a></li>
+                        <li><a class="text-decoration-none" href="#">Sort by Price (L-S)</a></li>
+                        <li><a class="text-decoration-none" href="#">Sort by Price (S-L)</a></li>
                     </ul>
                 </li>
                 <li class="pb-3">
@@ -81,10 +68,12 @@
                 </div> -->
                 <div class="col-md-6 pb-4 ms-auto">
                     <div class="d-flex">
-                        <select class="form-control">
-                            <option disabled>Sort by</option>
-                            <option>A to Z</option>
-                            <option>Item</option>
+                        <select class="form-control" name="sortid" id="sortingInp" onchange="console.log(this)">
+                            <option disabled selected>Sort by</option>
+                            <option value="naz">Srot by name (a-z)</option>
+                            <option value="nza">Srot by name (x-a)</option>
+                            <option value="pls">Srot by price (l-s)</option>
+                            <option value="psl">Srot by price (s-l)</option>
                         </select>
                     </div>
                 </div>

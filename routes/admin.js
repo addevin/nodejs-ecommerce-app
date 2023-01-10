@@ -64,7 +64,7 @@ routes.get('/logout',(req,res)=>{
     res.redirect('/admin/login')
 })
 routes.get('/users',async (req,res)=>{
-    let userslist = await users.find({});
+    let userslist = await users.find({'state.deleted':{$ne:true}});
 
         res.render('./admin/users', {page:'users', pageName:"Users ", userData: res.locals.userData, pages: ['users'],userslist})
     
@@ -138,6 +138,14 @@ routes.get('/settings/profile',async (req,res,next)=>{
 routes.get('/settings/admins',async (req,res,next)=>{
     let adminList = await admins.find({});
     res.render('./admin/admins', {page:'admins', pageName:"Admin Management", userData: res.locals.userData, pages: ['settings','admins'],adminList })  
+})
+routes.get('/report/',async (req,res,next)=>{
+    
+    res.render('./admin/report-ask', {page:'report', pageName:"Report", userData: res.locals.userData, pages: ['report'] })  
+})
+routes.post('/report/sales',async (req,res,next)=>{
+    let salesData = await orders.find({order_status:'completed'}).sort({ordered_date:-1}).populate('userid')
+    res.render('./admin/report-sales', {page:'report', pageName:"Sales Report", userData: res.locals.userData, pages: ['report','sales'] ,salesData})  
 })
 
 /*=======

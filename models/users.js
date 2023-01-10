@@ -29,6 +29,9 @@ const userSchema = new mongoose.Schema(
                 },
             ]
         ,
+        state:{
+            deleted:{type:Boolean, default:false},
+        },
         wishlist:[mongoose.Schema.Types.ObjectId],
         status:  {type:String, default: "active"},
         login_sess:  {type:String},

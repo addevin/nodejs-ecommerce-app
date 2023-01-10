@@ -103,7 +103,7 @@ routes.get('/shop',async (req,res,next)=>{
 routes.get('/product/:size/:id',async (req,res,next)=>{
     
     try {
-        let product = await products.findOne({_id:req.params.id})
+        let product = await products.findOne({_id:req.params.id,'state.deleted':{$ne:true}})
         let wordArr = product.discription.split(' ');
         wordArr = wordArr.map((val)=>{
             val = val.replace(/./,'').replace(/:/,'').replace(/-br/,'').replace(/\r/,'').replace(/\n/,'').replace(/[0-9]/g, '')

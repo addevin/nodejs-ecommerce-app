@@ -212,7 +212,9 @@ routes.post('/loginvalidate',(req,res,next)=>{
     let apiRes = JSON.parse(JSON.stringify(apiResponse));
 
     // res.render('./admin/login', {page:'home', pageName:"Login", layout:'layout/admin-base-layout', successLoginAttempt:false})
-    let dataToSearch = {}
+    let dataToSearch = {
+        'state.deleted':{$ne:true}
+    }
     let toUpdate = {}
     apiRes.status = 200;
     if(mainModule.validateEmail(req.body.user)){
@@ -535,7 +537,7 @@ routes.post('/updateuserdata',async (req,res)=>{
         }
     }else{
         if(readyToDelete==false && readyToUpdate ==false){ // SENT ERROR ONLY IF THERE IS NOTHING TO UPDATE WHICH IS NOT REQUIRED THE PHONE VERIFICATION LIKE PHONE NUMBER
-            apiRes.message = 'Phone number verification is required!1';
+            apiRes.message = 'Phone number verification is required!';
             res.status(200).json(apiRes);
         }
     }
@@ -571,7 +573,7 @@ routes.post('/updateuserdata',async (req,res)=>{
                 res.status(apiRes.status).json(apiRes)
             })
     }else if(readyToDelete){
-        users.deleteOne({_id:res.locals.userData._id}).then(()=>{
+        users.updateOne({_id:res.locals.userData._id},{$set:{'state.deleted':true}}).then(()=>{
             apiRes.message='User account deleted successfully!'
             apiRes.success = true;
         }).catch((err)=>{

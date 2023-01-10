@@ -6,7 +6,7 @@ let usersModules = {
         return new Promise( async(resolve,reject)=>{
 
             let isUserLogged = false;
-            let userData = await users.findOne({_id:reqData.session.userid})
+            let userData = await users.findOne({_id:reqData.session.userid, 'state.deleted':{$ne:true}})
             if(userData){
                 if(userData._id == reqData.session.userid && userData.login_sess == reqData.session.login_sess){
                     isUserLogged = true;
