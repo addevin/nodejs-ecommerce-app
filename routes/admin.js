@@ -89,8 +89,7 @@ routes.get('/categories',async (req,res)=>{
 
 
 routes.get('/products',async (req,res)=>{
-    // let prodlist = await products.aggregate([{$lookup:{from:'categories',localField:'category', foreignField:'_id', as:'catData'}}]);
-    let prodlist = await products.find({}).populate('category');
+    let prodlist = await products.find({'state.deleted':{$ne:true}}).populate('category');
     res.render('./admin/products', {page:'products', pageName:"Products ", userData: res.locals.userData, pages: ['products'], prodlist})
 })
 routes.get('/products/add',async (req,res)=>{
@@ -111,8 +110,8 @@ routes.get('/products/edit/:id',async (req,res,next)=>{
 })
 
 routes.get('/coupons',async (req,res)=>{
-    let couplist = await coupons.find({});
-
+    let couplist = await coupons.find({}).populate('last_updated_user')
+console.log(couplist);
         res.render('./admin/coupons', {page:'coupons', pageName:"Coupons ", userData: res.locals.userData, pages: ['coupons'],couplist})
 })
 routes.get('/orders',async (req,res)=>{

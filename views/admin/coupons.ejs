@@ -33,7 +33,7 @@
                   <td><%= ind+1 %></td>
                   <td class="text-capitalize"><%=val.name%></td>
                   <td><%=val.code%></td>
-                  <td><%=val.last_updated_user%></td>
+                  <td>@<%=val.last_updated_user.username%></td>
                   <td title="<%=val.last_updated%>"><%=val.last_updated.getDate() %>/<%=val.last_updated.getMonth()+1 %>/<%=val.last_updated.getFullYear() %></td>
                   <td title="<%=val.expire%>"><%=val.expire.getDate() %>/<%=val.expire.getMonth()+1 %>/<%=val.expire.getFullYear() %></td>
                   <td title=""><% if( val.expire<=new Date()){ %><span class="badge  bg-danger ">expired</span> <% }else{ %><span class="badge  bg-success ">active</span><% } %>  </td>
@@ -174,8 +174,8 @@
         $.ajax({
           type: "GET",
           url: "/adminapi/coupon/get/"+ cid,
-         dataType: "json",
-        encode: true, 
+          dataType: "json",
+          encode: true, 
         }).done(function (data) {
           if(data.success == true){
             //coupName,coupCode,coupMinBill,coupDiscount,coupExpire

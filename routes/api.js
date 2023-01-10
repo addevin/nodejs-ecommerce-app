@@ -106,7 +106,7 @@ routes.post('/searchSuggest', async (req,res,next)=>{
         if(req.body.q){
 
             let regex = new RegExp('^'+skey+'.*','i');
-            let productlist = await products.aggregate([{$match:{ $or: [{name: regex },{discription: regex},{specification: regex},{tags: regex}] }}])
+            let productlist = await products.aggregate([{$match:{ $or: [{name: regex },{discription: regex},{specification: regex},{tags: regex}],'state.deleted':{$ne:true} }}])
             productlist.forEach((val,i)=>{
                 sResult.push({title:val.name,type:'Product',id:val._id})
             })
@@ -608,7 +608,7 @@ Updaing and deleting address API
 routes.post('/updateAddress',checkPhoneVerified, async function(req, res) {
     let readyToUpdate = false;
     let readyToDelete = false;
-    let dataToCreate = {address:{$:{}}}
+    let dataToCreate = {}//address:{$:{}}
     let dataToUpdate = {}
     let apiRes = JSON.parse(JSON.stringify(apiResponse));
     apiRes.status = 200;

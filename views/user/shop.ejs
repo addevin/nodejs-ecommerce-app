@@ -37,12 +37,12 @@
                 </li>
                 <li class="pb-3">
                     <a class="collapsed d-flex justify-content-between h3 text-decoration-none" href="#">
-                        Sale
+                        Sorting
                         <i class="pull-right fa fa-fw fa-chevron-circle-down mt-1"></i>
                     </a>
                     <ul id="collapseTwo" class="collapse list-unstyled pl-3">
-                        <li><a class="text-decoration-none" href="#">Sport</a></li>
-                        <li><a class="text-decoration-none" href="#">Luxury</a></li>
+                        <li><a class="text-decoration-none" href="#">Sort Name</a></li>
+                        <li><a class="text-decoration-none" href="#">Sort Price</a></li>
                     </ul>
                 </li>
                 <li class="pb-3">
@@ -65,8 +65,8 @@
             <% }else if(typeData.type=='catlisting' && productsList.length >0){ %> 
                 <h3 class="text-secondary"><%= productsList[0].category.name %> </h3>
             <% } %> 
-            <!--div class="row">
-                <div class="col-md-6">
+            <div class="row">
+                <!-- <div class="col-md-6">
                     <ul class="list-inline shop-top-menu pb-3 pt-1">
                         <li class="list-inline-item">
                             <a class="h3 text-dark text-decoration-none mr-3" href="#">All</a>
@@ -78,17 +78,17 @@
                             <a class="h3 text-dark text-decoration-none" href="#">Women's</a>
                         </li>
                     </ul>
-                </div>
-                <div class="col-md-6 pb-4">
+                </div> -->
+                <div class="col-md-6 pb-4 ms-auto">
                     <div class="d-flex">
                         <select class="form-control">
-                            <option>Featured</option>
+                            <option disabled>Sort by</option>
                             <option>A to Z</option>
                             <option>Item</option>
                         </select>
                     </div>
                 </div>
-            </div-->
+            </div>
             <div class="row">
                 <% if(productsList.length ==0){ %> 
                     <h1 class="text-muted">No result found!</h1>
@@ -98,7 +98,7 @@
                 <div class="col-md-3">
                     <div class="card mb-4 product-wap hoverZoom rounded-0">
                         <div class="card rounded-0">
-                            <img class="card-img rounded-0 img-fluid squireImg" src="./<%= val.image[0] %> ">
+                            <img class="card-img rounded-0 img-fluid squireImg" src="./<%= val.image[0] %>">
                             <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                                 <ul class="list-unstyled">
                                     <% if(login==true){ %>
@@ -454,11 +454,13 @@
             </div> -->
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
-                  <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                  <li class="page-item <% if((pagination.q-1)<1){ %>disabled <%}%>"><a class="page-link" href="<%=pagination.urlpath+(pagination.q-1) %>">Previous</a></li>
+                  <% let paginationCount = Number(pagination.totalcount)/Number(pagination.limit);
+                  for (let i = 0; i < paginationCount; i++) { %>
+                      <li class="page-item <% if((i+1)==pagination.q){ %>disabled active <%}%>"><a class="page-link" href="<%=pagination.urlpath+(i+1) %>"><%=i+1%></a></li>
+                  <% } %> 
+                  
+                  <li class="page-item <% if((pagination.q+1)>paginationCount){ %>disabled <%}%>"><a class="page-link" href="<%=pagination.urlpath+(pagination.q+1) %>">Next</a></li>
                 </ul>
               </nav>
         </div>

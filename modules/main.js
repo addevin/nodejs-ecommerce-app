@@ -15,7 +15,6 @@ var mainFunctions = {
                 result += characters.charAt(Math.floor(Math.random() * charactersLength));
             }
             return result;
-        // console.log(makeid(5));
     },
     validateEmail : (email) => {
         return email.match(
@@ -37,11 +36,11 @@ var mainFunctions = {
         var nodemailer = require('nodemailer');
 
             var transporter = nodemailer.createTransport({
-                host: "smtp-relay.sendinblue.com",
-                port: 587,
+                host: process.env.EMAIL_HOST,
+                port: process.env.EMAIL_POST,
             auth: {
-                user: 'addev.connect@gmail.com',
-                pass: '6NQFrDCIn1ajMbkG'
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD
             }
             });
 

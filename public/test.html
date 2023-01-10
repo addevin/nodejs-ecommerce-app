@@ -9,17 +9,12 @@
 <body>
     <div id="main">
 
+        <textarea name="" id="text" cols="30" rows="10">hello aslam PRO</textarea>
     </div>
     <script src="/assets/js/jquery-1.11.0.min.js"></script>
     <script>
-        $.ajax({
-        type: "GET",
-        url:  '/test2.html',
-    }).done(function (res) {
-        console.log(res);
-        // $('#main').html(res)
-        document.getElementById('main').innerHTML = res;
-    })
+        
+        console.log(document.getElementById('text').value);
     </script>
 </body>
 </html>

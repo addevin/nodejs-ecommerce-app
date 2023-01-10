@@ -42,15 +42,34 @@ routes.get('/about',(req,res)=>{
     res.render('user/about', {pageName: 'About Us'})
 })
 routes.get('/shop',async (req,res,next)=>{
+    
     let productsList;
     let typeData = {
         type: 'listing',
         key:null
     }
+    let pagination={
+        q:1,
+        skip:0,
+        limit:20, //Limit can be changed here!
+        totalcount:0,
+        urlpath : '?page='
+    }
+    if(req.query.page){
+        if(req.query.page >1){
+            pagination.skip = (pagination.limit*Number(req.query.page))-pagination.limit;
+            // pagination.limit =pagination.limit*Number(req.query.page);
+            pagination.q = Number(req.query.page)
+            console.log(pagination);
+        }
+    }
+
     if(req.query.cat){
         try {
             
-            productsList = await products.find({category:req.query.cat}).populate('category')
+            productsList = await products.find({category:req.query.cat,'state.deleted':{$ne:true}}).populate('category')
+            pagination.totalcount = await products.countDocuments({category:req.query.cat,'state.deleted':{$ne:true}})
+            pagination.urlpath = '?cat='+req.query.cat+'&page='
         } catch (error) { 
             console.log(error);
             next(createError(404))
@@ -64,21 +83,25 @@ routes.get('/shop',async (req,res,next)=>{
             let skey = req.query.q;
             // productsList  = await products.find({ name: { $regex: new RegExp('^'+req.query.q.toString()+'.*','i')}})
             let regex = new RegExp('^'+skey+'.*','i');
-            productsList  = await products.aggregate([{$match:{ $or: [{name: regex },{discription: regex},{specification: regex},{tags: regex}] }}])
+            productsList  = await products.aggregate([{$match:{ $or: [{name: regex },{discription: regex},{specification: regex},{tags: regex}],'state.deleted':{$ne:true} }}]).skip(pagination.skip).limit(pagination.limit)
+            pagination.totalcount = await products.countDocuments({ $or: [{name: regex },{discription: regex},{specification: regex},{tags: regex}],'state.deleted':{$ne:true} })
+            pagination.urlpath = '?q='+skey+'&page='
+
         } catch (error) {
             console.log(error);
             next(createError(404))
         }
     }else{
-         productsList = await products.find({})
+         productsList = await products.find({'state.deleted':{$ne:true}}).skip(pagination.skip).limit(pagination.limit)
+         pagination.totalcount = await products.countDocuments({'state.deleted':{$ne:true}})
+         pagination.urlpath = '?page='
     }
     let catlist = await categories.find({});
-    console.log(catlist);
-    res.render('user/shop', {pageName: 'Shop',catlist, productsList, typeData})
+    res.render('user/shop', {pageName: 'Shop',catlist, productsList, typeData, pagination})
 })
 
 routes.get('/product/:size/:id',async (req,res,next)=>{
-
+    
     try {
         let product = await products.findOne({_id:req.params.id})
         let wordArr = product.discription.split(' ');

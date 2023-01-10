@@ -7,7 +7,7 @@ const couponSchema = new mongoose.Schema({
     min_bill: {type:Number},
     discount: {type:Number, required:true},
     pType: {type:String, required:true},
-    last_updated_user: {type:String, required:true},
+    last_updated_user: {type:mongoose.Schema.Types.ObjectId, required:true, ref:'admins', index:true},
     last_updated: {type:Date, default: Date.now},
     expire: {type:Date, required:true},
 })

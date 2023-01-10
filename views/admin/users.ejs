@@ -38,11 +38,12 @@
                     <td title="<%=val.joined%>"><%=val.joined.getDate() %>/<%=val.joined.getMonth()+1 %>/<%=val.joined.getFullYear() %></td>
                     <td >  <span class="badge bg-<% if(val.status=='active'){ %>success <% }else{ %>warning<% }%>"><%=val.status %></span></td>
                     <td>
+                      <%  if(val.username!='test_user' ){ %> 
                         <a href="/admin/users/update/<%=val._id%>" class="btn  text-warning d-none"><i class="bi bi-pencil-square"></i></a>
                         <button  class="btn text-danger" data-bs-toggle="modal" data-bs-target="#accountActionsModal" onclick="updateUserData('<%=val._id %>')"><i class="bi bi-trash3-fill"></i></button>
+                      <% } %> 
                     </td>
                 </tr>
-
                 <%})%>
             </tbody>
         </table>

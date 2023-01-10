@@ -32,11 +32,13 @@
               <tr>
                   <td><%= ind+1 %></td>
                   <td class="text-capitalize"><%=val.name%></td>
-                  <td class="text-capitalize"><%=val.username%></td>
+                  <td >@<%=val.username%></td>
                   <td ><%=val.email%></td>
                   <td><%=val.joined%></td>
                   <td>
-                      <button  class="btn text-danger border-0" id="delete2<%=val._id %>" onclick="catDelete ( 'delete2<%=val._id %>','<%=val._id %>', 'icon')"><i class="bi bi-shield-x"></i></button>
+                    <%  if(val.username!='test_user' && val.username!=userData.username){ %> 
+                        <button  class="btn text-danger border-0" id="delete2<%=val._id %>" onclick="catDelete ( 'delete2<%=val._id %>','<%=val._id %>', 'icon')"><i class="bi bi-shield-x"></i></button>
+                    <%  } %> 
                   </td>
               </tr>
 

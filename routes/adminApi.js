@@ -5,7 +5,6 @@ const main= require('../modules/main');
 const adminModule = require('../modules/admin')
 const path = require('path')
 const routes = express.Router();
-const multer = require("multer");
 const categories = require('../models/categories');
 const products = require('../models/products');
 const coupons = require('../models/coupons');
@@ -13,6 +12,7 @@ const orders = require('../models/orders');
 const banners = require('../models/banners');
 const { match } = require('assert');
 
+const multer = require("multer");
 const uploads = multer({
     dest: path.join(__dirname,'../public/uploads/temp/')
     // you might also want to set some limits: https://github.com/expressjs/multer#limits
@@ -482,17 +482,17 @@ routes.get('/product/delete/:cid',(req,res)=>{
     let apiRes = JSON.parse(JSON.stringify(apiResponse));
     apiRes.success = false;
     apiRes.status=200
-    products.findOne({_id:req.params.cid}).then((data)=>{
-        console.log(data);
-        if(data && data.image){
-            console.log('Starting to delete!');
-            data.image.forEach(val => {
-                console.log('Deleting '+val);
-                main.deleteFile(path.join(__dirname,'../public/uploads/product/')+val)
-            });
-        }
-    })
-    products.deleteOne({_id:req.params.cid}).then((data)=>{
+    // products.findOne({_id:req.params.cid}).then((data)=>{ //Disabled for porpose of softDeletion
+    //     console.log(data);
+    //     if(data && data.image){
+    //         console.log('Starting to delete!');
+    //         data.image.forEach(val => {
+    //             console.log('Deleting '+val);
+    //             main.deleteFile(path.join(__dirname,'../public/uploads/product/')+val)
+    //         });
+    //     }
+    // })
+    products.updateOne({_id:req.params.cid},{$set:{'state.deleted':true}}).then((data)=>{
         console.log(data);
         apiRes.message = 'Your Product has been deleted.';
         apiRes.success = true;

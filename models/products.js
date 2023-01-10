@@ -17,6 +17,9 @@ const productsSchema = new mongoose.Schema({
     last_updated_user: {type:String, required:true},
     last_updated: {type:Date, default: Date.now()},
     tags:{type:Array},
+    state:{
+        deleted:{type:Boolean, default:false},
+    },
     status:{type:String, default:'active'},
 })  
 productsSchema.index({ name: 'text', discription: 'text', tags: 'text' })
