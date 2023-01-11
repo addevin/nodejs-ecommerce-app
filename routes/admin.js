@@ -99,7 +99,6 @@ routes.get('/products/add',async (req,res)=>{
 })
 routes.get('/products/edit/:id',async (req,res,next)=>{
     try {
-        
         let catlist = await categories.find({});
         let product = await products.findOne({_id: req.params.id}).populate('category');
          res.render('./admin/products-edit', {page:'products', pageName:"Update Products ", userData: res.locals.userData, pages: ['products','edit',product.name],catlist, product})
@@ -144,7 +143,8 @@ routes.get('/report/',async (req,res,next)=>{
     res.render('./admin/report-ask', {page:'report', pageName:"Report", userData: res.locals.userData, pages: ['report'] })  
 })
 routes.post('/report/sales',async (req,res,next)=>{
-    let salesData = await orders.find({order_status:'completed'}).sort({ordered_date:-1}).populate('userid')
+    let salesData = await orders.aggregate([{$match:{order_status:'completed', $and:[{ordered_date:{$gt:new Date(req.body.fromDate)}},{ordered_date:{$lt:new Date(req.body.toDate)}}]}},{$lookup:{foreignField:'_id', localField:'userid',from:'users',as:'userid'}},{$sort:{ordered_date:-1}}])//.populate('userid') //.sort({ordered_date:-1})
+    console.log(salesData);
     res.render('./admin/report-sales', {page:'report', pageName:"Sales Report", userData: res.locals.userData, pages: ['report','sales'] ,salesData})  
 })
 
