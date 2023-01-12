@@ -10,11 +10,15 @@ const products = require('../models/products');
 const coupons = require('../models/coupons');
 const orders = require('../models/orders');
 const banners = require('../models/banners');
+const fs = require('fs');
+const config = require('config')
+
 
 /*=======
 Setting a layout for all admin pages
 ========*/
 routes.use((req,res,next)=>{
+    res.locals.siteData = config.get('site')
     ///////CHECKING AJAX LOAD OR NOT!
     if(req.query.load){
         req.app.set("layout", path.join(__dirname,'../views/layout/admin-ajax-layout'))
@@ -127,6 +131,15 @@ routes.get('/order/:oid',async (req,res,next)=>{
      next(createError(404))   
     }
 })
+routes.get('/invoice/:oid',async (req,res,next)=>{
+    try {
+        let orderData = await orders.findOne({order_status:'completed',_id:req.params.oid}).populate('products.product_id').populate('userid')
+        res.render('./admin/invoice', {page:'orders', pageName:"Invoice ", userData: res.locals.userData, pages: ['orders','Invoice  '],orderData, siteData :res.locals.siteData})
+    } catch (error) {
+     console.log(error);
+     next(createError(404))   
+    }
+})
 routes.get('/settings/banner',async (req,res,next)=>{
     let bannerList = await banners.find({})
     res.render('./admin/settings-banner', {page:'banner', pageName:"Banner Management", userData: res.locals.userData, pages: ['settings','banner_management'], bannerList})  
@@ -138,14 +151,24 @@ routes.get('/settings/admins',async (req,res,next)=>{
     let adminList = await admins.find({});
     res.render('./admin/admins', {page:'admins', pageName:"Admin Management", userData: res.locals.userData, pages: ['settings','admins'],adminList })  
 })
+routes.get('/settings/',async (req,res,next)=>{
+    let settingsData = JSON.parse(fs.readFileSync(path.join(__dirname,'../config/default.json')))
+    res.render('./admin/settings', {page:'admins', pageName:"Site Settings", userData: res.locals.userData, pages: ['settings'],settingsData })  
+})
 routes.get('/report/',async (req,res,next)=>{
     
     res.render('./admin/report-ask', {page:'report', pageName:"Report", userData: res.locals.userData, pages: ['report'] })  
 })
+
 routes.post('/report/sales',async (req,res,next)=>{
-    let salesData = await orders.aggregate([{$match:{order_status:'completed', $and:[{ordered_date:{$gt:new Date(req.body.fromDate)}},{ordered_date:{$lt:new Date(req.body.toDate)}}]}},{$lookup:{foreignField:'_id', localField:'userid',from:'users',as:'userid'}},{$sort:{ordered_date:-1}}])//.populate('userid') //.sort({ordered_date:-1})
-    console.log(salesData);
-    res.render('./admin/report-sales', {page:'report', pageName:"Sales Report", userData: res.locals.userData, pages: ['report','sales'] ,salesData})  
+    try {
+        let salesData = await orders.aggregate([{$match:{order_status:'completed', $and:[{ordered_date:{$gt:new Date(req.body.fromDate)}},{ordered_date:{$lt:new Date(req.body.toDate)}}]}},{$lookup:{foreignField:'_id', localField:'userid',from:'users',as:'userid'}},{$sort:{ordered_date:-1}}])//.populate('userid') //.sort({ordered_date:-1})
+        console.log(salesData);
+        res.render('./admin/report-sales', {page:'report', pageName:"Sales Report", userData: res.locals.userData, pages: ['report','sales'] ,salesData})  
+    } catch (error) {
+        console.log(error);
+        next(createError(404))
+    }
 })
 
 /*=======

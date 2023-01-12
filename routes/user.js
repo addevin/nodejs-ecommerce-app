@@ -7,9 +7,11 @@ const usersModules = require('../modules/users')
 const products = require('../models/products');
 const createError = require('http-errors');
 const banners = require('../models/banners');
+const config = require('config')
 
 
 routes.use((req,res,next)=>{
+    res.locals.siteData = config.get('site')
     req.app.set("layout", path.join(__dirname,'../views/layout/user-layout'))
     next()
 })
@@ -37,7 +39,7 @@ Pages
 ========*/
 routes.get('/',async (req,res)=>{
     let bannerList = await banners.find({})
-    res.render('user/index', {pageName: 'Home', login:res.locals.login, userData:res.locals.userData, catList:res.locals.catList, bannerList})
+    res.render('user/index', {pageName: 'Home', login:res.locals.login, userData:res.locals.userData, catList:res.locals.catList, bannerList, siteData :res.locals.siteData})
 })
 routes.get('/about',(req,res)=>{
     res.render('user/about', {pageName: 'About Us'})

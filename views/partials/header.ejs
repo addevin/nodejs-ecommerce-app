@@ -19,15 +19,27 @@
         <div class="w-100 d-flex justify-content-between">
             <div>
                 <i class="fa fa-envelope mx-2"></i>
-                <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:info@company.com">info@company.com</a>
+                <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:<%= siteData.email%>"><%= siteData.email%></a>
                 <i class="fa fa-phone mx-2"></i>
-                <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">010-020-0340</a>
+                <a class="navbar-sm-brand text-light text-decoration-none" href="tel:<%= siteData.phone%>"><%= siteData.phone%></a>
             </div>
             <div>
-                <a class="text-light" href="https://fb.com/templatemo" target="_blank" rel="sponsored"><i class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
-                <a class="text-light" href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
-                <a class="text-light" href="https://twitter.com/" target="_blank"><i class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
-                <a class="text-light" href="https://www.linkedin.com/" target="_blank"><i class="fab fa-linkedin fa-sm fa-fw"></i></a>
+                <% if(siteData.social.facebook.state){ %> 
+                    <a class="text-light" href="<%= siteData.social.facebook.url%>" target="_blank" rel="sponsored"><i class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
+                
+                    <%} %>
+                <% if(siteData.social.instagram.state){ %> 
+                    <a class="text-light" href="<%= siteData.social.instagram.url%>" target="_blank"><i class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
+                    <%} %>
+                 <% if(siteData.social.twitter.state){ %> 
+                    <a class="text-light" href="<%= siteData.social.twitter.url%>" target="_blank"><i class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
+                <%} %>
+                <% if(siteData.social.linkedin.state){ %> 
+                <a class="text-light" href="<%= siteData.social.linkedin.url%>" target="_blank"><i class="fab fa-linkedin fa-sm fa-fw me-2"></i></a>
+                <%} %>
+                <% if(siteData.social.whatsapp.state){ %> 
+                <a class="text-light" href="https://wa.me/<%= siteData.social.whatsapp.number%>" target="_blank"><i class="fab fa-whatsapp fa-sm fa-fw"></i></a>
+                <%} %>
             </div>
         </div>
     </div>
@@ -40,7 +52,7 @@
     <div class="container d-flex justify-content-between align-items-center">
 
         <a class="navbar-brand text-success logo h1 align-self-center" href="/">
-            AdDev
+            <%= siteData.name%>
         </a>
 
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

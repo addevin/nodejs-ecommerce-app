@@ -72,15 +72,17 @@ var mainFunctions = {
             if (ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.gif') {
                 
                 if(crop){
-                    this.cropImage(tempPath,targetPath,(err)=>{
+                    this.cropImage.call(mainFunctions,tempPath,targetPath,cropImgCB.bind(this))
+                    function cropImgCB(err){
                         if (err) {
                             dataToReturn.error = err;
                             reject(new Error('Internal server error detucted!'));
                             console.log(err);
                         }
-                    })
+                        // this.deleteFile(tempPath) //NOT WORKING :)
+                    }
                 }else{
-                    fs.renameSync(tempPath, targetPath, err => {
+                    fs.renameSync(tempPath, targetPath, function(err) {
                         if (err) {
                             dataToReturn.error = err;
                             reject(new Error('Internal server error detucted!'));
@@ -137,15 +139,14 @@ var mainFunctions = {
             }
         })
     },
-    deleteFile: (path)=>{
-        
+    deleteFile: function(path){
         fs.unlinkSync(path, err => {
             if (err) {
                 console.log(err);
             }
         });
     },
-    cropImage: (path, topath, cb)=>{
+    cropImage: function(path, topath, cb){
         sharp(path)
             .resize({
               width: 300,

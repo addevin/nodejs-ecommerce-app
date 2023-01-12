@@ -10,7 +10,7 @@ const products = require('../models/products');
 const coupons = require('../models/coupons');
 const orders = require('../models/orders');
 const banners = require('../models/banners');
-const { match } = require('assert');
+const fs = require('fs');
 
 const multer = require("multer");
 const uploads = multer({
@@ -972,6 +972,106 @@ routes.post('/admin/create',(req,res)=>{
         res.status(200).json(apiRes);
 
     }
+})
+
+ routes.post('/settings',(req,res)=>{
+    let apiRes = JSON.parse(JSON.stringify(apiResponse));
+    apiRes.success = false;
+    apiRes.status=200
+    apiRes.message = 'Missing some fields!'
+    let readyToUpdate = false;
+    let file = path.join(__dirname,'../config/default.json');
+    let settings = JSON.parse(fs.readFileSync(file));
+
+    console.log(req.body);
+    
+    if(req.body.companyname){
+        settings.site.name = req.body.companyname;
+        readyToUpdate = true
+    }
+    if(req.body.companyemail){
+        settings.site.email = req.body.companyemail;
+        readyToUpdate = true
+    }
+    if(req.body.companyphone){
+        settings.site.phone = req.body.companyphone;
+        readyToUpdate = true
+    }
+    if(req.body.companyaddress){
+        settings.site.address = req.body.companyaddress;
+        readyToUpdate = true
+    }   
+    if(req.body.instaSwitch){
+        settings.site.social.instagram.state = true;
+        readyToUpdate = true
+    }else{
+        readyToUpdate = true
+        settings.site.social.instagram.state = false;
+    }
+    
+    if(req.body.fbswitch){
+        settings.site.social.facebook.state = true;
+        readyToUpdate = true
+    }else{
+        readyToUpdate = true
+        settings.site.social.facebook.state = false;
+    }
+    if(req.body.twitswitch){
+        settings.site.social.twitter.state = true;
+        readyToUpdate = true
+    }else{
+        readyToUpdate = true
+        settings.site.social.twitter.state = false;
+    }
+    if(req.body.lnkdnswitch){
+        settings.site.social.linkedin.state = true;
+        readyToUpdate = true
+    }else{
+        readyToUpdate = true
+        settings.site.social.linkedin.state = false;
+    }
+    if(req.body.watpswtich){
+        settings.site.social.whatsapp.state = true;
+        readyToUpdate = true
+    }else{
+        readyToUpdate = true
+        settings.site.social.whatsapp.state = false;
+    }
+
+    if(req.body.instaurl){
+        settings.site.social.instagram.url = req.body.instaurl;
+        readyToUpdate = true
+    }   
+    if(req.body.fburl){
+        settings.site.social.facebook.url = req.body.fburl;
+        readyToUpdate = true
+    }   
+    if(req.body.twiturl){
+        settings.site.social.twitter.url = req.body.twiturl;
+        readyToUpdate = true
+    }   
+    if(req.body.linkedinurl){
+        settings.site.social.linkedin.url = req.body.linkedinurl;
+        readyToUpdate = true
+    }   
+    if(req.body.whatsappnum){
+        settings.site.social.whatsapp.number = req.body.whatsappnum;
+        readyToUpdate = true
+    }   
+
+console.log(settings);
+
+    if(readyToUpdate){
+        let newjson = JSON.stringify(settings);
+        fs.writeFileSync(file, newjson);
+        apiRes.message = 'Updated settings!'
+        apiRes.success = true
+
+        res.status(apiRes.status).json(apiRes)
+    }else{
+        res.status(apiRes.status).json(apiRes)
+    }
+    
 })
 
 

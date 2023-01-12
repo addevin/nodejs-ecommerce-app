@@ -1,0 +1,250 @@
+
+<style>
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #section-to-print, #section-to-print * {
+        visibility: visible;
+      }
+      #section-to-print {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 210mm;
+      }
+      #billAmountDetails{
+        width: 100mm;
+      }
+      @page 
+        {
+            size: auto;   /* auto is the initial value */
+            margin: 5mm;  /* this affects the margin in the printer settings */
+        }
+    }
+    </style>
+<%
+let status,invDate;
+if(orderData.delivery_status.delivered.state){
+    status= 'Delivered';
+    invDate= orderData.delivery_status.out_for_delivery.date;
+}else{
+    status= 'Pending';
+    invDate= orderData.delivery_status.ordered.date;
+}
+%>
+<div id="prodResponse" style="top: 0; left: 0; right: 0; z-index: 3; position: fixed;"></div>
+
+<div class="container bg-white my-2">
+    <div class="d-flex justify-content-between py-1 mb-0">
+
+        <h2 class=" text-muted p-0">
+            Invoice
+        </h2>
+        <a class="btn btn-dark btn-sm"  style="height: 30px;" href="#" onclick="window.print()">
+            <i class="bi bi-printer"></i>
+              Print
+          </a>
+    </div>
+    
+</div>
+
+<div class="container bg-white my-2" >
+    <div class="col-12 my-1 p-0" id="section-to-print">
+
+        <div class="card border-0 ad-box-shadow p-0">
+            <div class="card-body d-flex flex-column" style="min-height: 600px;">
+                <div class="d-flex border-bottom pb-3 mb-2">
+                    <div class="">
+                        <h3><%=siteData.name %></h3>
+                        <p><%=siteData.address %> <br>
+                        Contact: <%=siteData.phone %></p>
+                        <h5 class="mb-0">Delivery Address</h5>
+                        <p>Name: <b><%= orderData.address.name %></b>,  <br>
+                            Address: <b><%= orderData.address.house %>,
+                            <%= orderData.address.post %>,
+                            <%= orderData.address.city %>,
+                            <%= orderData.address.district %>,
+                            <%= orderData.address.state %>,</b> <br>
+                            pin: <b><%= orderData.address.pin %></b> <br>
+                            Contact: <b><%= orderData.userid.phone%></b>
+                         </p>
+                    </div>
+                    <div class=" ms-auto text-right justify-content-end d-flex flex-column text-right ">
+                        <h5 class="mb-0">Invoice</h5>
+                        <p class="text-right mb-0">Date: <%= invDate.getDate() %>/<%= invDate.getMonth()+1 %>/<%= invDate.getFullYear() %></p>
+                        <p class="text-right mb-0">Orderid: <%= orderData._id %></p>
+                        <p class="text-right mb-0" title="EDIT">Status: <span style="border: 0; outline: 0;" contenteditable><%= status %> </span> </p>
+                        <p class="text-right mb-0">Payment: <% if(orderData.payment.payment_method=='razorpay'){ %> online_payment<%}else{ %> <%= orderData.payment.payment_method %>  <% }%> <small>(<%= orderData.payment.payment_status %>)</small></p>
+                    </div>
+                </div>
+                <div>
+                    <table class="table table-striped">
+                       <tr>
+                            <th>
+                                Sl.No
+                            </th>
+                            <th>
+                                Item
+                            </th>
+                            <th>
+                                Price
+                            </th>
+                            <th>
+                                Qnty
+                            </th>
+                            <th>
+                                Sub total
+                            </th>
+                       </tr>
+                       <% let subTotalBill = 0; orderData.products.forEach((el,i) => { %>
+                        
+                         <tr>
+                            <td>
+                                <%= i+1 %>
+                            </td>
+                            <td>
+                                <%= el.name %>
+                            </td>
+                            <td>
+                                &#8377;<%= el.price %>
+                            </td>
+                            <td>
+                                <%= el.qnty %> x <%= el.size %>
+                            </td>
+                            <td>
+                                &#8377;<%= el.qnty*el.price %>
+                            </td>
+                       </tr>
+                         <% subTotalBill+= el.qnty*el.price;
+                          }); %>
+                    </table>
+                </div>
+                <div class="d-flex mt-auto" >
+                    <div class="ms-auto col-12 col-md-4" id="billAmountDetails">
+                        <% 
+                        let totalBill
+                        if(orderData.coupen.ptype=='inr'){
+                            totalBill = orderData.bill_amount-orderData.coupen.discount
+                        }else{
+                            totalBill = orderData.bill_amount-((orderData.bill_amount*orderData.coupen.discount)/100)
+                        }
+                            
+                            %> 
+                        <table class="table table-striped  ">
+                            <tr>
+                                <td>
+                                    Sub-total
+                                </td>
+                                <td>
+                                    &#8377;<%= subTotalBill %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Items
+                                </td>
+                                <td>
+                                    <%= orderData.products.length %> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Discount
+                                </td>
+                                <td>
+                                    <% if(orderData.coupen.ptype=='inr'){ %> &#8377;<%}else{ %>&percnt;<%} %><%= orderData.coupen.discount %>  
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Rounding Off
+                                </td>
+                                <td>
+                                    <%= totalBill-Math.round(totalBill) %> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Total
+                                </td>
+                                <td>
+                                    <b class="text-success fw-bold">&#8377;<%= Math.round(totalBill) %> </b>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+       
+    </div>
+
+    
+</div>
+
+
+
+
+<script>
+    $(document).ready(function () {
+        $('#myTable').dataTable();
+    });
+    
+function confirmPaid(){
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You are confirming that @<%= orderData.userid.username %> paid the bill!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, paid!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $('#paymentUpdationForm').submit()
+        }
+    })
+}
+ /********************
+  * AJAX 
+  * *************/ 
+function submitData (id) {
+  
+    let btn_data = $('#'+id+'Btn').html();
+    $('#'+id+'Btn').html('Loading...').prop('disabled', true);
+
+    $.ajax({
+      type: "POST",
+      url: $('#'+id+'Form').attr('action'),
+      data: $('#'+id+'Form').serialize(),
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      console.log(data);
+      $('#'+id+'Btn').html(btn_data).prop('disabled', false);
+      if(data.success == true){
+
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+            $('#'+id+'Btn').hide();
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+
+        }
+        $('#'+id+'Response').html(resHTML)
+    });
+
+    event.preventDefault();
+ 
+}
+
+
+</script>

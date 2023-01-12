@@ -1,0 +1,195 @@
+<div id="adminRes" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9;"></div>
+
+
+<div class="container bg-white my-2">
+    <div class="d-flex justify-content-between border-bottom py-3 mb-2">
+
+        <h2 class=" text-muted p-0">
+            <i class="bi bi-gear"></i> Settings
+        </h2>
+    </div>
+    <div class=" w-100">
+        <div class="col-12 col-md-6 mx-auto">
+            <form action="" id="profileUpdationForm">
+                <h5>Site Details</h5>
+                <div class="mb-1">
+                    <label for="">Company Name</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" name="companyname" placeholder="Company Name" aria-label="Company Name" value="<%=settingsData.site.name %>">
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <label for="">
+                        Email
+                    </label>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" name="companyemail" placeholder="admin@email.com" aria-label="email"  value="<%=settingsData.site.email %>">
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <label for="">
+                        Phone
+                    </label>
+                    <div class="input-group mb-3">
+                        <input type="number" class="form-control" name="companyphone" placeholder="9876543210" aria-label="phone"  value="<%=settingsData.site.phone %>">
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <label for="">
+                        Address
+                    </label>
+                    <div class="input-group mb-3">
+                        <textarea id="" cols="30" rows="10" class="form-control" name="companyaddress" placeholder="company location" ><%=settingsData.site.address %></textarea>
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <h5>Social Accounts</h5>
+                    <div class="mb-1 border p-1">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" name="instaSwitch" type="checkbox" role="switch" id="" <% if(settingsData.site.social.instagram.state){ %>checked<%} %>>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Enable/Disable</label>
+                        </div>
+                        <label for="">
+                            Instagram
+                        </label>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-instagram"></i></span>
+                            <input type="text" class="form-control" name="instaurl" placeholder="Instagram url" value="<%= settingsData.site.social.instagram.url%>">
+                        </div>
+                    </div>
+                    <div class="mb-1 border p-1">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" name="fbswitch" type="checkbox" role="switch"  <% if(settingsData.site.social.facebook.state){ %>checked<%} %>>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Enable/Disable</label>
+                        </div>
+                        <div class="mb-1">
+                            <label for="">
+                                Facebook
+                            </label>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1"><i class="bi bi-facebook"></i></span>
+                                <input type="text" class="form-control" name="fburl" placeholder="Instagram url"  value="<%= settingsData.site.social.facebook.url%>">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-1 border p-1">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" name="twitswitch" type="checkbox" role="switch" id="" <% if(settingsData.site.social.twitter.state){ %>checked<%} %>>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Enable/Disable</label>
+                        </div>
+                        <div class="mb-1">
+                            <label for="">
+                                Twitter
+                            </label>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1"><i class="bi bi-twitter"></i></span>
+                                <input type="text" class="form-control" name="twiturl" placeholder="Instagram url"  value="<%= settingsData.site.social.twitter.url%>">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-1 border p-1">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" name="lnkdnswitch" type="checkbox" role="switch" id="" <% if(settingsData.site.social.linkedin.state){ %>checked<%} %>>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Enable/Disable</label>
+                        </div>
+                        <div class="mb-1">
+                            <label for="">
+                                linkedin
+                            </label>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1"><i class="bi bi-linkedin"></i></span>
+                                <input type="text" class="form-control" name="linkedinurl" placeholder="Linkedin url"  value="<%= settingsData.site.social.linkedin.url%>">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-1 border p-1">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" name="watpswtich" type="checkbox" role="switch" id="" <% if(settingsData.site.social.whatsapp.state){ %>checked<%} %>>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Enable/Disable</label>
+                        </div>
+                        <div class="mb-1">
+                            <label for="">
+                                whatsapp
+                            </label>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1"><i class="bi bi-whatsapp"></i></span>
+                                <input type="text" class="form-control" name="whatsappnum" placeholder="Whatsapp Number" value="<%= settingsData.site.social.whatsapp.number%>">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <button type="submit" class="btn btn-primary w-100" id="profileUpdateBtn"><i class="fa-solid fa-gear"></i> SAVE</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="accountActionsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Account Actions </h5> <div id="acLoaderStatus"></div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" >
+            <h5 id="uname" class="text-muted">Loading..</h5>
+            <p id="acMessage" class="text-muted"></p>
+        </div>
+        <div class="modal-footer" id="acbuttons">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+<script>
+    $(document).ready(function () {
+        $('#myTable').dataTable();
+    });
+    
+  
+$(document).ready(function () {
+  $("form").submit(function (event) {
+    let btn_data = $('#profileUpdateBtn').html();
+    $('#profileUpdateBtn').html('<i class="fa-solid fa-gear fa-spin"></i> Saving...').prop('disabled', true);
+
+    $.ajax({
+      type: "POST",
+      url: '/adminapi/settings',
+      data: $('#profileUpdationForm').serialize(),
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      console.log(data.message);
+      if(data.success == true){
+
+           resHTML = '<div class="alert alert-success alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Success!</strong> '+data.message +
+            '</div>';
+        }else{
+
+             resHTML = '<div class="alert alert-danger alert-dismissible"> '+
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>'+
+            '<strong>Error!</strong> '+data.message +
+            '</div>';
+        }
+    $('#profileUpdateBtn').html(btn_data).prop('disabled', false);
+      $("#adminRes").html(resHTML)
+    });
+
+    event.preventDefault();
+  });
+});
+
+
+</script>

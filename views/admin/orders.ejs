@@ -51,6 +51,7 @@
                   <td title=""><% if( val.payment.payment_status == 'completed'){ %><span class="badge  bg-success ">Paid</span> <% }else{ %><span class="badge  bg-warning ">Pending</span><% } %>  </td>
                   <td>
                       <a href="/admin/order/<%= val._id %>" class="btn  text-warning" title="View Order"><i class="bi bi-eye-fill"></i></a>
+                      <a href="/admin/invoice/<%= val._id %>" class="btn  text-warning" title="View Order"><i class="bi bi-receipt"></i></a>
                       <!-- <button  class="btn text-danger border-0" id="delete2<%=val._id %>" onclick="coupDelete( 'delete2<%=val._id %>','<%=val._id %>', 'icon')"><i class="bi bi-trash3-fill"></i></button> -->
                   </td>
               </tr>
