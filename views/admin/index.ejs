@@ -22,16 +22,16 @@
 <div class="row justify-content-around">
     <div class="card col-12 col-md-6 ad-box-shadow border-0" >
         <div class="card-body">
-          <canvas id="myChart1" ></canvas>
+          <canvas id="salesChart">Sales chart couldn't load on your browser</canvas>
         </div>
       </div>
     <div class="card col-12 col-md-5 ad-box-shadow border-0" >
         <div class="card-body">
-          <canvas id="myChart2" ></canvas>
+          <canvas id="myChart2">Chart couldn't load on your browser</canvas>
         </div>
       </div>
 </div>
-<div class="container">
+<div class="container" >
     <h3 class="text-muted border-bottom">Usefull links</h3>
     <a href="/admin/users" class="btn-link btn">Manage Users</a> | 
     <a href="#" class="btn-link btn">Manage Products</a> |
@@ -67,37 +67,51 @@ new Chart("myChart2", {
   }
 });
 
+<%
 
+
+function getMonthName(monthNumber) {
+  const date = new Date();
+  date.setMonth(monthNumber - 1);
+
+  return date.toLocaleString('en-US', { month: 'long' });
+}
+
+%>
 
 /**chart*/
-var xValues = [100,200,300,400,500,600,700,800,900,1000];
+<% let dates = salesChartDt.map((val)=>{ return val._id.slice(-2)}) %>
+<% let salesCount = salesChartDt.map((val)=>{ return val.count}) %>
+var xValues = [<%= dates%>];
 
-new Chart("myChart1", {
+new Chart("salesChart", {
   type: "line",
   data: {
     labels: xValues,
     datasets: [{
         label: 'Sales',
-      data: [860,1140,1060,1060,1070,1110,1330,2210,7830,2478],
-      borderColor: "rgba(255,0,0,0.5)",
+      data: [<%=salesCount %>],
+      borderColor: "rgba(95, 250, 175,0.8)",
       fill: false
-    },{
-        label: 'Return',
-      data: [1600,1700,1700,1900,2000,2700,4000,5000,6000,7000],
-      borderColor: "green",
-      fill: false
-    },{
-        label: 'Cancel',
-      data: [300,700,2000,5000,6000,4000,2000,1000,200,100],
-      borderColor: "blue",
-      fill: false
-    }]
+    }
+    // ,{
+    //     label: 'Return',
+    //   data: [1600,1700,1700,1900,2000,2700,4000,5000,6000,7000],
+    //   borderColor: "green",
+    //   fill: false
+    // },{
+    //     label: 'Cancel',
+    //   data: [300,700,2000,5000,6000,4000,2000,1000,200,100],
+    //   borderColor: "blue",
+    //   fill: false
+    // }
+  ]
   },
   options: {
-    legend: {display: true},
+    legend: {display: false},
     title: {
       display: true,
-      text: "Sales chart december - 2022"
+      text: "Sales chart <%=getMonthName(Number(salesChartDt[0]._id.substring(7,5))) %> -  <%= salesChartDt[0]._id.substring(0, 4)%>"
     }
   }
 });

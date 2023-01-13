@@ -1,1 +1,41 @@
-{"server":{"test_mode":{"state":false,"user_id":"63bac8075efaaa71d71cfab1","admin_id":"63bac7cb5efaaa71d71cfa95"},"maintenence":{"state":false,"message":"We are having maintenence in our server, we will back in few hours!"}},"site":{"name":"AdDev","address":"new addressasdjnas\r\nd","email":"adil@mail.com","phone":"123546893","social":{"instagram":{"url":"https://insagram.com/addev.in","state":false},"facebook":{"url":"https://facebook.com/addev.in","state":false},"linkedin":{"url":"https://linkedin.com/in/addevin","state":false},"whatsapp":{"number":"101010100","state":false},"twitter":{"url":"https://twitter.com/addev.in","state":true}}}}
+{
+    "server": {
+        "test_mode": {
+            "state": true,
+            "user_id": "63bac8075efaaa71d71cfab1",
+            "admin_id": "63bac7cb5efaaa71d71cfa95"
+        },
+        "maintenance": {
+            "state": false,
+            "message": "We are having maintenence on our server, we will back in few hours!"
+        }
+    },
+    "site": {
+        "name": "AdDev",
+        "address": "calicut, kerala, india",
+        "email": "addev.connect@gmail.com",
+        "phone": "123546893",
+        "social": {
+            "instagram": {
+                "url": "https://insagram.com/addev.in",
+                "state": true
+            },
+            "facebook": {
+                "url": "https://facebook.com/addev.in",
+                "state": true
+            },
+            "linkedin": {
+                "url": "https://linkedin.com/in/addevin",
+                "state": false
+            },
+            "whatsapp": {
+                "number": "101010100",
+                "state": false
+            },
+            "twitter": {
+                "url": "https://twitter.com/addev.in",
+                "state": true
+            }
+        }
+    }
+}

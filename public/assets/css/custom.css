@@ -31,6 +31,10 @@ Custom Css
     background-image: url('../img/bgimage1.jpg');
     background-size: cover;
 }
+.bgimage2{
+    background-size: cover;
+    background-image: url('../img/loginBG.jpg');
+}
 .squireImg{
     object-fit: cover;
     width: 220px;

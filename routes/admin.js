@@ -57,11 +57,42 @@ routes.use(async (req,res,next)=>{
         res.redirect('/admin/login')
     }
 })
+
 routes.get('/', async(req,res)=>{
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const endOfMonth = new Date();
+    endOfMonth.setMonth(endOfMonth.getMonth()+1);
+    endOfMonth.setDate(0);
+    endOfMonth.setHours(23, 59, 59, 999);
+
     let usersCount = await users.countDocuments({});
     let catCount = await categories.countDocuments({});
     let prodCount = await products.countDocuments({});
-    res.render('./admin/index', {page:'home', pageName:"Dashboard", userData: res.locals.userData, pages: ['dashboard'], usersCount,catCount,prodCount})
+    let orderCount = await orders.countDocuments({});
+    let salesChartDt = await orders.aggregate([
+        {
+            $match: {
+                ordered_date: {
+                    $gte: startOfMonth,
+                    $lt: endOfMonth
+                }
+            }
+        },
+        {
+            $group: {
+                _id: { $dateToString: { format: "%Y-%m-%d", date: "$ordered_date" } },
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: { _id: 1 }
+        }
+    ]);
+    console.log(salesChartDt);
+    res.render('./admin/index', {page:'home', pageName:"Dashboard", userData: res.locals.userData, pages: ['dashboard'], usersCount,catCount,prodCount, salesChartDt})
 })
 routes.get('/logout',(req,res)=>{
     req.session.destroy()

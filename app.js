@@ -8,7 +8,7 @@ const mongoose = require('mongoose')
 const dotenv = require("dotenv")
 const session = require("express-session")
 const  mainModule  = require('./modules/main')
-
+const config = require('config')
 
 
 //cache clearing... 
@@ -18,6 +18,15 @@ app.use(function (req, res, next) {
     res.header('Pragma', 'no-cache');
 next();
 });
+
+app.use((req,res,next)=>{
+    let configdata = config.get('server');
+    if(configdata.maintenance.state){
+        res.render('error/maintenance',{pageName:"under_maintenance",message: configdata.maintenance.message});
+    }else{
+        next()
+    }
+})
 
 
 
