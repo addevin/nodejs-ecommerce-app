@@ -9,7 +9,9 @@ const couponSchema = new mongoose.Schema({
     pType: {type:String, required:true},
     last_updated_user: {type:mongoose.Schema.Types.ObjectId, required:true, ref:'admins', index:true},
     last_updated: {type:Date, default: Date.now},
-    used_users: {type:Array},//////////////////////////////////////////////
+    used_users: [
+        {type:mongoose.Schema.Types.ObjectId, unique:true, ref:'users'}
+    ],
     expire: {type:Date, required:true},
 })
 
