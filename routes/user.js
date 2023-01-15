@@ -69,7 +69,6 @@ routes.get('/shop',async (req,res,next)=>{
 
     if(req.query.cat){
         try {
-            
             productsList = await products.find({category:req.query.cat,'state.deleted':{$ne:true}}).populate('category')
             pagination.totalcount = await products.countDocuments({category:req.query.cat,'state.deleted':{$ne:true}})
             pagination.urlpath = '?cat='+req.query.cat+'&page='

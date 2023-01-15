@@ -63,7 +63,7 @@
                                             </form>
                                             <form action="/api/sentSms" method="post" onsubmit="sendData('sendSms');unblockBtn('sendSmsBtn',5000); return false" id="sendSmsForm">
                                                 <input type="hidden" id="no_use_data" class="form-control"  name="no_use_data">
-                                                <button class="btn btn-sm btn-outline-secondary mx-2" type="button" onclick="resetPhone()" >Edit number</button>
+                                                <button class="btn btn-sm btn-outline-dark mx-2" type="button" onclick="resetPhone()" >Edit number</button>
                                                 <button class="btn btn-sm btn-outline-dark mx-2"  id="sendSmsBtn" disabled>Resend</button>
                                             </form>
                                     </div>
@@ -133,7 +133,7 @@
 }
 
 
-    // $('#sendSmsForm').submit();  UNCOMMECT THIS AFTER MODIFICATION
+    $('#sendSmsForm').submit();  
 function sendData(id,ask){
     if(ask){
         if (confirm("Confirming that you are sure to do this action, To confirm it just click OK") != true) {

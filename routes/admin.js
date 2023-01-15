@@ -71,7 +71,11 @@ routes.get('/', async(req,res)=>{
     let usersCount = await users.countDocuments({});
     let catCount = await categories.countDocuments({});
     let prodCount = await products.countDocuments({});
-    let orderCount = await orders.countDocuments({});
+    let orderCount = await orders.countDocuments({order_status:'completed'}); 
+    let pendingorderCount = await orders.countDocuments({order_status:'pending'});
+    let paymentpendingorderCount = await orders.countDocuments({'payment.payment_status':'pending'});
+    let paymentpaidorderCount = await orders.countDocuments({'payment.payment_status':'completed'});
+    let successOrders = await orders.find({order_status:'completed'}).populate('userid').sort({ordered_date:-1}).limit(15)
     let salesChartDt = await orders.aggregate([
         {
             $match: {
@@ -92,7 +96,7 @@ routes.get('/', async(req,res)=>{
         }
     ]);
     console.log(salesChartDt);
-    res.render('./admin/index', {page:'home', pageName:"Dashboard", userData: res.locals.userData, pages: ['dashboard'], usersCount,catCount,prodCount, salesChartDt})
+    res.render('./admin/index', {page:'home', pageName:"Dashboard", userData: res.locals.userData, pages: ['dashboard'], usersCount,catCount,prodCount, salesChartDt,orderCount,successOrders,pendingorderCount,paymentpendingorderCount,paymentpaidorderCount})
 })
 routes.get('/logout',(req,res)=>{
     req.session.destroy()

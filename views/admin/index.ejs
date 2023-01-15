@@ -1,22 +1,29 @@
 
-    <div class="row justify-content-around my-5">
-        <div class="card col-9 col-sm-3 text-dark col-md-3 my-1 border-0 ad-box-shadow pt-1">
+    <div class="row justify-content-around my-5 p-3 flex-wrap">
+        <div class="card col text-dark mx-2 border-0 ad-box-shadow pt-1  my-1" style="min-width: 120px; background-color: rgba(0, 128, 255, 0.101);" >
             <h1 class=""><i class="bi bi-people-fill bg-primary rounded-pill px-2 py-1 h2 text-white"></i> <%= usersCount %></h1>
             <h4 class="">Users</h4>
         </div>
-        <div class="card col-9 col-sm-3 col-lg-3 col-md-3 my-1 border-0 pt-1 ad-box-shadow ">
+        <div class="card col mx-2 border-0 pt-1 ad-box-shadow my-1" style="min-width: 120px; background-color: rgba(0, 255, 102, 0.101);">
             <h1 class="text-dark">
                 <i class="bi bi-grid bg-success rounded-pill px-2 py-1 h2 text-white"></i>
                 <%= prodCount %> 
             </h1>
-            <h4 class="text-muted">Products</h4>
+            <h4 class="text-dark">Products</h4>
         </div>
-        <div class="card col-9 col-sm-3 col-lg-3 col-md-3 my-1 pt-1 ad-box-shadow border-0">
+        <div class="card col mx-2 pt-1 ad-box-shadow border-0  my-1" style="min-width: 120px; background-color: rgba(199, 165, 12, 0.101);">
             <h1 class="text-dark">
-                <i class="bi bi-clipboard2-data-fill rounded-pill px-2 py-1 h2 text-white bg-dark"></i>
+                <i class="bi bi-clipboard2-data-fill rounded-pill px-2 py-1 h2 text-white " style="background-color: rgb(230, 174, 20);"></i>
                 <%= catCount %>
             </h1>
             <h4 class="text-muted">Categories</h4>
+        </div>
+        <div class="card col mx-2 pt-1 ad-box-shadow border-0  my-1" style="min-width: 120px; background-color: rgba(185, 21, 244, 0.050);">
+            <h1 class="text-dark">
+                <i class="bi bi-bar-chart-line-fill rounded-pill px-2 py-1 h2 text-white " style="background-color: purple; ;"></i>
+                <%= orderCount %>
+            </h1>
+            <h4 class="text-muted">Orders</h4>
         </div>
     </div>
 <div class="row justify-content-around">
@@ -31,23 +38,78 @@
         </div>
       </div>
 </div>
+<div class="container">
+  <div class="ad-responsive-table w-100">
+    <h3 class="text-secondary py-3">Latest Orders</h3>
+    <table id="myTable" class="table table-striped table-bordered table-responsive table-hover ">
+        <thead>
+            <tr>
+                <th>Sr No.</th>
+                <th>OID</th>
+                <th>User</th>
+                <th>Items</th>
+                <th>Ordered</th>
+                <th>Order Status</th>
+                <th>Payment Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <% successOrders.forEach((val,i)=>{ %>
+
+
+            
+            <tr>
+                <td><%= i+1 %></td>
+                <td class=""><%= val._id %></td> <!--text-capitalize-->
+                <td>@<%=val.userid.username%> <small>(<%=val.userid.name%>)</small></td>
+                <td><%=val.products.length%></td>
+                <td title=""><%= val.ordered_date.getDate() %>/<%= val.ordered_date.getMonth()+1 %>/<%= val.ordered_date.getFullYear() %></td>
+                <td title="">
+                    <% if(val.delivery_status.delivered.state){ %> 
+                      <p><b>DELIVERED</b><small>(<%= val.delivery_status.delivered.date.getDate() %>/<%= val.delivery_status.delivered.date.getMonth()+1 %>/<%= val.delivery_status.delivered.date.getFullYear() %>)</small> </p>
+                      
+                    <% }else if(val.delivery_status.out_for_delivery.state){ %> 
+                        <p> <b>OUT_FOR_DELIVERY</b><small>(<%= val.delivery_status.out_for_delivery.date.getDate() %>/<%= val.delivery_status.out_for_delivery.date.getMonth()+1 %>/<%= val.delivery_status.out_for_delivery.date.getFullYear() %>)</small> </p>
+                        
+                    <% }else if(val.delivery_status.shipped.state){  %> 
+                        <p> <b>SHIPPED</b><small>(<%= val.delivery_status.shipped.date.getDate() %>/<%= val.delivery_status.shipped.date.getMonth()+1 %>/<%= val.delivery_status.shipped.date.getFullYear() %>)</small> </p>
+                       
+                    <% }else if(val.delivery_status.ordered.state){  %> 
+                        <p> <b>ORDERED</b><small>(<%= val.delivery_status.ordered.date.getDate() %>/<%= val.delivery_status.ordered.date.getMonth()+1 %>/<%= val.delivery_status.ordered.date.getFullYear() %>)</small> </p>
+                        
+
+                    <% } %> 
+                </td>
+                <td title=""><% if( val.payment.payment_status == 'completed'){ %><span class="badge  bg-success ">Paid</span> <% }else{ %><span class="badge  bg-warning ">Pending</span><% } %>  </td>
+                <td>
+                    <a href="/admin/order/<%= val._id %>" class="btn  text-warning" title="View Order"><i class="bi bi-eye-fill"></i></a>
+                    <a href="/admin/invoice/<%= val._id %>" class="btn  text-warning" title="View Order"><i class="bi bi-receipt"></i></a>
+                    <!-- <button  class="btn text-danger border-0" id="delete2<%=val._id %>" onclick="coupDelete( 'delete2<%=val._id %>','<%=val._id %>', 'icon')"><i class="bi bi-trash3-fill"></i></button> -->
+                </td>
+            </tr>
+
+            <%})%>
+        </tbody>
+    </table>
+  </div>
+</div>
 <div class="container" >
     <h3 class="text-muted border-bottom">Usefull links</h3>
     <a href="/admin/users" class="btn-link btn">Manage Users</a> | 
-    <a href="#" class="btn-link btn">Manage Products</a> |
-    <a href="/admin/users/update/{{userData._id}}" class="btn-link btn">Settings</a> 
+    <a href="/admin/products" class="btn-link btn">Manage Products</a> |
+    <a href="/admin/settings" class="btn-link btn">Settings</a> 
 
 </div>
-
+<div style="background-color: rgba(212, 161, 51, 0.434);"></div>
 <script>
-    var xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
-var yValues = [55, 49, 44, 24, 15];
+    var xValues = ['Incomplete orders', 'Payment pending','paid orders'];
+var yValues = [<%= pendingorderCount%>,<%=paymentpendingorderCount%>,<%=paymentpaidorderCount%>];
 var barColors = [
-  "#b91d47",
-  "#00aba9",
-  "#2b5797",
-  "#e8c3b9",
-  "#1e7145"
+  "rgba(221, 63, 63, 0.834)",
+  "rgba(212,161,51, 0.834)",
+  "rgba(95, 250, 175,0.8)",
 ];
 
 new Chart("myChart2", {

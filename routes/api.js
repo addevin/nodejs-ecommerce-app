@@ -781,7 +781,7 @@ Twilio API
 //     // Set environment variables for your credentials
 //     // Read more at http://twil.io/secure
 //     const accountSid = "AC9f53dacf185216d76be902986188f85f";
-//     const authToken = process.env.TWILIO_AUTH_TOKEN || 'bc9e63a2fa9830dd592bf9ee9f0e20be';
+//     const authToken =  '7c21ca1d880300381dc5bf393b7adb3b';
 //     const verifySid = "VA0851e3c6cd857eeb9c95ccbf16076911";
 //     const client = require("twilio")(accountSid, authToken);
 
@@ -804,6 +804,7 @@ Twilio API
 //             .then(() => readline.close());
 //         });
 //     }).catch((err)=>{
+//         console.log('ERROR-------------------------------------------------------');
 //         console.log(err);
 //     })
 // })
@@ -818,31 +819,39 @@ routes.post('/sentSms', function(req, res) {
     apiRes.status = 200;
     apiRes.message = 'No data recieved!';
     apiRes.success = false;
-    
-    if(res.locals.userData.phone_verified==false){
-        const accountSid = process.env.TWILIO_ACCOUNT_SID;
-        const authToken = process.env.TWILIO_AUTH_TOKEN ;
-        const verifySid = process.env.TWILIO_VERIFY_SID;
-        const client = require("twilio")(accountSid, authToken);
+    try {
         
-        client.verify.v2
-        .services(verifySid)
-        .verifications.create({ to: "+91"+res.locals.userData.phone, channel: "sms" })
-        .then((verification) =>{
-            apiRes.message = 'OTP sent to '+verification.to;
-            apiRes.success = true;
-        } ).catch((err)=>{
-            console.log(err);
-            apiRes.message = 'Error detucted while trying to send OTP! try again later..';
+    
+        
+        if(res.locals.userData.phone_verified==false){
+            const accountSid = process.env.TWILIO_ACCOUNT_SID;
+            const authToken = process.env.TWILIO_AUTHTOKEN ;
+            const verifySid = process.env.TWILIO_VERIFY_SID;
+            const client = require("twilio")(accountSid, authToken);
             
-        }).then(()=>{
-            
+            client.verify.v2
+            .services(verifySid)
+            .verifications.create({ to: "+91"+res.locals.userData.phone, channel: "sms" })
+            .then((verification) =>{
+                apiRes.message = 'OTP sent to '+verification.to;
+                apiRes.success = true;
+            } ).catch((err)=>{
+                console.log(err);
+                apiRes.message = 'Error detucted while trying to send OTP! try again later..';
+                
+            }).then(()=>{
+                
+                res.status(apiRes.status).json(apiRes)
+            })
+        }else{
+            apiRes.message = 'You are already verified your phone!'
             res.status(apiRes.status).json(apiRes)
-        })
-    }else{
-        apiRes.message = 'You are already verified your phone!'
-        res.status(apiRes.status).json(apiRes)
 
+        }
+    } catch (error) {
+        console.log(error);
+        apiRes.message = 'Error detucted while trying to send OTP! try again later..'
+        res.status(apiRes.status).json(apiRes)
     }
     
 });
@@ -855,7 +864,7 @@ routes.post('/verifysmsotp', function(req, res) {
     if(res.locals.userData.phone_verified==false){
 
         const accountSid = process.env.TWILIO_ACCOUNT_SID;
-        const authToken = process.env.TWILIO_AUTH_TOKEN ;
+        const authToken = process.env.TWILIO_AUTHTOKEN;
         const verifySid = process.env.TWILIO_VERIFY_SID;
         const client = require("twilio")(accountSid, authToken); 
         const otpCode = req.body.otp;
@@ -904,7 +913,7 @@ routes.post('/sentemailverify',(req,res)=>{
         users.updateOne({_id:res.locals.userData._id},{$set: {email_id:key}}).then(()=>{
             let data = {}
             data.mailOptions = {
-            from: 'addev.connect@gmail.com',
+            from: process.env.EMAIL_USER,
             to: res.locals.userData.email,
             subject: 'Verification Email',
             html:  `<h2>Verify Email</h2> <p>To verify your email account please click on the link provided below.</p>

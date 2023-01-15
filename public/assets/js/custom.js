@@ -274,7 +274,7 @@ function cartLupdateQnty(id,limit, calc){
     locaData = locaData.map((val,i)=>{
         if(val.id==id){
             if(calc=='inc'){
-                if( val.qnty<=limit){
+                if( val.qnty<limit){
                     val.qnty++
                 }
             }else if(calc == 'dec'){
