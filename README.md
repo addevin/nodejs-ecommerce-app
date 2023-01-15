@@ -1,8 +1,9 @@
 ## Ecommerce open source node.js
 <p>A node.js ecommerce project which is made for educational purpose only. it's completely open source now!</p>
 
-<p>You have to create a new file named `.env` in your root of project and insert the code below and edit!</p>
-```
+You have to create a new file named `.env` in your root of project and insert the code below and edit!
+
+```js
 DB_SECRET = mongodb://localhost:27017/projectname
 TWILIO_ACCOUNT_SID = twilio
 TWILIO_AUTHTOKEN =twilio
