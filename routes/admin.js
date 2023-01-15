@@ -183,7 +183,7 @@ routes.get('/settings/profile',async (req,res,next)=>{
     res.render('./admin/profile', {page:'profile', pageName:"Account Management", userData: res.locals.userData, pages: ['settings','profile'], })  
 })
 routes.get('/settings/admins',async (req,res,next)=>{
-    let adminList = await admins.find({});
+    let adminList = await admins.find({'state.deleted':{$ne:true}});
     res.render('./admin/admins', {page:'admins', pageName:"Admin Management", userData: res.locals.userData, pages: ['settings','admins'],adminList })  
 })
 routes.get('/settings/',async (req,res,next)=>{

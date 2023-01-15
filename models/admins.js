@@ -10,7 +10,7 @@ const adminsSchema = new mongoose.Schema({
         deleted:{type:Boolean, default:false},
     },
     joined: {type:Date, default: Date.now()},
-    last_login: {type:Date}
+    last_login: {type:Date},
 })
 
 module.exports = mongoose.model("admins", adminsSchema)

@@ -41,7 +41,10 @@ Admin login validator API
         }else{
             loginuserData.username = req.body.user;
         }
+        loginuserData['state.deleted']={$ne:true}
+        console.log(loginuserData);
         let userData = await admins.findOne(loginuserData)
+        console.log(userData);
         if(userData){
             let isLoginValid = await main.hashPasswordvalidate(req.body.password,userData.password)
             if(isLoginValid){
@@ -908,7 +911,7 @@ routes.post('/admin/create',(req,res)=>{
     if(req.body.id){
         if(req.body.id.toString() !== req.session.adminid.toString()){
 
-            admins.remove({_id:req.body.id})
+            admins.updateOne({_id:req.body.id},{$set:{state:{deleted:true}}})
            .then(()=>{
                 apiRes.message = 'Removed the Admin!';
                 apiRes.success = true;
