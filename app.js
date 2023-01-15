@@ -33,11 +33,14 @@ app.use((req,res,next)=>{
 app.use((req,res,next)=>{
 /**DB CONFIG */
     dotenv.config()
-    mongoose.connect(process.env.DB_SECRET).then(()=>console.log('Db connected...'))
+    mongoose.connect(process.env.DB_SECRET).then(()=>{
+        console.log('Db connected...')
+        next()
+    })
     .catch((err)=>{
         console.log(err)
         next(createError(500))
-})
+    })
 })
 
 
@@ -102,7 +105,7 @@ app.use(function(err, req, res, next) {
 });
 
 
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, ()=>{
     console.log('Server is running...');
     console.log('\x1b[33m%s\x1b[0m', "developed by :"+
