@@ -105,7 +105,7 @@ app.use(function(err, req, res, next) {
 });
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 80;
 app.listen(PORT, ()=>{
     console.log('Server is running...');
     console.log('\x1b[33m%s\x1b[0m', "developed by :"+

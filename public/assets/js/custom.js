@@ -164,7 +164,8 @@ function getCartData(){
         cartLoader.html('<i class="fa-solid fa-spinner  fa-spin"></i> Loading...')
         let cartVal = localStorage.getItem('cart');
         
-        if(cartVal){
+        if(cartVal.length ){
+            console.log('in if case');
             let locaData = JSON.parse(localStorage.getItem('cart'))
             if(locaData.length>0){
                 $('#cartCountHeader').show()
@@ -183,7 +184,6 @@ function getCartData(){
                 dataType: "json",
                 encode: true,
             }).done(function (res) {
-                console.log(res);
                 cartLoader.html('')
                 if(res.success==true){
                     cartDiv.html('')
@@ -202,7 +202,6 @@ function getCartData(){
                             </div>
                         </div>
                         <div class="d-flex flex-column">
-    
                             <b class="text-success mx-2 ">&#8377;${e.total}</b>
                             <button class="btn btn-transparent text-muted" onclick="deleteCartL('${e.id}')">
                                 <i class="fa-solid fa-trash"></i>
@@ -228,8 +227,35 @@ function getCartData(){
                 
             })
         }else{
-            cartLoader.html(`<p class="text-danger text-center">Add products to the cart to show here!</p>`)
-
+            console.log('in else case');
+            $.ajax({
+                type: "POST",
+                url:  '/api/getProductDetails/tolocal',
+                data: {},
+                dataType: "json",
+                encode: true,
+            }).done(function (res) {
+                console.table(res);
+                console.table(res.data);
+                cartLoader.html('')
+                if(res.success==true){
+                    if (res.data.length >=1) {
+                        let newCartDt = res.data.map((val)=>{
+                            let data = {
+                                id: val.product_id,
+                                qnty:val.quantity
+                            }
+                            return data
+                        })
+                        let data = JSON.stringify(newCartDt)
+                        localStorage.setItem('cart', data);
+                    }else{
+                        cartLoader.html(`<p class="text-danger text-center">Add products to the cart to show here!</p>`)
+                    }
+                }else{
+                    cartLoader.html(`<p class="text-danger text-center">${res.message}</p>`)
+                }
+            })
         }
  
 }

@@ -197,6 +197,26 @@ routes.post('/getProductDetails/tocart', async (req,res,next)=>{
     }
 })
 
+routes.post('/getProductDetails/tolocal', async (req,res,next)=>{
+    let apiRes = JSON.parse(JSON.stringify(apiResponse));
+    apiRes.message = 'No result found!';
+    apiRes.status = 200;
+    apiRes.success = false
+    try {
+        apiRes.message = 'Data fetch success!';
+        apiRes.success = true
+        if(res.locals.login){
+            apiRes.data = res.locals.userData.cart
+        }else{
+            apiRes.data = []
+        }
+        console.log(apiRes.data);
+    } catch (error) {
+        apiRes.message = 'Error while trying to accessing the cart!'
+    }finally{
+        res.status(apiRes.status).json(apiRes)
+    }
+})
 /*=======
 Login Validation
 ========*/
