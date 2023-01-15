@@ -30,13 +30,14 @@ app.use((req,res,next)=>{
 
 
 
-
+app.use((req,res,next)=>{
 /**DB CONFIG */
-dotenv.config()
-mongoose.connect(process.env.DB_SECRET+process.env.DB_NAME).then(()=>console.log('Db connected...'))
-.catch((err)=>{
-    console.log(err)
-    next(createError(500))
+    dotenv.config()
+    mongoose.connect(process.env.DB_SECRET).then(()=>console.log('Db connected...'))
+    .catch((err)=>{
+        console.log(err)
+        next(createError(500))
+})
 })
 
 
