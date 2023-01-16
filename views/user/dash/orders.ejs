@@ -37,7 +37,7 @@
                             <div class="border p-2">
                                 <h5 class="text-secondary border-bottom py-2 mb-2">Your Orders! </h5>
                                 <% ordersList.forEach((val,i)=>{ %> 
-                                    <div class="col-md-12 border  <% if(val.delivery_status.delivered.state ==false){ %> border-dark  <% } %>  bg-light p-2 d-flex flex-wrap">
+                                    <div class="col-md-12 border  <% if(val.delivery_status.delivered.state ==false){ %> border-dark  <% } %>  my-1 p-2 d-flex flex-wrap">
                                         <div class="col-12 col-md-5 ">
                                             <p>Order id: <b><%= val._id %></b> </p>
                                             <p>Ordered at: <b><%= val.ordered_date.getDate() %>/<%= val.ordered_date.getMonth()+1 %>/<%= val.ordered_date.getFullYear() %></b> </p>
@@ -45,16 +45,16 @@
                                         <div class="col-12 col-md-3">
                                             <% if(val.delivery_status.delivered.state){ %> 
                                                 <p>Status: <b>DELIVERED</b><small>(<%= val.delivery_status.delivered.date.getDate() %>/<%= val.delivery_status.delivered.date.getMonth()+1 %>/<%= val.delivery_status.delivered.date.getFullYear() %>)</small> </p>
-                                                <p><button class="btn btn-dark border-0 btn-sm">Return</button></p>
+                                                <p><button class="btn btn-dark border-0 btn-sm d-none">Return</button></p>
                                             <% }else if(val.delivery_status.out_for_delivery.state){ %> 
                                                 <p>Status: <b>OUT_FOR_DELIVERY</b><small>(<%= val.delivery_status.out_for_delivery.date.getDate() %>/<%= val.delivery_status.out_for_delivery.date.getMonth()+1 %>/<%= val.delivery_status.out_for_delivery.date.getFullYear() %>)</small> </p>
-                                                <p><button class="btn btn-dark border-0 btn-sm">Cancel</button></p>
+                                                <p><button class="btn btn-dark border-0 btn-sm d-none">Cancel</button></p>
                                             <% }else if(val.delivery_status.shipped.state){  %> 
                                                 <p>Status: <b>SHIPPED</b><small>(<%= val.delivery_status.shipped.date.getDate() %>/<%= val.delivery_status.shipped.date.getMonth()+1 %>/<%= val.delivery_status.shipped.date.getFullYear() %>)</small> </p>
-                                                <p><button class="btn btn-dark border-0 btn-sm">Cancel</button></p>
+                                                <p><button class="btn btn-dark border-0 btn-sm d-none">Cancel</button></p>
                                             <% }else if(val.delivery_status.ordered.state){  %> 
                                                 <p>Status: <b>ORDERED</b><small>(<%= val.delivery_status.ordered.date.getDate() %>/<%= val.delivery_status.ordered.date.getMonth()+1 %>/<%= val.delivery_status.ordered.date.getFullYear() %>)</small> </p>
-                                                <p><button class="btn btn-dark border-0 btn-sm">Cancel</button></p>
+                                                <p><button class="btn btn-dark border-0 btn-sm d-none">Cancel</button></p>
 
                                             <% } %> 
                                         </div>

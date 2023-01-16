@@ -57,9 +57,6 @@ function toggleModal(id,togglewut){
 
 function searchSuggest(val){
     let url;
-    if(val != null){
-        console.log('not nu;;');
-    }
     let sr = $('#searchResult');
     $.ajax({
         type: "POST",
@@ -70,7 +67,6 @@ function searchSuggest(val){
         dataType: "json",
         encode: true,
         }).done(function (res) {
-            console.log(res);
             if(res.success==true){
                 sr.html('');
                 res.data.forEach((el,i) => {
@@ -125,7 +121,6 @@ function addToCartLoc(id,qntyId){
     if(localStorage.getItem('cart')){
         let locaData = JSON.parse(localStorage.getItem('cart'))
         let isExit = locaData.reduce((state,val)=>{
-            console.log(val);
             if(val.id==id){
                 state=true;
             }
@@ -135,8 +130,6 @@ function addToCartLoc(id,qntyId){
             locaData.push(newData)
             datatoAdd = locaData;
             readyToUpdate = true;
-        }else{
-            console.log('Data exist!');
         }
     }else{
         datatoAdd = [newData]
@@ -164,8 +157,7 @@ function getCartData(){
         cartLoader.html('<i class="fa-solid fa-spinner  fa-spin"></i> Loading...')
         let cartVal = localStorage.getItem('cart');
         
-        if(cartVal.length ){
-            console.log('in if case');
+        if(cartVal){
             let locaData = JSON.parse(localStorage.getItem('cart'))
             if(locaData.length>0){
                 $('#cartCountHeader').show()
@@ -188,37 +180,53 @@ function getCartData(){
                 if(res.success==true){
                     cartDiv.html('')
                     let totalPrice= 0;
-                    res.data.forEach((e,i) => {
-                        cartDiv.append(`<div class="border rounded d-flex justify-content-between align-items-center" id="${e.id}main">
-                        <img src="http://localhost/shop/${e.image}" alt="" class="object-fit-cover" style="width: 100px; height: 100px;">
-                        <div>
-                            <h6 class="letterLimit-160 pb-0 mb-0">${e.name}</h6>
-                            <p class="m-0 p-0">${e.size}</p>
-                            <div class="d-flex align-items-center" style="max-height: 30px;">
-                                <b class="text-success me-2">&#8377;${e.price}</b>
-                                <button class="btn btn-outline-secondary btn-sm" onclick="cartLupdateQnty('${e.id}',${e.limit},'dec')" id="${e.id}QntyDec">-</button>
-                                <input type="text" class="form-control bg-white text-dark p-0 text-center"  style="width: 35px; height: 30px;" value="${e.qnty}" id="${e.id}QntyInp" disabled>
-                                <button class="btn btn-outline-secondary btn-sm" onclick="cartLupdateQnty('${e.id}',${e.limit},'inc')" id="${e.id}QntyInc">+</button>
+                    if(res.data.length >=1){
+
+                        
+                        res.data.forEach((e,i) => {
+                            cartDiv.append(`<div class="border rounded d-flex justify-content-between align-items-center" id="${e.id}main">
+                            <img src="http://localhost/shop/${e.image}" alt="" class="object-fit-cover" style="width: 100px; height: 100px;">
+                            <div>
+                                <h6 class="letterLimit-160 pb-0 mb-0">${e.name}</h6>
+                                <p class="m-0 p-0">${e.size}</p>
+                                <div class="d-flex align-items-center" style="max-height: 30px;">
+                                    <b class="text-success me-2">&#8377;${e.price}</b>
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="cartLupdateQnty('${e.id}',${e.limit},'dec')" id="${e.id}QntyDec">-</button>
+                                    <input type="text" class="form-control bg-white text-dark p-0 text-center"  style="width: 35px; height: 30px;" value="${e.qnty}" id="${e.id}QntyInp" disabled>
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="cartLupdateQnty('${e.id}',${e.limit},'inc')" id="${e.id}QntyInc">+</button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="d-flex flex-column">
-                            <b class="text-success mx-2 ">&#8377;${e.total}</b>
-                            <button class="btn btn-transparent text-muted" onclick="deleteCartL('${e.id}')">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>`)
-                    totalPrice += e.total;
-                    });
-                    const countNm = (res.data.length<=1)? ' item' : ' items';
-                    $('#cartItemCount').html(res.data.length + countNm)
-                    $('#cartItemTotal').html('&#8377;'+totalPrice)
-                    let itemCountCPAGE = document.getElementById('cartItemCount2')
-                    if(itemCountCPAGE){
-                        itemCountCPAGE.innerHTML = res.data.length;
-                        $('#cartSubTotal2').html(totalPrice) 
-                        $('#cartTotal2').html(totalPrice)
+                            <div class="d-flex flex-column">
+                                <b class="text-success mx-2 ">&#8377;${e.total}</b>
+                                <button class="btn btn-transparent text-muted" onclick="deleteCartL('${e.id}')">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>`)
+                        totalPrice += e.total;
+                        });
+                        const countNm = (res.data.length<=1)? ' item' : ' items';
+                        $('#cartItemCount').html(res.data.length + countNm)
+                        $('#cartItemTotal').html('&#8377;'+totalPrice)
+                        let itemCountCPAGE = document.getElementById('cartItemCount2')
+                        if(itemCountCPAGE){
+                            itemCountCPAGE.innerHTML = res.data.length;
+                            $('#cartSubTotal2').html(totalPrice) 
+                            $('#cartTotal2').html(totalPrice)
+                        }
+                    }else{
+                        cartLoader.html(`<p class="text-danger text-center">Add products to the cart to show here!</p>`)
+                        const countNm = (res.data.length<=1)? ' item' : ' items';
+                        $('#cartItemCount').html(res.data.length + countNm)
+                        $('#cartItemTotal').html('&#8377;'+totalPrice)
+                        let itemCountCPAGE = document.getElementById('cartItemCount2')
+                        if(itemCountCPAGE){
+                            itemCountCPAGE.innerHTML = res.data.length;
+                            $('#cartSubTotal2').html(totalPrice) 
+                            $('#cartTotal2').html(totalPrice)
+                        }
                     }
+                    
                     
                 }else{
                     cartLoader.html(`<p class="text-danger text-center">${res.message}</p>`)
@@ -227,7 +235,6 @@ function getCartData(){
                 
             })
         }else{
-            console.log('in else case');
             $.ajax({
                 type: "POST",
                 url:  '/api/getProductDetails/tolocal',
@@ -235,8 +242,6 @@ function getCartData(){
                 dataType: "json",
                 encode: true,
             }).done(function (res) {
-                console.table(res);
-                console.table(res.data);
                 cartLoader.html('')
                 if(res.success==true){
                     if (res.data.length >=1) {
@@ -251,6 +256,12 @@ function getCartData(){
                         localStorage.setItem('cart', data);
                     }else{
                         cartLoader.html(`<p class="text-danger text-center">Add products to the cart to show here!</p>`)
+                        let itemCountCPAGE = document.getElementById('cartItemCount2')
+                        if(itemCountCPAGE){
+                            itemCountCPAGE.innerHTML = res.data.length;
+                            $('#cartSubTotal2').html(0) 
+                            $('#cartTotal2').html(0)
+                        }
                     }
                 }else{
                     cartLoader.html(`<p class="text-danger text-center">${res.message}</p>`)
@@ -338,7 +349,6 @@ function addToWishList(id){
         dataType: "json",
         encode: true,
     }).done(function (res) {
-        console.log(res);
         if(res.success==true){
             Swal.fire(
                 'Good job!',
@@ -367,7 +377,6 @@ function removeWishList(id){
         dataType: "json",
         encode: true,
     }).done(function (res) {
-        console.log(res);
         if(res.success==true){
             Swal.fire(
                 'Good job!',

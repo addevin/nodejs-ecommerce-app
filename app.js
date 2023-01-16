@@ -44,15 +44,6 @@ app.use((req,res,next)=>{
 })
 
 
-
-const adminRoutes = require('./routes/admin')
-const userRoutes = require('./routes/user')
-const authRoutes = require('./routes/auth')
-const apiRoutes = require('./routes/api') 
-const adminapiRoutes = require('./routes/adminApi') 
-const userDashRoutes = require('./routes/userdash') 
-
-
 app.use(express.static(path.join(__dirname,"public")))
 app.use('/shop',express.static(path.join(__dirname,"public/uploads/product")))
 app.use('/cat',express.static(path.join(__dirname,"public/uploads/category")))
@@ -62,6 +53,14 @@ app.use(ejsLayout)
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(session({secret: mainModule.randomGen(15), cookie:{maxAge:60000000000}}))
+
+
+const adminRoutes = require('./routes/admin')
+const userRoutes = require('./routes/user')
+const authRoutes = require('./routes/auth')
+const apiRoutes = require('./routes/api') 
+const adminapiRoutes = require('./routes/adminApi') 
+const userDashRoutes = require('./routes/userdash') 
 
 app.set("view engine", "ejs")
 app.set("layout", path.join(__dirname,'views/layout/base-layout'))
