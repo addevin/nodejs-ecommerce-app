@@ -41,6 +41,8 @@ routes.get('/',async (req,res)=>{
     let bannerList = await banners.find({})
     res.render('user/index', {pageName: 'Home', login:res.locals.login, userData:res.locals.userData, catList:res.locals.catList, bannerList, siteData :res.locals.siteData})
 })
+
+
 routes.get('/about',(req,res)=>{
     res.render('user/about', {pageName: 'About Us'})
 })
@@ -134,6 +136,8 @@ routes.get('/product/:size/:id',async (req,res,next)=>{
 routes.get('/contact',(req,res)=>{
     res.render('user/contact', {pageName: 'Contact Us'})
 })
+
+
 
 
 
