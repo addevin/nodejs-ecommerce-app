@@ -36,7 +36,7 @@
                         <form method="POST" class="needs-validation" novalidate="" autocomplete="off" action="/api/loginvalidate">
                             <div class="mb-3">
                                 <label class="mb-2 text-muted" for="user">Email/Username</label>
-                                <input id="user" type="text" class="form-control" name="user" required autofocus>
+                                <input id="user" type="text" class="form-control" name="user" placeholder="username or email" required autofocus>
                                 <div class="invalid-feedback">
                                     Email/username is invalid
                                 </div>
@@ -44,12 +44,12 @@
 
                             <div class="mb-3">
                                 <div class="mb-2 w-100">
-                                    <label class="text-muted" for="password">Password</label>
+                                    <label class="text-muted" for="password" >Password</label>
                                     <a href="/auth/reset" class="float-end">
                                         Forgot Password?
                                     </a>
                                 </div>
-                                <input id="password" type="password" class="form-control" name="password" required>
+                                <input id="password" type="password" class="form-control" name="password" placeholder="Password" required>
                                 <div class="invalid-feedback">
                                     Password is required
                                 </div>
