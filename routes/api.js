@@ -1128,7 +1128,8 @@ routes.post('/checkout/setCoupon',checkPhoneVerified, (req,res)=>{
                                 discount:data.discount,
                                 ptype:data.pType,
                             }}}).then(async ()=>{
-                                await coupons.updateOne({_id:data._id},{$push:{used_users:res.locals.userData._id}})
+                                console.log('iddddd '+data._id);
+                                await coupons.updateOne({_id:data._id},{$addToSet:{used_users:res.locals.userData._id}})
                                 apiRes.data = data
                                 apiRes.message = 'Applied discount to your bill!';
                                 apiRes.success = true
@@ -1303,9 +1304,10 @@ failure@razorpay: To fail the payment.*/
                     console.log("sig generated " ,expectedSignature);
                 if(expectedSignature === req.body.raz_sign){
                     orders.updateOne({_id:req.body.id},{$set:{'payment.payment_status' : 'completed',order_status:'completed', 'payment.payment_id': req.body.raz_id, 'delivery_status.ordered.state':true,'delivery_status.ordered.date': Date.now()}})
-                    .then(()=>{
+                    .then(async ()=>{
                         apiRes.message = 'Payment verified Successfully!';
                         apiRes.success = true;
+                        await users.updateOne({_id:res.locals.userData._id},{$set:{cart:[]}})
                     }).catch((err)=>{
                         apiRes.message = 'Payment verified Successfully, but couldn\'t update! please contact support ASAP!';
                         console.log(err);
@@ -1347,9 +1349,10 @@ routes.post('/checkout/CODapprove',checkPhoneVerified, async(req,res)=>{
             let orderData = await orders.findOne({_id:req.body.id, userid:res.locals.userData._id, order_status:'pending'})
             if(orderData){
                 orders.updateOne({_id:req.body.id},{$set:{order_status:'completed', 'payment.payment_id': 'COD_'+req.body.id,'payment.payment_order_id':'COD_noOID','payment.payment_method':'cash_on_delivery', 'delivery_status.ordered.state':true,'delivery_status.ordered.date': Date.now()}})
-                .then(()=>{
+                .then(async ()=>{
                     apiRes.message = 'Order placed Successfully!';
                     apiRes.success = true;
+                    await users.updateOne({_id:res.locals.userData._id},{$set:{cart:[]}})
                 }).catch((err)=>{
                     apiRes.message = 'Internal error detucted, try again later!';
                     console.log(err);

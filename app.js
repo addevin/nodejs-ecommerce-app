@@ -30,19 +30,26 @@ app.use((req,res,next)=>{
 
 
 
-app.use((req,res,next)=>{
+
 /**DB CONFIG */
+let dbErr = false;
     dotenv.config()
     mongoose.connect(process.env.DB_SECRET).then(()=>{
         console.log('Db connected...')
-        next()
+        // next()
     })
     .catch((err)=>{
+        dbErr  =true;
         console.log(err)
-        next(createError(500))
+        // next(createError(500))
     })
+app.use((req,res,next)=>{
+    if (dbErr) {
+        next(createError(500))
+    }else{
+        next()
+    }
 })
-
 
 app.use(express.static(path.join(__dirname,"public")))
 app.use('/shop',express.static(path.join(__dirname,"public/uploads/product")))
@@ -106,7 +113,7 @@ app.use(function(err, req, res, next) {
 
 const PORT = process.env.PORT || 80;
 app.listen(PORT, ()=>{
-    console.log('Server is running...');
+    console.log('Server is running on port '+PORT);
     console.log('\x1b[33m%s\x1b[0m', "developed by :"+
     "\n  __   __    ____  ____  ____  _  _  _ __  \n / /  /__\\  (  _ \\(  _ \\( ___)( \\/ )/ )\\ \\ \n< <  /(__)\\  )(_) ))(_) ))__)  \\  // /  > > \n \\_\\(__)(__)(____/(____/(____)  \\/(_/  /_/ ")
 })

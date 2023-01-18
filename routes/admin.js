@@ -95,7 +95,6 @@ routes.get('/', async(req,res)=>{
             $sort: { _id: 1 }
         }
     ]);
-    console.log(salesChartDt);
     res.render('./admin/index', {page:'home', pageName:"Dashboard", userData: res.locals.userData, pages: ['dashboard'], usersCount,catCount,prodCount, salesChartDt,orderCount,successOrders,pendingorderCount,paymentpendingorderCount,paymentpaidorderCount})
 })
 routes.get('/logout',(req,res)=>{

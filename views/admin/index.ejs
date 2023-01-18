@@ -151,9 +151,9 @@ new Chart("salesChart", {
   data: {
     labels: xValues,
     datasets: [{
-        label: 'Sales',
+        label: 'Orders',
       data: [<%=salesCount %>],
-      borderColor: "rgba(95, 250, 175,0.8)",
+      borderColor: "rgba(0, 156, 255 ,0.4)", //95, 250, 175,0.8
       fill: false
     }
     // ,{
@@ -173,7 +173,7 @@ new Chart("salesChart", {
     legend: {display: false},
     title: {
       display: true,
-      text: "Sales chart <%=getMonthName(Number(salesChartDt[0]._id.substring(7,5))) %> -  <%= salesChartDt[0]._id.substring(0, 4)%>"
+      text: "Order chart <%=getMonthName(Number(salesChartDt[0]._id.substring(7,5))) %> -  <%= salesChartDt[0]._id.substring(0, 4)%>"
     }
   }
 });
