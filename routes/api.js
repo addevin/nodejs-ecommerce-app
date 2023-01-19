@@ -1128,7 +1128,6 @@ routes.post('/checkout/setCoupon',checkPhoneVerified, (req,res)=>{
                                 discount:data.discount,
                                 ptype:data.pType,
                             }}}).then(async ()=>{
-                                console.log('iddddd '+data._id);
                                 await coupons.updateOne({_id:data._id},{$addToSet:{used_users:res.locals.userData._id}})
                                 apiRes.data = data
                                 apiRes.message = 'Applied discount to your bill!';

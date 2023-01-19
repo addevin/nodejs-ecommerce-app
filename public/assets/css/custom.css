@@ -33,6 +33,9 @@ Custom Css
 }
 .bgimage2{
     background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
     background-image: url('../img/loginBG.jpg');
 }
 .squireImg{

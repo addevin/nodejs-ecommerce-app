@@ -433,7 +433,7 @@ function initPayment(){
         
     var options = {
         "key": orderData.razKey, 
-        "amount": orderData.amount, 
+        "amount": orderData.amount,
         "currency": "INR",
         "name": "AdDev",
         "description": "The Transaction is under test mode, enabled by AdDev",
@@ -448,12 +448,12 @@ function initPayment(){
             verifyPayment()
         },
         "prefill": {
-            "name": "Gaurav Kumar",
-            "email": "gaurav.kumar@example.com",
+            "name": "name",
+            "email": "name@example.com",
             "contact": "9999999999"
         },
         "notes": {
-            "address": "Razorpay Corporate Office"
+            "address": "AdDev Pay"
         },
         "theme": {
             "color": "#000000"
