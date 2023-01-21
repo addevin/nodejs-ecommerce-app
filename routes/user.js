@@ -8,6 +8,7 @@ const products = require('../models/products');
 const createError = require('http-errors');
 const banners = require('../models/banners');
 const config = require('config')
+const sharp = require('sharp')
 
 
 routes.use((req,res,next)=>{
@@ -19,6 +20,7 @@ routes.use((req,res,next)=>{
 /*=======
 Checking whether loggedin or not
 ========*/
+
 routes.use(async (req,res,next)=>{
     let isUserLoggedin = await usersModules.authCheck(req);
     res.locals.catList = await categories.find({}) ;
@@ -33,7 +35,35 @@ routes.use(async (req,res,next)=>{
     }
 })
 
+/**
+ * IMG Thumb for products
+ */
+routes.use('/productimage/thumb/:img',(req,res,next)=>{
+    var mime = {
+        html: 'text/html',
+        txt: 'text/plain',
+        css: 'text/css',
+        gif: 'image/gif',
+        jpg: 'image/jpeg',
+        png: 'image/png',
+        svg: 'image/svg+xml',
+        js: 'application/javascript'
+    };
 
+    sharp('public/uploads/product/'+req.params.img) //prod-02lj2SiBOLUCH62.png
+  .jpeg({ quality: 10, progressive: true, force: false })
+  .webp({ quality: 10, progressive: true, force: false })
+  .png({ compressionLevel: 1, progressive: true, force: false })
+  .toBuffer()
+  .then((data)=>{
+     let type = mime[path.extname(req.params.img).slice(1)] || 'text/plain';
+     res.set('Content-Type', type);
+    res.send(data)
+}).catch((err)=>{
+    console.log(err);
+    res.send('No image found!')
+  })
+})
 /*=======
 Pages
 ========*/

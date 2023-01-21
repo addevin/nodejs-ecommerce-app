@@ -225,7 +225,7 @@
                             
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card mb-1">
                         <div class="card-body">
                             
                             <div class="border p-2">
@@ -246,12 +246,29 @@
                             
                         </div>
                     </div>
+                    <div class="card ">
+                        <div class="card-body">
+                            
+                            <div class="border p-2">
+                                <h5 class="text-secondary border-bottom py-2 mb-2">Cancel? </h5>
+                                <div class="border p-2">
+                                    <div class="alert alert-warning" style="display: none;"  id="<%= orderData._id %>clickinfo"  >Cancelling items in this order may cause you to lose your promotional offers and/or cashback on this order.</div>
+                                    <p>Your order is on the way to deliver, but you still be able to cancel and will not able to revert it back once cancelled.</p>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="sendData('<%= orderData._id %>',true)" id="<%= orderData._id %>Btn">Cancel</button>
+                                    <p class="text-danger" id="<%= orderData._id %>clickALert" ></p>
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
     <!-- Close Content -->
 <script>
+  
     
 var uclicks = 0;
 function sendData(id,ask){
@@ -270,6 +287,7 @@ function sendData(id,ask){
             }
         }else{
             $('#'+id+'clickALert').html('Click '+count+' more times')
+            $('#'+id+'clickinfo').show()
             if(uclicks<=3){
                 uclicks++;
             }

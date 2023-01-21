@@ -104,6 +104,7 @@
 </div>
 <div style="background-color: rgba(212, 161, 51, 0.434);"></div>
 <script>
+
     var xValues = ['Incomplete orders', 'Payment pending','paid orders'];
 var yValues = [<%= pendingorderCount%>,<%=paymentpendingorderCount%>,<%=paymentpaidorderCount%>];
 var barColors = [
@@ -140,6 +141,7 @@ function getMonthName(monthNumber) {
 }
 
 %>
+
 
 /**chart*/
 <% let dates = salesChartDt.map((val)=>{ return val._id.slice(-2)}) %>

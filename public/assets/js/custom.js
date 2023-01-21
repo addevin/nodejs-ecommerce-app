@@ -185,7 +185,7 @@ function getCartData(){
                         
                         res.data.forEach((e,i) => {
                             cartDiv.append(`<div class="border rounded d-flex justify-content-between align-items-center" id="${e.id}main">
-                            <img src="/shop/${e.image}" alt="" class="object-fit-cover" style="width: 100px; height: 100px;">
+                            <img src="/productimage/thumb/${e.image}" alt="" class="object-fit-cover" style="width: 100px; height: 100px;">
                             <div>
                                 <h6 class="letterLimit-160 pb-0 mb-0">${e.name}</h6>
                                 <p class="m-0 p-0">${e.size}</p>

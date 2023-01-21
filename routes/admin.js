@@ -114,6 +114,7 @@ routes.get("/", async (req, res) => {
       $sort: { _id: 1 },
     },
   ]);
+  
   res.render("./admin/index", {
     page: "home",
     pageName: "Dashboard",

@@ -45,6 +45,10 @@ const ordersSchema = new mongoose.Schema({
             state:{type:Boolean, default:false},
             date:{type:Date},
         },
+        cancelled:{
+            state:{type:Boolean, default:false},
+            date:{type:Date},
+        },
     },
     coupen:{
         name:{type:String},
