@@ -31,6 +31,16 @@ routes.use((req, res, next) => {
   next();
 });
 
+
+//cache clearing... 
+routes.use(function (req, res, next) {
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.header('Expires', '-1');
+    res.header('Pragma', 'no-cache');
+next();
+});
+
+
 /*=======
 Login page
 ========*/
@@ -114,7 +124,7 @@ routes.get("/", async (req, res) => {
       $sort: { _id: 1 },
     },
   ]);
-  
+
   res.render("./admin/index", {
     page: "home",
     pageName: "Dashboard",

@@ -11,13 +11,7 @@ const  mainModule  = require('./modules/main')
 const config = require('config')
 
 
-//cache clearing... 
-app.use(function (req, res, next) {
-    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-    res.header('Expires', '-1');
-    res.header('Pragma', 'no-cache');
-next();
-});
+
 
 app.use((req,res,next)=>{
     let configdata = config.get('server');
