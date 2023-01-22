@@ -1371,6 +1371,40 @@ routes.post('/checkout/CODapprove',checkPhoneVerified, async(req,res)=>{
         
         
 
+routes.post('/order/cancel',checkPhoneVerified, async(req,res)=>{
+    
+    let apiRes = JSON.parse(JSON.stringify(apiResponse));
+    apiRes.message = 'Invalid payment or something went wrong!';
+    apiRes.status = 200;
+    apiRes.success = false
+    if(req.body.id){
+
+        let orderData = await orders.findOne({_id:req.body.id, userid:res.locals.userData._id, order_status:'completed'})
+        if(orderData){
+            orders.updateOne({_id:req.body.id},{$set:{'delivery_status.cancelled.state':true,'delivery_status.cancelled.date': Date.now()}})
+            .then(async ()=>{
+                apiRes.message = 'Order cancelled Successfully!';
+                apiRes.success = true;
+                await users.updateOne({_id:res.locals.userData._id},{$set:{cart:[]}})
+            }).catch((err)=>{
+                apiRes.message = 'Internal error detucted, try again later!';
+                console.log(err);
+            }).finally(()=>{
+                res.status(apiRes.status).json(apiRes) 
+            })
+        }else{
+            apiRes.message = 'Seems it\'s an invalid order!';
+            res.status(apiRes.status).json(apiRes) 
+        }
+        
+    }else{
+        apiRes.message = 'Invalid argument passed!';
+        res.status(apiRes.status).json(apiRes) 
+    }
+})
+    
+
+
 routes.post('/wishlist/add',checkPhoneVerified, async(req,res)=>{
     
         let apiRes = JSON.parse(JSON.stringify(apiResponse));

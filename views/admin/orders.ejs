@@ -33,7 +33,10 @@
                   <td><%=val.products.length%></td>
                   <td title=""><%= val.ordered_date.getDate() %>/<%= val.ordered_date.getMonth()+1 %>/<%= val.ordered_date.getFullYear() %></td>
                   <td title="">
-                      <% if(val.delivery_status.delivered.state){ %> 
+                      <% if(val.delivery_status.cancelled.state){ %> 
+                        <p><b>CANCELLED</b><small>(<%= val.delivery_status.cancelled.date.getDate() %>/<%= val.delivery_status.cancelled.date.getMonth()+1 %>/<%= val.delivery_status.cancelled.date.getFullYear() %>)</small> </p>
+                        
+                      <% }else if(val.delivery_status.delivered.state){ %> 
                         <p><b>DELIVERED</b><small>(<%= val.delivery_status.delivered.date.getDate() %>/<%= val.delivery_status.delivered.date.getMonth()+1 %>/<%= val.delivery_status.delivered.date.getFullYear() %>)</small> </p>
                         
                       <% }else if(val.delivery_status.out_for_delivery.state){ %> 

@@ -36,7 +36,7 @@ if(orderData.delivery_status.delivered.state){
 
                     <label for="customRange3" class="form-label">Order Status</label>
                     <input type="hidden" name="id" value="<%= orderData._id %>">
-                    <input type="range" class="form-range" min="1" max="4" step="1" id="customRange3" value="<%= stsRange %>" name="sts" onchange="$('#stsRangeUpdateBtn').show()">
+                    <input type="range" class="form-range" min="1" max="4" step="1" id="customRange3" value="<%= stsRange %>" name="sts" onchange="$('#stsRangeUpdateBtn').show()" <% if(orderData.delivery_status.cancelled.state){ %> disabled<% } %> >
                     <div class="d-flex justify-content-between">
                         <p>Ordered</p>
                         <p>Shipped</p>
@@ -47,7 +47,17 @@ if(orderData.delivery_status.delivered.state){
                     <div id="stsRangeUpdateResponse"></div>
                 </form>
                 <table class="table table-striped">
-                    <% if(orderData.delivery_status.delivered.state){ %> 
+                    <% if(orderData.delivery_status.cancelled.state){ %> 
+                        <tr title="<%= orderData.delivery_status.cancelled.date%>">
+                            <td>
+                                <b>CANCELLED</b>
+                            </td>
+                            <td>
+                                <%= orderData.delivery_status.cancelled.date.getDate() %>/<%= orderData.delivery_status.cancelled.date.getMonth()+1 %>/<%= orderData.delivery_status.cancelled.date.getFullYear() %>
+                            </td>
+                        </tr>
+                        
+                      <% } if(orderData.delivery_status.delivered.state){ %> 
                         <tr title="<%= orderData.delivery_status.delivered.date%>">
                             <td>
                                 <b>DELIVERED</b>

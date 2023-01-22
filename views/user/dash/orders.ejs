@@ -43,7 +43,10 @@
                                             <p>Ordered at: <b><%= val.ordered_date.getDate() %>/<%= val.ordered_date.getMonth()+1 %>/<%= val.ordered_date.getFullYear() %></b> </p>
                                         </div>
                                         <div class="col-12 col-md-3">
-                                            <% if(val.delivery_status.delivered.state){ %> 
+                                            <% if(val.delivery_status.cancelled.state){ %> 
+                                                <p>Status: <b>CANCELLED</b><small>(<%= val.delivery_status.cancelled.date.getDate() %>/<%= val.delivery_status.cancelled.date.getMonth()+1 %>/<%= val.delivery_status.cancelled.date.getFullYear() %>)</small> </p>
+                                                <p><button class="btn btn-dark border-0 btn-sm d-none">Return</button></p>
+                                            <% }else if(val.delivery_status.delivered.state){ %> 
                                                 <p>Status: <b>DELIVERED</b><small>(<%= val.delivery_status.delivered.date.getDate() %>/<%= val.delivery_status.delivered.date.getMonth()+1 %>/<%= val.delivery_status.delivered.date.getFullYear() %>)</small> </p>
                                                 <p><button class="btn btn-dark border-0 btn-sm d-none">Return</button></p>
                                             <% }else if(val.delivery_status.out_for_delivery.state){ %> 

@@ -36,50 +36,56 @@
                         <div class="card-body bg-dark border-0">
                             <div class="border-0 p-2">
                                 <h5 class="text-secondary border-bottom py-2 mb-2 text-white">Order Status </h5>
-                                <div class="adProgress-bar">
-                                    <div class="d-flex align-items-center">
-                                        <div class="col-2 col-md-1 ad-line-s-half py-4">
-                                            <i class="bi <% if(orderData.delivery_status.ordered.state) {%>   bi-check-square<% }else{ %>bi-square <% } %>  h3 text-white bg-dark "></i>
+                                <% if(orderData.delivery_status.cancelled.state) {%> 
+                                    <div class="container">
+                                        <p class="text-white">You have cancelled this order on "<%= orderData.delivery_status.cancelled.date %>".</p>
+                                    </div>
+                                <% }else{ %>
+                                    <div class="adProgress-bar">
+                                        <div class="d-flex align-items-center">
+                                            <div class="col-2 col-md-1 ad-line-s-half py-4">
+                                                <i class="bi <% if(orderData.delivery_status.ordered.state) {%>   bi-check-square<% }else{ %>bi-square <% } %>  h3 text-white bg-dark "></i>
+                                            </div>
+                                            <div class="col ">
+                                                <p class="mt-1 h3  text-white <% if(orderData.delivery_status.ordered.state==true && orderData.delivery_status.shipped.state==false) {%>   fw-bold<% } %>">Order Placed</p>
+                                                <p class="m-0 p-0 text-light"> <%= orderData.delivery_status.ordered.date %></p>
+                                            </div>
                                         </div>
-                                        <div class="col ">
-                                            <p class="mt-1 h3  text-white <% if(orderData.delivery_status.ordered.state==true && orderData.delivery_status.shipped.state==false) {%>   fw-bold<% } %>">Order Placed</p>
-                                            <p class="m-0 p-0 text-light"> <%= orderData.delivery_status.ordered.date %></p>
+                                        <div class="d-flex align-items-center">
+                                            <div class="col-2 col-md-1 ad-line-e-half ad-line-s-half py-4">
+                                                <i class="bi <% if(orderData.delivery_status.shipped.state) {%>   bi-check-square<% }else{ %>bi-square <% } %> h3 text-white bg-dark "></i>
+                                            </div>
+                                            <div class="col">
+                                                <p class="mt-1 h3 text-white <% if(orderData.delivery_status.shipped.state==true && orderData.delivery_status.out_for_delivery.state==false) {%>   fw-bold<% } %>" >Shipped</p>
+                                                <% if(orderData.delivery_status.shipped.state) {%>
+                                                    <p class="m-0 p-0 text-light"><%= orderData.delivery_status.shipped.date %></p>
+                                                <% } %> 
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <div class="col-2 col-md-1 ad-line-e-half ad-line-s-half py-4">
+                                                <i class="bi <% if(orderData.delivery_status.out_for_delivery.state) {%>   bi-check-square<% }else{ %>bi-square <% } %> h3 text-white bg-dark "></i>
+                                            </div>
+                                            <div class="col">
+                                                <p class="mt-1 h3 text-white  <% if(orderData.delivery_status.out_for_delivery.state==true && orderData.delivery_status.delivered.state==false) {%>   fw-bold<% } %>">Out for delivery</p>
+                                                <% if(orderData.delivery_status.out_for_delivery.state) {%>
+                                                    <p class="m-0 p-0 text-light"><%= orderData.delivery_status.out_for_delivery.date %></p>
+                                                <% } %> 
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <div class="col-2 col-md-1 ad-line-e-half py-4">
+                                                <i class="bi <% if(orderData.delivery_status.delivered.state) {%>   bi-check-square<% }else{ %>bi-square <% } %> h3 text-white bg-dark "></i>
+                                            </div>
+                                            <div class="col">
+                                                <p class="mt-1 h3 text-white <% if(orderData.delivery_status.delivered.state==true ) {%>   fw-bold<% } %>">Delivered</p>
+                                                <% if(orderData.delivery_status.delivered.state) {%> 
+                                                    <p class="m-0 p-0 text-light"><%= orderData.delivery_status.delivered.date %></p>
+                                                <% } %> 
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="d-flex align-items-center">
-                                        <div class="col-2 col-md-1 ad-line-e-half ad-line-s-half py-4">
-                                            <i class="bi <% if(orderData.delivery_status.shipped.state) {%>   bi-check-square<% }else{ %>bi-square <% } %> h3 text-white bg-dark "></i>
-                                        </div>
-                                        <div class="col">
-                                            <p class="mt-1 h3 text-white <% if(orderData.delivery_status.shipped.state==true && orderData.delivery_status.out_for_delivery.state==false) {%>   fw-bold<% } %>" >Shipped</p>
-                                            <% if(orderData.delivery_status.shipped.state) {%>
-                                                <p class="m-0 p-0 text-light"><%= orderData.delivery_status.shipped.date %></p>
-                                            <% } %> 
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <div class="col-2 col-md-1 ad-line-e-half ad-line-s-half py-4">
-                                            <i class="bi <% if(orderData.delivery_status.out_for_delivery.state) {%>   bi-check-square<% }else{ %>bi-square <% } %> h3 text-white bg-dark "></i>
-                                        </div>
-                                        <div class="col">
-                                            <p class="mt-1 h3 text-white  <% if(orderData.delivery_status.out_for_delivery.state==true && orderData.delivery_status.delivered.state==false) {%>   fw-bold<% } %>">Out for delivery</p>
-                                            <% if(orderData.delivery_status.out_for_delivery.state) {%>
-                                                <p class="m-0 p-0 text-light"><%= orderData.delivery_status.out_for_delivery.date %></p>
-                                            <% } %> 
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <div class="col-2 col-md-1 ad-line-e-half py-4">
-                                            <i class="bi <% if(orderData.delivery_status.delivered.state) {%>   bi-check-square<% }else{ %>bi-square <% } %> h3 text-white bg-dark "></i>
-                                        </div>
-                                        <div class="col">
-                                            <p class="mt-1 h3 text-white <% if(orderData.delivery_status.delivered.state==true ) {%>   fw-bold<% } %>">Delivered</p>
-                                            <% if(orderData.delivery_status.delivered.state) {%> 
-                                                <p class="m-0 p-0 text-light"><%= orderData.delivery_status.delivered.date %></p>
-                                            <% } %> 
-                                        </div>
-                                    </div>
-                                </div>
+                                <% } %>
                                
                             </div>
                            
@@ -246,22 +252,26 @@
                             
                         </div>
                     </div>
-                    <div class="card ">
-                        <div class="card-body">
-                            
-                            <div class="border p-2">
-                                <h5 class="text-secondary border-bottom py-2 mb-2">Cancel? </h5>
+                    <% if(!orderData.delivery_status.cancelled.state && !orderData.delivery_status.delivered.state) {%> 
+                        <div class="card ">
+                            <div class="card-body">
+                                
                                 <div class="border p-2">
-                                    <div class="alert alert-warning" style="display: none;"  id="<%= orderData._id %>clickinfo"  >Cancelling items in this order may cause you to lose your promotional offers and/or cashback on this order.</div>
-                                    <p>Your order is on the way to deliver, but you still be able to cancel and will not able to revert it back once cancelled.</p>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="sendData('<%= orderData._id %>',true)" id="<%= orderData._id %>Btn">Cancel</button>
-                                    <p class="text-danger" id="<%= orderData._id %>clickALert" ></p>
+                                    <h5 class="text-secondary border-bottom py-2 mb-2">Cancel? </h5>
+                                    <div class="border p-2">
+                                        <div class="alert alert-warning" style="display: none;"  id="<%= orderData._id %>clickinfo"  >Cancelling items in this order may cause you to lose your promotional offers and/or cashback on this order.</div>
+                                        <p>Your order is on the way to deliver, but you still be able to cancel and will not able to revert it back once cancelled.</p>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="sendData('<%= orderData._id %>',true)" id="<%= orderData._id %>Btn">Cancel</button>
+                                        <form action="" method="post" id="<%= orderData._id %>Form"><input type="hidden" name="id" value="<%= orderData._id %>" ></form>
+                                        <p class="text-danger" id="<%= orderData._id %>clickALert" ></p>
+                                    </div>
                                 </div>
+                                
+                                
                             </div>
-                            
-                            
                         </div>
-                    </div>
+                    <% } %>   
+
                 </div>
             </div>
         </div>
@@ -301,7 +311,7 @@ function sendData(id,ask){
         console.log($("#"+id+'Form').serialize());
         $.ajax({
             type: "POST",
-            url: "/api/updateuserdata",
+            url: "/api/order/cancel",
             data: $("#"+id+'Form').serialize(),
             dataType: "json",
             encode: true,
