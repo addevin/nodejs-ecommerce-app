@@ -1111,7 +1111,80 @@ routes.post('/checkout/getdata',checkPhoneVerified, (req,res)=>{
         res.status(apiRes.status).json(apiRes)
     }
 })
+routes.post('/checkout/setCoupon',checkPhoneVerified, (req,res)=>{
+    let apiRes = JSON.parse(JSON.stringify(apiResponse));
+    apiRes.message = 'Seems you have claimed the coupon already or it\'s an invalid coupon!';
+    apiRes.status = 200;
+    apiRes.success = false
+    if(req.body.id && req.body.ccode){
+        coupons.findOne({code:req.body.ccode, used_users:{$nin:[res.locals.userData._id]}}).then((data)=>{
+            if(data){
+                if(data.expire>=new Date()){ //CHECKING EXPIRED OR NOT
+                    orders.findOne({_id:req.body.id, userid:res.locals.userData._id, order_status:'pending'}).then((orderData)=>{
+                        if(orderData.bill_amount>data.min_bill){ //CHECKING BILL AMOUNT
+                            orders.updateOne({_id:req.body.id, userid:res.locals.userData._id, order_status:'pending'},{$set:{coupen:{
+                                code:data.code,
+                                name:data.name,
+                                discount:data.discount,
+                                ptype:data.pType,
+                            }}}).then(async ()=>{
+                                await coupons.updateOne({_id:data._id},{$addToSet:{used_users:res.locals.userData._id}})
+                                apiRes.data = data
+                                apiRes.message = 'Applied discount to your bill!';
+                                apiRes.success = true
+                            }).catch((err)=>{
+                                console.log(err);
+                                apiRes.message = 'Error while applying coupon!';
+                            }).then(()=>{
+                                 res.status(apiRes.status).json(apiRes)
+                            })
+                        }else{
+                            apiRes.message = 'You are not eligible to use this coupon!';
+                            res.status(apiRes.status).json(apiRes)
+                        }
+                    }).catch((err)=>{
+                        console.log(err);
+                        apiRes.message = 'Seems you are not authorised to add coupon to this order!';
+                         res.status(apiRes.status).json(apiRes)
+                    })
+                }else{
+                    apiRes.message = 'Coupon Expired, Try another one!';
+                    res.status(apiRes.status).json(apiRes)
+                }
 
+            }else{
+                apiRes.message = 'Invalid coupon or you have already used this coupon once!';
+                 res.status(apiRes.status).json(apiRes)
+            }
+        }).catch((err)=>{
+            console.log(err);
+            res.status(apiRes.status).json(apiRes)
+        })
+    }else{
+        if(req.body.id){
+
+            orders.findOneAndUpdate({_id:req.body.id, userid:res.locals.userData._id,  order_status:'pending'},{$set:{coupen:{
+                code:'nocode',
+                name:'noname',
+                discount:0,
+                ptype:'nodata',
+            }}},{returnDocument: 'before'}).then(async(data)=>{
+                await coupons.updateOne({code:data.coupen.code},{$pull:{used_users:res.locals.userData._id}})
+                apiRes.message = 'Coupon removed!';
+                apiRes.success = true
+            }).catch((err)=>{
+                apiRes.message = 'Error detucted while removing coupon from your order!';
+                console.log(err);                
+            }).then(()=>{
+                apiRes.message = 'Invalid coupon or something went wrong!';
+                res.status(apiRes.status).json(apiRes)
+            })
+        }else{
+            res.status(apiRes.status).json(apiRes)
+        }
+
+    }
+})
 
 
 
