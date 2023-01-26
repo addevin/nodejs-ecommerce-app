@@ -67,6 +67,8 @@ Admin login validator API
         }else{
             apiRes.message = "Ooops! you have entered wrong credentials!";
         }
+    }else{
+        apiRes.message = "Please enter password and username."
     }
     res.status(apiRes.status).json(apiRes)
  })
