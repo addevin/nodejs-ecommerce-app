@@ -15,3 +15,6 @@ EMAIL_POST = 587
 EMAIL_USER = company@mail.com
 EMAIL_PASSWORD = password
 ```
+
+live demo: [https://addev.club](https://addev.club)
+test mode: [https://addev.club/auth/test/](https://addev.club/auth/test/) 
